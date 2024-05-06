@@ -4,24 +4,64 @@ import HelloWorld from '@/demo/components/HelloWorld.vue'
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/demo">Demo</RouterLink>
-        <RouterLink to="/demo/about">About</RouterLink>
-      </nav>
+  <div id="demo-body">
+    <div id="demo">
+      <header>
+        <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+    
+        <div class="wrapper">
+          <HelloWorld msg="You did it!" />
+    
+          <nav>
+            <RouterLink to="/">Home</RouterLink>
+            <RouterLink to="/demo">Demo</RouterLink>
+            <RouterLink to="/demo/about">About</RouterLink>
+          </nav>
+        </div>
+      </header>
+    
+      <RouterView />
     </div>
-  </header>
-
-  <RouterView />
+  </div>
 </template>
 
 <style scoped>
+#demo-body {
+  min-height: 100vh;
+}
+#demo {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-weight: normal;
+}
+
+a,
+.green {
+  text-decoration: none;
+  color: hsla(160, 100%, 37%, 1);
+  transition: 0.4s;
+  padding: 3px;
+}
+
+@media (hover: hover) {
+  a:hover {
+    background-color: hsla(160, 100%, 37%, 0.2);
+  }
+}
+
+@media (min-width: 1024px) {
+  #demo-body {
+    display: flex;
+    place-items: center;
+  }
+  #demo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 2rem;
+  }
+}
+
 header {
   line-height: 1.5;
   max-height: 100vh;

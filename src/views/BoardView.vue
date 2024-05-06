@@ -2,19 +2,37 @@
 </script>
 
 <template>
-  <header>
-    <div class="wrapper">
-      <h1>Farm Flow</h1>
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/demo">Demo</RouterLink>
-        <RouterLink to="/demo/about">About</RouterLink>
-      </nav>
+  <div id="the-board-wrapper">
+    <div id="the-board">
+      <header>
+        <div class="wrapper">
+          <h1>Farm Flow</h1>
+          <nav>
+            <RouterLink to="/">Home</RouterLink>
+            <RouterLink to="/demo">Demo</RouterLink>
+            <RouterLink to="/demo/about">About</RouterLink>
+          </nav>
+        </div>
+      </header>
+      <main>
+        <h2>The Board</h2>
+      </main>
     </div>
-  </header>
+  </div>
 </template>
 
 <style scoped>
+#the-board-wrapper {
+  min-height: 100vh;
+}
+
+#the-board {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-weight: normal;
+}
+
 header {
   line-height: 1.5;
   max-height: 100vh;
@@ -46,6 +64,17 @@ nav a:first-of-type {
 }
 
 @media (min-width: 1024px) {
+  #the-board-wrapper {
+    display: flex;
+    place-items: center;
+  }
+
+  #the-board {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 2rem;
+  }
+
   header {
     display: flex;
     place-items: center;
