@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, type Ref } from 'vue';
+import { useResizeObserver } from '@vueuse/core';
 
 // Style constants.
 const style = {
@@ -16,41 +17,45 @@ const style = {
   },
 };
 
-// Refs to key DOM elements.
+// Refs to canvas DOM element and its 2D rendering context.
 const canvas: Ref<HTMLCanvasElement | null> = ref(null);
 const ctx: Ref<CanvasRenderingContext2D | null> = ref(null);
 
 // Bounding box (ie, the <section> containing the <canvas>).
-const bb: {
-  el: HTMLElement | null, width: number, height: number, margin: number,
-} = reactive({
-  el: null,
-  width: 960,
-  height: 640,
+const boundingBox: Ref<HTMLElement | null> = ref(null);
+interface BBDimensions { width: number, height: number, margin: number, }
+const bb: BBDimensions = reactive({
+  width: boundingBox.value?.clientWidth || 960,
+  height: boundingBox.value?.clientHeight || 640,
   margin: 20,
 });
 
 // Grid dimensions.
-const grid = computed<{
+interface GridDimensions {
   width: number,
   height: number,
   unit: number,
   lineWidth: number,
   origin: { x: number, y: number },
   terminus: { x: number, y: number },
-}>(() => ({
-  width: bb.width - (bb.margin * 2),
-  height: bb.height - (bb.margin * 2),
-  // These are constants for now, but grouped here for consistency.
-  unit: 20,
-  lineWidth: 1.5,
-  // Set the x + y coordinates where each line will start (origin) & end (terminus).
-  origin: { x: bb.margin, y: bb.margin },
-  terminus: { x: bb.width - bb.margin, y: bb.height - bb.margin },
-}));
+}
+const grid = computed<GridDimensions>(() => {
+  console.log('computing grid dimensions');
+  return {
+    width: bb.width - (bb.margin * 2),
+    height: bb.height - (bb.margin * 2),
+    // These are constants for now, but grouped here for consistency.
+    unit: 20,
+    lineWidth: 1.5,
+    // Set the x + y coordinates where each line will start (origin) & end (terminus).
+    origin: { x: bb.margin, y: bb.margin },
+    terminus: { x: bb.width - bb.margin, y: bb.height - bb.margin },
+  };
+});
 
 // Grid coordinates for the filled square, plus its computed dimensions.
-const square: { x: number, y: number } = reactive({ x: 42, y: 24 });
+interface GridLocation { x: number, y: number }
+const square: GridLocation = reactive({ x: 42, y: 24 });
 const sq = computed<{
   origin: { x: number, y: number },
   terminus: { x: number, y: number },
@@ -65,29 +70,21 @@ const sq = computed<{
   },
 }));
 
-// Initialize the board.
-onMounted(() => {
-  canvas.value = document.getElementById('the-board') as HTMLCanvasElement;
-  ctx.value = canvas.value.getContext('2d');
-  if (!canvas.value || !canvas.value.parentElement || !ctx.value) {
-    console.error('Failed to get canvas context. Check element target.')
-    return;
+const resizeCanvas = (dimensions: { width: number, height: number }) => {
+  bb.width = dimensions.width;
+  bb.height = dimensions.height;
+  if (canvas.value) {
+    canvas.value.width = dimensions.width;
+    canvas.value.height = dimensions.height;
   }
+}
 
-  // Reset the canvas to be the same size as the bounding box.
-  bb.el = canvas.value.parentElement;
-  bb.width = bb.el.offsetWidth;
-  bb.height = bb.el.offsetHeight;
-  canvas.value.width = bb.width;
-  canvas.value.height = bb.height;
-
-  // Set context styles etc.
-  ctx.value.fillStyle = style.c.black.soft;
-  ctx.value.strokeStyle = style.c.green.transparent;
-  ctx.value.lineWidth = grid.value.lineWidth;
-
+const drawBoard = (ctx: CanvasRenderingContext2D, bb: BBDimensions) => {
   // Create the board's background.
-  ctx.value.fillRect(bb.margin, bb.margin, grid.value.width, grid.value.height);
+  ctx.fillStyle = style.c.black.soft;
+  ctx.strokeStyle = style.c.green.transparent;
+  ctx.lineWidth = grid.value.lineWidth;
+  ctx.fillRect(bb.margin, bb.margin, grid.value.width, grid.value.height);
 
   // Now loop through the horizontal grid...
   for (
@@ -98,11 +95,11 @@ onMounted(() => {
     // ...iterating through each line, spaced accordingly by grid units.
     y += grid.value.unit
   ) {
-    ctx.value.beginPath();
+    ctx.beginPath();
     // Horizontal gridlines will have endpoints on the x-origin & x-terminus.
-    ctx.value.moveTo(grid.value.origin.x, y);
-    ctx.value.lineTo(grid.value.terminus.x, y);
-    ctx.value.stroke();
+    ctx.moveTo(grid.value.origin.x, y);
+    ctx.lineTo(grid.value.terminus.x, y);
+    ctx.stroke();
   }
 
   // Then the vertical grid...
@@ -114,17 +111,17 @@ onMounted(() => {
     // ...iterating through by grid units.
     x += grid.value.unit
   ) {
-    ctx.value.beginPath();
+    ctx.beginPath();
     // Vertical gridlines will have endpoints on the y-origin & y-terminus.
-    ctx.value.moveTo(x, grid.value.origin.y);
-    ctx.value.lineTo(x, grid.value.terminus.y);
-    ctx.value.stroke();
+    ctx.moveTo(x, grid.value.origin.y);
+    ctx.lineTo(x, grid.value.terminus.y);
+    ctx.stroke();
   }
 
   // Fill a square on top of a grid location w/ differently colored borderlines,
   // so that the orientation and direction of draw actions can be confirmed. 
-  ctx.value.fillStyle = 'tomato';
-  ctx.value.fillRect(
+  ctx.fillStyle = 'tomato';
+  ctx.fillRect(
     sq.value.origin.x,
     sq.value.origin.y,
     grid.value.unit,
@@ -132,33 +129,68 @@ onMounted(() => {
   );
 
   // Top line.
-  ctx.value.beginPath();
-  ctx.value.strokeStyle = 'blue';
-  ctx.value.moveTo(sq.value.origin.x, sq.value.origin.y);
-  ctx.value.lineTo(sq.value.terminus.x, sq.value.origin.y);
-  ctx.value.stroke();
+  ctx.beginPath();
+  ctx.strokeStyle = 'blue';
+  ctx.moveTo(sq.value.origin.x, sq.value.origin.y);
+  ctx.lineTo(sq.value.terminus.x, sq.value.origin.y);
+  ctx.stroke();
   
   // Right line.
-  ctx.value.beginPath();
-  ctx.value.strokeStyle = 'green';
-  ctx.value.moveTo(sq.value.terminus.x, sq.value.origin.y);
-  ctx.value.lineTo(sq.value.terminus.x, sq.value.terminus.y);
-  ctx.value.stroke();
+  ctx.beginPath();
+  ctx.strokeStyle = 'green';
+  ctx.moveTo(sq.value.terminus.x, sq.value.origin.y);
+  ctx.lineTo(sq.value.terminus.x, sq.value.terminus.y);
+  ctx.stroke();
   
   // Bottom line.
-  ctx.value.beginPath();
-  ctx.value.strokeStyle = 'yellow';
-  ctx.value.moveTo(sq.value.terminus.x, sq.value.terminus.y);
-  ctx.value.lineTo(sq.value.origin.x, sq.value.terminus.y);
-  ctx.value.stroke();
+  ctx.beginPath();
+  ctx.strokeStyle = 'yellow';
+  ctx.moveTo(sq.value.terminus.x, sq.value.terminus.y);
+  ctx.lineTo(sq.value.origin.x, sq.value.terminus.y);
+  ctx.stroke();
   
   // Left line.
-  ctx.value.beginPath();
-  ctx.value.strokeStyle = 'red';
-  ctx.value.moveTo(sq.value.origin.x, sq.value.terminus.y);
-  ctx.value.lineTo(sq.value.origin.x, sq.value.origin.y);
-  ctx.value.stroke();
+  ctx.beginPath();
+  ctx.strokeStyle = 'red';
+  ctx.moveTo(sq.value.origin.x, sq.value.terminus.y);
+  ctx.lineTo(sq.value.origin.x, sq.value.origin.y);
+  ctx.stroke();
+};
+
+onMounted(() => {
+  canvas.value = document.getElementById('the-board') as HTMLCanvasElement;
+  if (canvas.value) {
+    boundingBox.value = canvas.value.parentElement;
+    ctx.value = canvas.value.getContext('2d');
+  }
+  if (boundingBox.value && ctx.value) {
+    resizeCanvas({
+      width: boundingBox.value.clientWidth,
+      height: boundingBox.value.clientHeight,
+    });
+    drawBoard(ctx!.value, bb);
+  } else {
+    console.error('Failed to get canvas context. Check target element.')
+  }
 });
+
+useResizeObserver(boundingBox, ([bbResizeObserverEntry]) => {
+  if (!canvas.value) {
+    canvas.value = document.getElementById('the-board') as HTMLCanvasElement;
+  } else {
+    boundingBox.value = canvas.value.parentElement;
+    ctx.value = canvas.value.getContext('2d');
+  }
+  if (ctx.value) {
+    const { contentRect: { width, height } } = bbResizeObserverEntry;
+    resizeCanvas({ width, height });
+    drawBoard(ctx!.value, bb);
+  } else {
+    console.error('Failed to get canvas context. Check target element.')
+  }
+});
+
+
 
 </script>
 
