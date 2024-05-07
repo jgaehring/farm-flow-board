@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, type Ref } from 'vue';
+import { computed, onMounted, reactive, ref, type Ref } from 'vue';
 
 // Style constants.
 const style = {
@@ -16,20 +16,54 @@ const style = {
   },
 };
 
-// Defaults.
-const defaultValues = {
-  // Bounding box (ie, the <section> containing the <canvas>).
-  bb: {
-    width: 960,
-    height: 640,
-    margin: 20,
-  },
-  grid: { unit: 20, lineWidth: 1.5 },
-};
-
-// Reactive refs to DOM elements.
+// Refs to key DOM elements.
 const canvas: Ref<HTMLCanvasElement | null> = ref(null);
 const ctx: Ref<CanvasRenderingContext2D | null> = ref(null);
+
+// Bounding box (ie, the <section> containing the <canvas>).
+const bb: {
+  el: HTMLElement | null, width: number, height: number, margin: number,
+} = reactive({
+  el: null,
+  width: 960,
+  height: 640,
+  margin: 20,
+});
+
+// Grid dimensions.
+const grid = computed<{
+  width: number,
+  height: number,
+  unit: number,
+  lineWidth: number,
+  origin: { x: number, y: number },
+  terminus: { x: number, y: number },
+}>(() => ({
+  width: bb.width - (bb.margin * 2),
+  height: bb.height - (bb.margin * 2),
+  // These are constants for now, but grouped here for consistency.
+  unit: 20,
+  lineWidth: 1.5,
+  // Set the x + y coordinates where each line will start (origin) & end (terminus).
+  origin: { x: bb.margin, y: bb.margin },
+  terminus: { x: bb.width - bb.margin, y: bb.height - bb.margin },
+}));
+
+// Grid coordinates for the filled square, plus its computed dimensions.
+const square: { x: number, y: number } = reactive({ x: 42, y: 24 });
+const sq = computed<{
+  origin: { x: number, y: number },
+  terminus: { x: number, y: number },
+}>(() => ({
+  origin: {
+    x: square.x * grid.value.unit,
+    y: square.y * grid.value.unit,
+  },
+  terminus: {
+    x: square.x * grid.value.unit + grid.value.unit,
+    y: square.y * grid.value.unit + grid.value.unit,
+  },
+}));
 
 // Initialize the board.
 onMounted(() => {
@@ -40,95 +74,89 @@ onMounted(() => {
     return;
   }
 
-  // Constants for the board dimensions.
-  const { bb, grid } = defaultValues;
-  const boardWidth = bb.width - (bb.margin * 2);
-  const boardHeight = bb.height - (bb.margin * 2);
+  // Reset the canvas to be the same size as the bounding box.
+  bb.el = canvas.value.parentElement;
+  bb.width = bb.el.offsetWidth;
+  bb.height = bb.el.offsetHeight;
+  canvas.value.width = bb.width;
+  canvas.value.height = bb.height;
 
   // Set context styles etc.
   ctx.value.fillStyle = style.c.black.soft;
   ctx.value.strokeStyle = style.c.green.transparent;
-  ctx.value.lineWidth = defaultValues.grid.lineWidth;
+  ctx.value.lineWidth = grid.value.lineWidth;
 
   // Create the board's background.
-  ctx.value.fillRect(bb.margin, bb.margin, boardWidth, boardHeight);
-
-  // Begin drawing the grid by setting the x and y coordinates for where each
-  // line will start (origin) and where they will end (terminus). Horizontal
-  // lines will always have their points on the x-origin and x-terminus, while
-  // vertical lines will always have their 
-  const gridLineOriginX = bb.margin;
-  const gridLineTerminusX = boardWidth + bb.margin;
-  const gridLineOriginY = bb.margin;
-  const gridLineTerminusY = boardHeight + bb.margin;
+  ctx.value.fillRect(bb.margin, bb.margin, grid.value.width, grid.value.height);
 
   // Now loop through the horizontal grid...
   for (
     // ...starting from the top...
-    let y = gridLineOriginY + grid.unit;
+    let y = grid.value.origin.y + grid.value.unit;
     // ...ending at the bottom...
-    y < gridLineTerminusY;
+    y < grid.value.terminus.y;
     // ...iterating through each line, spaced accordingly by grid units.
-    y += grid.unit
+    y += grid.value.unit
   ) {
     ctx.value.beginPath();
-    ctx.value.moveTo(gridLineOriginX, y);
-    ctx.value.lineTo(gridLineTerminusX, y);
+    // Horizontal gridlines will have endpoints on the x-origin & x-terminus.
+    ctx.value.moveTo(grid.value.origin.x, y);
+    ctx.value.lineTo(grid.value.terminus.x, y);
     ctx.value.stroke();
   }
 
   // Then the vertical grid...
   for (
     // ...starting from the left...
-    let x = gridLineOriginX + grid.unit;
+    let x = grid.value.origin.x + grid.value.unit;
     // ...ending at the right...
-    x < gridLineTerminusX;
+    x < grid.value.terminus.x;
     // ...iterating through by grid units.
-    x += grid.unit
+    x += grid.value.unit
   ) {
     ctx.value.beginPath();
-    ctx.value.moveTo(x, gridLineOriginY);
-    ctx.value.lineTo(x, gridLineTerminusY);
+    // Vertical gridlines will have endpoints on the y-origin & y-terminus.
+    ctx.value.moveTo(x, grid.value.origin.y);
+    ctx.value.lineTo(x, grid.value.terminus.y);
     ctx.value.stroke();
   }
 
-  // Draw a square on top of a grid location w/ differently colored borderlines,
+  // Fill a square on top of a grid location w/ differently colored borderlines,
   // so that the orientation and direction of draw actions can be confirmed. 
-  const sqLocX = 42;
-  const sqLocY = 24;
-  const sqOriginX = sqLocX * grid.unit;
-  const sqOriginY = sqLocY * grid.unit;
-  const sqTerminusX = sqOriginX + grid.unit;
-  const sqTerminusY = sqOriginY + grid.unit;
   ctx.value.fillStyle = 'tomato';
-  ctx.value.fillRect(sqOriginX, sqOriginY, grid.unit, grid.unit);
+  ctx.value.fillRect(
+    sq.value.origin.x,
+    sq.value.origin.y,
+    grid.value.unit,
+    grid.value.unit,
+  );
 
   // Top line.
   ctx.value.beginPath();
   ctx.value.strokeStyle = 'blue';
-  ctx.value.moveTo(sqOriginX, sqOriginY);
-  ctx.value.lineTo(sqTerminusX, sqOriginY);
+  ctx.value.moveTo(sq.value.origin.x, sq.value.origin.y);
+  ctx.value.lineTo(sq.value.terminus.x, sq.value.origin.y);
   ctx.value.stroke();
   
   // Right line.
   ctx.value.beginPath();
   ctx.value.strokeStyle = 'green';
-  ctx.value.moveTo(sqTerminusX, sqOriginY);
-  ctx.value.lineTo(sqTerminusX, sqTerminusY);
+  ctx.value.moveTo(sq.value.terminus.x, sq.value.origin.y);
+  ctx.value.lineTo(sq.value.terminus.x, sq.value.terminus.y);
   ctx.value.stroke();
   
   // Bottom line.
   ctx.value.beginPath();
   ctx.value.strokeStyle = 'yellow';
-  ctx.value.moveTo(sqTerminusX, sqTerminusY);
-  ctx.value.lineTo(sqOriginX, sqTerminusY);
+  ctx.value.moveTo(sq.value.terminus.x, sq.value.terminus.y);
+  ctx.value.lineTo(sq.value.origin.x, sq.value.terminus.y);
   ctx.value.stroke();
   
   // Left line.
   ctx.value.beginPath();
   ctx.value.strokeStyle = 'red';
-  ctx.value.moveTo(sqOriginX, sqTerminusY);
-  ctx.value.lineTo(sqOriginX, sqOriginY);
+  ctx.value.moveTo(sq.value.origin.x, sq.value.terminus.y);
+  ctx.value.lineTo(sq.value.origin.x, sq.value.origin.y);
   ctx.value.stroke();
 });
 
