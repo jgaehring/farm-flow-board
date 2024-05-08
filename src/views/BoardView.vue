@@ -15,19 +15,36 @@ const style = {
       mute: '#282828'
     },
   },
+  // Defaults for initializing the board.
+  board: {
+    width: 960,
+    height: 640,
+    margin: 20,
+  },
 };
 
 // Refs to canvas DOM element and its 2D rendering context.
 const canvas: Ref<HTMLCanvasElement | null> = ref(null);
 const ctx: Ref<CanvasRenderingContext2D | null> = ref(null);
-
 // Bounding box (ie, the <section> containing the <canvas>).
 const boundingBox: Ref<HTMLElement | null> = ref(null);
-interface BBDimensions { width: number, height: number, margin: number, }
-const bb: BBDimensions = reactive({
-  width: boundingBox.value?.clientWidth || 960,
-  height: boundingBox.value?.clientHeight || 640,
-  margin: 20,
+
+// Board dimensions.
+interface BoardProperties {
+  width: number,
+  height: number,
+  marginTop: number,
+  marginRight: number,
+  marginBottom: number,
+  marginLeft: number,
+}
+const board: BoardProperties = reactive({
+    width: boundingBox.value?.clientWidth || style.board.width,
+    height: boundingBox.value?.clientHeight || style.board.height,
+    marginTop: style.board.margin,
+    marginRight: style.board.margin,
+    marginBottom: style.board.margin,
+    marginLeft: style.board.margin,
 });
 
 // Grid dimensions.
@@ -40,16 +57,16 @@ interface GridDimensions {
   terminus: { x: number, y: number },
 }
 const grid = computed<GridDimensions>(() => {
-  console.log('computing grid dimensions');
+  const { marginTop, marginRight, marginBottom, marginLeft } = board;
   return {
-    width: bb.width - (bb.margin * 2),
-    height: bb.height - (bb.margin * 2),
+    width: board.width - marginLeft - marginRight,
+    height: board.height - marginTop - marginBottom,
     // These are constants for now, but grouped here for consistency.
     unit: 20,
     lineWidth: 1.5,
     // Set the x + y coordinates where each line will start (origin) & end (terminus).
-    origin: { x: bb.margin, y: bb.margin },
-    terminus: { x: bb.width - bb.margin, y: bb.height - bb.margin },
+    origin: { x: marginLeft, y: marginTop },
+    terminus: { x: board.width - marginLeft, y: board.height - marginBottom },
   };
 });
 
@@ -58,20 +75,25 @@ interface GridCoordinates { x: number, y: number }
 const square: GridCoordinates = reactive({ x: 42, y: 24 });
 
 const resizeCanvas = (dimensions: { width: number, height: number }) => {
-  bb.width = dimensions.width;
-  bb.height = dimensions.height;
+  board.width = dimensions.width;
+  board.height = dimensions.height;
   if (canvas.value) {
     canvas.value.width = dimensions.width;
     canvas.value.height = dimensions.height;
   }
 }
 
-const drawBoard = (ctx: CanvasRenderingContext2D, bb: BBDimensions) => {
+const drawBoard = (ctx: CanvasRenderingContext2D) => {
   // Create the board's background.
   ctx.fillStyle = style.c.black.soft;
   ctx.strokeStyle = style.c.green.transparent;
   ctx.lineWidth = grid.value.lineWidth;
-  ctx.fillRect(bb.margin, bb.margin, grid.value.width, grid.value.height);
+  ctx.fillRect(
+    board.marginLeft,
+    board.marginTop,
+    grid.value.width,
+    grid.value.height,
+  );
 
   // Now loop through the horizontal grid...
   for (
@@ -164,7 +186,7 @@ onMounted(() => {
       width: boundingBox.value.clientWidth,
       height: boundingBox.value.clientHeight,
     });
-    drawBoard(ctx!.value, bb);
+    drawBoard(ctx!.value);
     drawSquare(ctx!.value, { x: square.x, y: square.y });
   } else {
     console.error('Failed to get canvas context. Check target element.')
@@ -181,14 +203,12 @@ useResizeObserver(boundingBox, ([bbResizeObserverEntry]) => {
   if (ctx.value) {
     const { contentRect: { width, height } } = bbResizeObserverEntry;
     resizeCanvas({ width, height });
-    drawBoard(ctx!.value, bb);
+    drawBoard(ctx!.value);
     drawSquare(ctx!.value, { x: square.x, y: square.y });
   } else {
     console.error('Failed to get canvas context. Check target element.')
   }
 });
-
-
 
 </script>
 
