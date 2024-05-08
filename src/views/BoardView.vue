@@ -54,21 +54,8 @@ const grid = computed<GridDimensions>(() => {
 });
 
 // Grid coordinates for the filled square, plus its computed dimensions.
-interface GridLocation { x: number, y: number }
-const square: GridLocation = reactive({ x: 42, y: 24 });
-const sq = computed<{
-  origin: { x: number, y: number },
-  terminus: { x: number, y: number },
-}>(() => ({
-  origin: {
-    x: square.x * grid.value.unit,
-    y: square.y * grid.value.unit,
-  },
-  terminus: {
-    x: square.x * grid.value.unit + grid.value.unit,
-    y: square.y * grid.value.unit + grid.value.unit,
-  },
-}));
+interface GridCoordinates { x: number, y: number }
+const square: GridCoordinates = reactive({ x: 42, y: 24 });
 
 const resizeCanvas = (dimensions: { width: number, height: number }) => {
   bb.width = dimensions.width;
@@ -117,13 +104,22 @@ const drawBoard = (ctx: CanvasRenderingContext2D, bb: BBDimensions) => {
     ctx.lineTo(x, grid.value.terminus.y);
     ctx.stroke();
   }
+};
 
-  // Fill a square on top of a grid location w/ differently colored borderlines,
-  // so that the orientation and direction of draw actions can be confirmed. 
+// Fill a square on top of a grid location w/ differently colored borderlines,
+// so that the orientation and direction of draw actions can be confirmed.
+const drawSquare = (ctx: CanvasRenderingContext2D, coords: GridCoordinates) => {
+  const { x, y } = coords;
+  const originX = x * grid.value.unit;
+  const originY = y * grid.value.unit;
+  const terminusX = originX + grid.value.unit;
+  const terminusY = originY + grid.value.unit;
+
+
   ctx.fillStyle = 'tomato';
   ctx.fillRect(
-    sq.value.origin.x,
-    sq.value.origin.y,
+    originX,
+    originY,
     grid.value.unit,
     grid.value.unit,
   );
@@ -131,31 +127,31 @@ const drawBoard = (ctx: CanvasRenderingContext2D, bb: BBDimensions) => {
   // Top line.
   ctx.beginPath();
   ctx.strokeStyle = 'blue';
-  ctx.moveTo(sq.value.origin.x, sq.value.origin.y);
-  ctx.lineTo(sq.value.terminus.x, sq.value.origin.y);
+  ctx.moveTo(originX, originY);
+  ctx.lineTo(terminusX, originY);
   ctx.stroke();
   
   // Right line.
   ctx.beginPath();
   ctx.strokeStyle = 'green';
-  ctx.moveTo(sq.value.terminus.x, sq.value.origin.y);
-  ctx.lineTo(sq.value.terminus.x, sq.value.terminus.y);
+  ctx.moveTo(terminusX, originY);
+  ctx.lineTo(terminusX, terminusY);
   ctx.stroke();
   
   // Bottom line.
   ctx.beginPath();
   ctx.strokeStyle = 'yellow';
-  ctx.moveTo(sq.value.terminus.x, sq.value.terminus.y);
-  ctx.lineTo(sq.value.origin.x, sq.value.terminus.y);
+  ctx.moveTo(terminusX, terminusY);
+  ctx.lineTo(originX, terminusY);
   ctx.stroke();
   
   // Left line.
   ctx.beginPath();
   ctx.strokeStyle = 'red';
-  ctx.moveTo(sq.value.origin.x, sq.value.terminus.y);
-  ctx.lineTo(sq.value.origin.x, sq.value.origin.y);
+  ctx.moveTo(originX, terminusY);
+  ctx.lineTo(originX, originY);
   ctx.stroke();
-};
+}
 
 onMounted(() => {
   canvas.value = document.getElementById('the-board') as HTMLCanvasElement;
@@ -169,6 +165,7 @@ onMounted(() => {
       height: boundingBox.value.clientHeight,
     });
     drawBoard(ctx!.value, bb);
+    drawSquare(ctx!.value, { x: square.x, y: square.y });
   } else {
     console.error('Failed to get canvas context. Check target element.')
   }
@@ -185,6 +182,7 @@ useResizeObserver(boundingBox, ([bbResizeObserverEntry]) => {
     const { contentRect: { width, height } } = bbResizeObserverEntry;
     resizeCanvas({ width, height });
     drawBoard(ctx!.value, bb);
+    drawSquare(ctx!.value, { x: square.x, y: square.y });
   } else {
     console.error('Failed to get canvas context. Check target element.')
   }
