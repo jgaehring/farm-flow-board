@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, type Ref } from 'vue';
-import { useResizeObserver } from '@vueuse/core';
+import { reactive, ref, type Ref } from 'vue';
+import useResizableCanvas from '@/composables/useResizableCanvas';
 
 // Style constants.
 const style = {
@@ -15,136 +15,89 @@ const style = {
       mute: '#282828'
     },
   },
-  // Defaults for initializing the board.
-  board: {
-    width: 960,
-    height: 640,
-    margin: 20,
-  },
 };
 
-// Refs to canvas DOM element and its 2D rendering context.
+// Defaults for initializing the board.
+const marginTop = 20;
+const marginRight = 20;
+const marginBottom = 20;
+const marginLeft = 20;
+const gridUnit = 20;
+const lineWidth = 1.5;
+
+// Refs for canvas DOM element.
 const canvas: Ref<HTMLCanvasElement | null> = ref(null);
-const ctx: Ref<CanvasRenderingContext2D | null> = ref(null);
-// Bounding box (ie, the <section> containing the <canvas>).
-const boundingBox: Ref<HTMLElement | null> = ref(null);
 
-// Board dimensions.
-interface BoardProperties {
-  width: number,
-  height: number,
-  marginTop: number,
-  marginRight: number,
-  marginBottom: number,
-  marginLeft: number,
-}
-const board: BoardProperties = reactive({
-    width: boundingBox.value?.clientWidth || style.board.width,
-    height: boundingBox.value?.clientHeight || style.board.height,
-    marginTop: style.board.margin,
-    marginRight: style.board.margin,
-    marginBottom: style.board.margin,
-    marginLeft: style.board.margin,
-});
+const drawBoard = (canvasWidth: number, canvasHeight: number) => {
+  const ctx = canvas.value?.getContext('2d');
+  if (!ctx) return;
 
-// Grid dimensions.
-interface GridDimensions {
-  width: number,
-  height: number,
-  unit: number,
-  lineWidth: number,
-  origin: { x: number, y: number },
-  terminus: { x: number, y: number },
-}
-const grid = computed<GridDimensions>(() => {
-  const { marginTop, marginRight, marginBottom, marginLeft } = board;
-  return {
-    width: board.width - marginLeft - marginRight,
-    height: board.height - marginTop - marginBottom,
-    // These are constants for now, but grouped here for consistency.
-    unit: 20,
-    lineWidth: 1.5,
-    // Set the x + y coordinates where each line will start (origin) & end (terminus).
-    origin: { x: marginLeft, y: marginTop },
-    terminus: { x: board.width - marginLeft, y: board.height - marginBottom },
-  };
-});
+  const boardWidth = canvasWidth - marginLeft - marginRight;
+  const boardHeight = canvasHeight - marginTop - marginBottom;
 
-// Grid coordinates for the filled square, plus its computed dimensions.
-interface GridCoordinates { x: number, y: number }
-const square: GridCoordinates = reactive({ x: 42, y: 24 });
-
-const resizeCanvas = (dimensions: { width: number, height: number }) => {
-  board.width = dimensions.width;
-  board.height = dimensions.height;
-  if (canvas.value) {
-    canvas.value.width = dimensions.width;
-    canvas.value.height = dimensions.height;
-  }
-}
-
-const drawBoard = (ctx: CanvasRenderingContext2D) => {
   // Create the board's background.
   ctx.fillStyle = style.c.black.soft;
   ctx.strokeStyle = style.c.green.transparent;
-  ctx.lineWidth = grid.value.lineWidth;
-  ctx.fillRect(
-    board.marginLeft,
-    board.marginTop,
-    grid.value.width,
-    grid.value.height,
-  );
+  ctx.lineWidth = lineWidth;
+  ctx.fillRect(marginLeft, marginTop, boardWidth, boardHeight);
+
+  // Set the x + y coordinates where each line will start (origin) & end (terminus).
+  const originX = marginLeft;
+  const originY = marginTop;
+  const terminusX = marginLeft + boardWidth;
+  const terminusY = marginTop + boardHeight;
 
   // Now loop through the horizontal grid...
   for (
     // ...starting from the top...
-    let y = grid.value.origin.y + grid.value.unit;
+    let y = originY + gridUnit;
     // ...ending at the bottom...
-    y < grid.value.terminus.y;
+    y < terminusY;
     // ...iterating through each line, spaced accordingly by grid units.
-    y += grid.value.unit
+    y += gridUnit
   ) {
     ctx.beginPath();
     // Horizontal gridlines will have endpoints on the x-origin & x-terminus.
-    ctx.moveTo(grid.value.origin.x, y);
-    ctx.lineTo(grid.value.terminus.x, y);
+    ctx.moveTo(originX, y);
+    ctx.lineTo(terminusX, y);
     ctx.stroke();
   }
 
   // Then the vertical grid...
   for (
     // ...starting from the left...
-    let x = grid.value.origin.x + grid.value.unit;
+    let x = originX + gridUnit;
     // ...ending at the right...
-    x < grid.value.terminus.x;
+    x < terminusX;
     // ...iterating through by grid units.
-    x += grid.value.unit
+    x += gridUnit
   ) {
     ctx.beginPath();
     // Vertical gridlines will have endpoints on the y-origin & y-terminus.
-    ctx.moveTo(x, grid.value.origin.y);
-    ctx.lineTo(x, grid.value.terminus.y);
+    ctx.moveTo(x, originY);
+    ctx.lineTo(x, terminusY);
     ctx.stroke();
   }
 };
 
+// Grid coordinates for the filled square.
+const square = reactive({ x: 42, y: 24 });
+
 // Fill a square on top of a grid location w/ differently colored borderlines,
 // so that the orientation and direction of draw actions can be confirmed.
-const drawSquare = (ctx: CanvasRenderingContext2D, coords: GridCoordinates) => {
-  const { x, y } = coords;
-  const originX = x * grid.value.unit;
-  const originY = y * grid.value.unit;
-  const terminusX = originX + grid.value.unit;
-  const terminusY = originY + grid.value.unit;
+const drawSquare = (x: number, y: number) => {
+  const ctx = canvas.value?.getContext('2d');
+  if (!ctx) return;
 
+  // Four points of the square.
+  const originX = x * gridUnit + marginLeft;
+  const originY = y * gridUnit + marginTop;
+  const terminusX = originX + gridUnit;
+  const terminusY = originY + gridUnit;
 
+  // Fill.
   ctx.fillStyle = 'tomato';
-  ctx.fillRect(
-    originX,
-    originY,
-    grid.value.unit,
-    grid.value.unit,
-  );
+  ctx.fillRect(originX, originY, gridUnit, gridUnit);
 
   // Top line.
   ctx.beginPath();
@@ -175,39 +128,10 @@ const drawSquare = (ctx: CanvasRenderingContext2D, coords: GridCoordinates) => {
   ctx.stroke();
 }
 
-onMounted(() => {
-  canvas.value = document.getElementById('the-board') as HTMLCanvasElement;
-  if (canvas.value) {
-    boundingBox.value = canvas.value.parentElement;
-    ctx.value = canvas.value.getContext('2d');
-  }
-  if (boundingBox.value && ctx.value) {
-    resizeCanvas({
-      width: boundingBox.value.clientWidth,
-      height: boundingBox.value.clientHeight,
-    });
-    drawBoard(ctx!.value);
-    drawSquare(ctx!.value, { x: square.x, y: square.y });
-  } else {
-    console.error('Failed to get canvas context. Check target element.')
-  }
-});
-
-useResizeObserver(boundingBox, ([bbResizeObserverEntry]) => {
-  if (!canvas.value) {
-    canvas.value = document.getElementById('the-board') as HTMLCanvasElement;
-  } else {
-    boundingBox.value = canvas.value.parentElement;
-    ctx.value = canvas.value.getContext('2d');
-  }
-  if (ctx.value) {
-    const { contentRect: { width, height } } = bbResizeObserverEntry;
-    resizeCanvas({ width, height });
-    drawBoard(ctx!.value);
-    drawSquare(ctx!.value, { x: square.x, y: square.y });
-  } else {
-    console.error('Failed to get canvas context. Check target element.')
-  }
+// Redraw the board and the square whenever the canvas is resized.
+useResizableCanvas(canvas, (width: number, height: number) => {
+  drawBoard(width, height);
+  drawSquare(square.x, square.y);
 });
 
 </script>
@@ -219,7 +143,7 @@ useResizeObserver(boundingBox, ([bbResizeObserverEntry]) => {
     </header>
     <main>
       <section>
-        <canvas id="the-board" role="presentation" height="640" width="960">
+        <canvas id="the-board" ref="canvas" role="presentation" height="640" width="960">
           <p>Oops, forgot to add a fallback! &#x1F643;</p>
         </canvas>
       </section>
