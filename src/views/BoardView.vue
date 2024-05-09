@@ -28,6 +28,9 @@ const lineWidth = 1.5;
 // Refs for canvas DOM element.
 const canvas: Ref<HTMLCanvasElement | null> = ref(null);
 
+// Grid coordinates for the filled square.
+const square = reactive({ x: 42, y: 24 });
+
 const drawBoard = (canvasWidth: number, canvasHeight: number) => {
   const ctx = canvas.value?.getContext('2d');
   if (!ctx) return;
@@ -42,6 +45,9 @@ const drawBoard = (canvasWidth: number, canvasHeight: number) => {
   ctx.lineWidth = lineWidth;
   ctx.fillRect(marginLeft, marginTop, boardWidth, boardHeight);
   drawGrid(ctx, boardWidth, boardHeight);
+
+  // And finally the square.
+  drawSquare(ctx, square.x, square.y);
 };
 
 const drawGrid = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
@@ -84,15 +90,9 @@ const drawGrid = (ctx: CanvasRenderingContext2D, width: number, height: number) 
   }
 };
 
-// Grid coordinates for the filled square.
-const square = reactive({ x: 42, y: 24 });
-
 // Fill a square on top of a grid location w/ differently colored borderlines,
 // so that the orientation and direction of draw actions can be confirmed.
-const drawSquare = (x: number, y: number) => {
-  const ctx = canvas.value?.getContext('2d');
-  if (!ctx) return;
-
+const drawSquare = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
   // Four points of the square.
   const originX = x * gridUnit + marginLeft;
   const originY = y * gridUnit + marginTop;
@@ -132,11 +132,8 @@ const drawSquare = (x: number, y: number) => {
   ctx.stroke();
 }
 
-// Redraw the board and the square whenever the canvas is resized.
-useResizableCanvas(canvas, (width: number, height: number) => {
-  drawBoard(width, height);
-  drawSquare(square.x, square.y);
-});
+// Redraw the board whenever the canvas is resized.
+useResizableCanvas(canvas, drawBoard);
 
 </script>
 
