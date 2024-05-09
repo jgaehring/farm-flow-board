@@ -32,22 +32,26 @@ const drawBoard = (canvasWidth: number, canvasHeight: number) => {
   const ctx = canvas.value?.getContext('2d');
   if (!ctx) return;
 
+  // Adjust board dimensions to fit inside canvas w/ margins.
   const boardWidth = canvasWidth - marginLeft - marginRight;
   const boardHeight = canvasHeight - marginTop - marginBottom;
 
-  // Create the board's background.
+  // Draw the board's background and grid.
   ctx.fillStyle = style.c.black.soft;
   ctx.strokeStyle = style.c.green.transparent;
   ctx.lineWidth = lineWidth;
   ctx.fillRect(marginLeft, marginTop, boardWidth, boardHeight);
+  drawGrid(ctx, boardWidth, boardHeight);
+};
 
+const drawGrid = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
   // Set the x + y coordinates where each line will start (origin) & end (terminus).
   const originX = marginLeft;
   const originY = marginTop;
-  const terminusX = marginLeft + boardWidth;
-  const terminusY = marginTop + boardHeight;
+  const terminusX = marginLeft + width;
+  const terminusY = marginTop + height;
 
-  // Now loop through the horizontal grid...
+  // Now loop through the horizontal gridlines...
   for (
     // ...starting from the top...
     let y = originY + gridUnit;
@@ -63,7 +67,7 @@ const drawBoard = (canvasWidth: number, canvasHeight: number) => {
     ctx.stroke();
   }
 
-  // Then the vertical grid...
+  // Then the vertical gridlines...
   for (
     // ...starting from the left...
     let x = originX + gridUnit;
