@@ -33,7 +33,13 @@ const square = reactive({ x: 42, y: 24 });
 
 const drawBoard = (canvasWidth: number, canvasHeight: number) => {
   const ctx = canvas.value?.getContext('2d');
-  if (!ctx) return;
+  if (!ctx) {
+    console.warn(
+      'Aborted drawing the board because the canvas\'s rendering '
+      + 'context could not be found.',
+    );
+    return;
+  }
 
   // Adjust board dimensions to fit inside canvas w/ margins.
   const boardWidth = canvasWidth - marginLeft - marginRight;
