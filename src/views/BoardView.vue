@@ -22,6 +22,34 @@ const canvas: Ref<HTMLCanvasElement | null> = ref(null);
 // Grid coordinates for the filled square.
 const square = reactive({ x: 3, y: 9 });
 
+// Given a Date object, return a new Date object set 24 hours later.
+const plusDay = (d: Date) => new Date(d.valueOf() + 24 * 60 * 60 * 1000);
+// Given a starting Date object and an ending Date object, return an array of
+// Date objects spanning that date range, including the start and end dates.
+function createDateRange(start: Date, end: Date, prevRange = [] as Date[]) {
+  if (start.valueOf() >= end.valueOf()) return [...prevRange, end];
+  const nextRange = [...prevRange, start];
+  const nextStart = plusDay(start);
+  if (nextStart.valueOf() >= end.valueOf()) return [...nextRange, end];
+  return createDateRange(nextStart, end, nextRange);
+}
+
+// Based on the length of one of the canvas axes, the margins along that axis,
+// and an array of elements to display, return a truncated shallow copy of those
+// elements that will fit within the canvas along that axis.
+function fitToGrid<T>(
+  axisLength: number,
+  marginStart: number,
+  marginEnd: number,
+  elements: T[],
+): T[] {
+  const maxDisplayWidth = axisLength - marginStart - marginEnd;
+  const maxColumns = Math.floor(maxDisplayWidth / gridUnit);
+  const gridCount = elements.length <= maxColumns ? elements.length : maxColumns;
+  const truncatedElements = elements.slice(0, gridCount);
+  return truncatedElements;
+}
+
 const drawBoard = (canvasWidth: number, canvasHeight: number) => {
   const ctx = canvas.value?.getContext('2d');
   if (!ctx) {
@@ -33,16 +61,13 @@ const drawBoard = (canvasWidth: number, canvasHeight: number) => {
   }
 
   // Adjust board width to fit the most rows within bounding box (canvas + margins)
-  // without any rows partially cut off.
-  const maxDisplayWidth = canvasWidth - marginLeft - marginRight;
-  const maxDisplayColumns = maxDisplayWidth - (maxDisplayWidth % gridUnit);
-  const boardWidth = maxDisplayColumns;
-  // ...and same for height and columns.
-  const rowCount = sampleData.farmFields.length;
-  const maxRowHeight = rowCount * gridUnit;
-  const maxDisplayHeight = canvasHeight - marginTop - marginBottom;
-  const maxDisplayRows = maxDisplayHeight - (maxDisplayHeight % gridUnit);
-  const boardHeight = maxRowHeight > maxDisplayRows ? maxDisplayRows : maxRowHeight;
+  // without any rows partially cut off; similarly for height / columns.
+  const dateRange = createDateRange(new Date(2024, 2, 28), new Date(2024, 9));
+  const displayDates = fitToGrid(canvasWidth, marginLeft, marginRight, dateRange);
+  const boardWidth = displayDates.length * gridUnit;
+  const { farmFields: fieldRange } = sampleData;
+  const displayFields = fitToGrid(canvasHeight, marginTop, marginBottom, fieldRange);
+  const boardHeight = displayFields.length * gridUnit;
 
   // Draw the board's background and grid.
   ctx.fillStyle = getCssVar('--vt-c-black-soft', '#222222');
@@ -50,9 +75,8 @@ const drawBoard = (canvasWidth: number, canvasHeight: number) => {
   ctx.lineWidth = lineWidth;
   ctx.fillRect(marginLeft, marginTop, boardWidth, boardHeight);
   drawGrid(ctx, boardWidth, boardHeight);
-  labelAxisY(ctx, sampleData.farmFields);
-  const stubAxisXLabels = [...Array(boardWidth / gridUnit)];
-  labelAxisX(ctx, stubAxisXLabels);
+  labelAxisY(ctx, displayFields);
+  labelAxisX(ctx, displayDates);
 
   // And finally the square.
   drawSquare(ctx, square.x, square.y);
