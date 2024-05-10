@@ -1,21 +1,11 @@
 <script setup lang="ts">
 import { reactive, ref, type Ref } from 'vue';
 import useResizableCanvas from '@/composables/useResizableCanvas';
+import useStyleDeclaration from '../composables/useStyleDeclaration';
 
-// Style constants.
-const style = {
-  c: {
-    green: {
-      base: 'rgba(0, 189, 126, 1)',
-      transparent: 'rgba(0, 189, 126, 0.3)',
-    },
-    black: {
-      base: '#181818',
-      soft: '#222222',
-      mute: '#282828'
-    },
-  },
-};
+const rootStyles = useStyleDeclaration(':root');
+const getCssVar = (v: string, def?: string) =>
+  rootStyles.value?.getPropertyValue(v) || def || '';
 
 // Defaults for initializing the board.
 const marginTop = 20;
@@ -46,8 +36,8 @@ const drawBoard = (canvasWidth: number, canvasHeight: number) => {
   const boardHeight = canvasHeight - marginTop - marginBottom;
 
   // Draw the board's background and grid.
-  ctx.fillStyle = style.c.black.soft;
-  ctx.strokeStyle = style.c.green.transparent;
+  ctx.fillStyle = getCssVar('--vt-c-black-soft', '#222222');
+  ctx.strokeStyle = getCssVar('--ff-c-green-transparent', 'rgba(0, 189, 126, 0.3)');
   ctx.lineWidth = lineWidth;
   ctx.fillRect(marginLeft, marginTop, boardWidth, boardHeight);
   drawGrid(ctx, boardWidth, boardHeight);

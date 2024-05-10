@@ -19,6 +19,9 @@
   --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
   --vt-c-text-dark-1: var(--vt-c-white);
   --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+
+  --ff-c-green: rgba(0, 189, 126, 1);
+  --ff-c-green-transparent: rgba(0, 189, 126, 0.3);
 }
 
 /* semantic color variables for this project */
