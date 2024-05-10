@@ -207,6 +207,10 @@ main {
 section {
   width: calc(100% - 2rem);
   height: calc(100% - 3rem);
+  /** The canvas will resize, but not instantly. Setting overflow to hidden
+    * prevents a flash resize of the section.
+    */
+  overflow: hidden;
 }
 
 </style>
