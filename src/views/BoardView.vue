@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, ref, type Ref } from 'vue';
 import useResizableCanvas from '@/composables/useResizableCanvas';
-import sampleData from './boardSampleData';
+import { farmFields as fieldRange, randomActions } from './boardSampleData';
 import useStyleDeclaration from '../composables/useStyleDeclaration';
 
 const rootStyles = useStyleDeclaration(':root');
@@ -15,6 +15,8 @@ const marginBottom = 20;
 const marginLeft = 240;
 const gridUnit = 40;
 const lineWidth = 1.5;
+const startDate = new Date(2024, 2, 28);
+const endDate = new Date(2024, 9);
 
 // Refs for canvas DOM element.
 const canvas: Ref<HTMLCanvasElement | null> = ref(null);
@@ -78,10 +80,9 @@ const drawBoard = (canvasWidth: number, canvasHeight: number) => {
 
   // Adjust board width to fit the most rows within bounding box (canvas + margins)
   // without any rows partially cut off; similarly for height / columns.
-  const dateRange = createDateRange(new Date(2024, 2, 28), new Date(2024, 9));
+  const dateRange = createDateRange(startDate, endDate);
   const displayDates = fitToGrid(canvasWidth, marginLeft, marginRight, dateRange);
   const boardWidth = displayDates.length * gridUnit;
-  const { farmFields: fieldRange } = sampleData;
   const displayFields = fitToGrid(canvasHeight, marginTop, marginBottom, fieldRange);
   const boardHeight = displayFields.length * gridUnit;
 
@@ -94,8 +95,11 @@ const drawBoard = (canvasWidth: number, canvasHeight: number) => {
   labelAxisY(ctx, displayFields);
   labelAxisX(ctx, displayDates);
 
-  // And finally the square.
-  drawSquare(ctx, square.x, square.y);
+  // Finally, plot a random scatter of actions on the grid.
+  const actionCount = Math.floor(Math.sqrt(displayFields.length * displayDates.length));
+  const firstAction = displayDates.slice(0, 1)[0];
+  const lastAction = displayDates.slice(-1)[0];
+  plotActions(ctx, actionCount, [firstAction, lastAction], displayFields);
 };
 
 const drawGrid = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
@@ -182,47 +186,26 @@ const labelAxisY = (ctx: CanvasRenderingContext2D, farmLocations: string[]) => {
   });
 };
 
-// Fill a square on top of a grid location w/ differently colored borderlines,
-// so that the orientation and direction of draw actions can be confirmed.
-const drawSquare = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
-  // Four points of the square.
-  const originX = (x - 1) * gridUnit + marginLeft;
-  const originY = (y - 1) * gridUnit + marginTop;
-  const terminusX = originX + gridUnit;
-  const terminusY = originY + gridUnit;
-
-  // Fill.
-  ctx.fillStyle = 'tomato';
-  ctx.fillRect(originX, originY, gridUnit, gridUnit);
-
-  // Top line.
-  ctx.beginPath();
-  ctx.strokeStyle = 'blue';
-  ctx.moveTo(originX, originY);
-  ctx.lineTo(terminusX, originY);
-  ctx.stroke();
-  
-  // Right line.
-  ctx.beginPath();
-  ctx.strokeStyle = 'green';
-  ctx.moveTo(terminusX, originY);
-  ctx.lineTo(terminusX, terminusY);
-  ctx.stroke();
-  
-  // Bottom line.
-  ctx.beginPath();
-  ctx.strokeStyle = 'yellow';
-  ctx.moveTo(terminusX, terminusY);
-  ctx.lineTo(originX, terminusY);
-  ctx.stroke();
-  
-  // Left line.
-  ctx.beginPath();
-  ctx.strokeStyle = 'red';
-  ctx.moveTo(originX, terminusY);
-  ctx.lineTo(originX, originY);
-  ctx.stroke();
-}
+const plotActions = (
+  ctx: CanvasRenderingContext2D,
+  count: number,
+  dateRange: [Date, Date],
+  locations: string[],
+) => {
+  const actions = randomActions(dateRange, locations);
+  for (let i  = 0; i < count; i += 1) {
+    const action = actions.next().value;
+    if (action) {
+      const { color = 'tomato', date, location } = action;
+      const x = Math.floor((date.valueOf() - dateRange[0].valueOf()) / 24 / 60 / 60 / 1000) + 1;
+      const y = location + 1;
+      const originX = (x - 1) * gridUnit + marginLeft;
+      const originY = (y - 1) * gridUnit + marginTop;
+      ctx.fillStyle = color;
+      ctx.fillRect(originX, originY, gridUnit, gridUnit);
+    }
+  }
+};
 
 // Redraw the board whenever the canvas is resized.
 useResizableCanvas(canvas, drawBoard);
