@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { reactive, ref, type Ref } from 'vue';
 import useResizableCanvas from '@/composables/useResizableCanvas';
+import sampleData from './boardSampleData';
 import useStyleDeclaration from '../composables/useStyleDeclaration';
 
 const rootStyles = useStyleDeclaration(':root');
@@ -8,18 +9,18 @@ const getCssVar = (v: string, def?: string) =>
   rootStyles.value?.getPropertyValue(v) || def || '';
 
 // Defaults for initializing the board.
-const marginTop = 20;
+const marginTop = 60;
 const marginRight = 20;
 const marginBottom = 20;
-const marginLeft = 20;
-const gridUnit = 20;
+const marginLeft = 300;
+const gridUnit = 45;
 const lineWidth = 1.5;
 
 // Refs for canvas DOM element.
 const canvas: Ref<HTMLCanvasElement | null> = ref(null);
 
 // Grid coordinates for the filled square.
-const square = reactive({ x: 42, y: 24 });
+const square = reactive({ x: 3, y: 9 });
 
 const drawBoard = (canvasWidth: number, canvasHeight: number) => {
   const ctx = canvas.value?.getContext('2d');
@@ -41,6 +42,7 @@ const drawBoard = (canvasWidth: number, canvasHeight: number) => {
   ctx.lineWidth = lineWidth;
   ctx.fillRect(marginLeft, marginTop, boardWidth, boardHeight);
   drawGrid(ctx, boardWidth, boardHeight);
+  labelAxisY(ctx, sampleData.farmFields);
 
   // And finally the square.
   drawSquare(ctx, square.x, square.y);
@@ -84,6 +86,17 @@ const drawGrid = (ctx: CanvasRenderingContext2D, width: number, height: number) 
     ctx.lineTo(x, terminusY);
     ctx.stroke();
   }
+};
+
+const labelAxisY = (ctx: CanvasRenderingContext2D, labels: string[]) => {
+  ctx.fillStyle = getCssVar('--color-text');
+  ctx.font = `${gridUnit * .80}px ${getCssVar('--ff-font-family')}`;
+  ctx.textAlign = 'end';
+  const x = marginLeft - 6;
+  labels.forEach((label, i) => {
+    const y = marginTop + (i + 1) * gridUnit - gridUnit * .2;
+    ctx.fillText(label, x, y);
+  });
 };
 
 // Fill a square on top of a grid location w/ differently colored borderlines,

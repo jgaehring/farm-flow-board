@@ -1,0 +1,36 @@
+const data: { farmFields: string[], fieldActions: string[] } = {
+  farmFields: [
+    'Home',
+    'Johnson',
+    'Cotter',
+    'Lake',
+    'Wendorff 220',
+    'Wendorff 60',
+    'Yak',
+    'Boonie',
+    'Heatwole',
+    'Stockholm Home',
+    'Stockholm East',
+    'Carlson',
+    'Hlwd 1',
+    'Hlwd 2',
+    'Hlwd 3',
+    'Lilly 1',
+    'Lilly 2',
+    'Lilly 3',
+    'Lilly 4',
+  ],
+  fieldActions: [
+    'Tillage',
+    'Tine Weed',
+    'Cultivation',
+    'Flame Weed',
+    'Rotary Hoe',
+    'Rock Picking',
+    'Mow',
+    'Plant',
+    'ZAP',
+  ],
+};
+
+export default data;
