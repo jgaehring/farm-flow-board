@@ -32,9 +32,17 @@ const drawBoard = (canvasWidth: number, canvasHeight: number) => {
     return;
   }
 
-  // Adjust board dimensions to fit inside canvas w/ margins.
-  const boardWidth = canvasWidth - marginLeft - marginRight;
-  const boardHeight = canvasHeight - marginTop - marginBottom;
+  // Adjust board width to fit the most rows within bounding box (canvas + margins)
+  // without any rows partially cut off.
+  const maxDisplayWidth = canvasWidth - marginLeft - marginRight;
+  const maxDisplayColumns = maxDisplayWidth - (maxDisplayWidth % gridUnit);
+  const boardWidth = maxDisplayColumns;
+  // ...and same for height and columns.
+  const rowCount = sampleData.farmFields.length;
+  const maxRowHeight = rowCount * gridUnit;
+  const maxDisplayHeight = canvasHeight - marginTop - marginBottom;
+  const maxDisplayRows = maxDisplayHeight - (maxDisplayHeight % gridUnit);
+  const boardHeight = maxRowHeight > maxDisplayRows ? maxDisplayRows : maxRowHeight;
 
   // Draw the board's background and grid.
   ctx.fillStyle = getCssVar('--vt-c-black-soft', '#222222');
