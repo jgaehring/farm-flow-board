@@ -9,7 +9,7 @@ const getCssVar = (v: string, def?: string) =>
   rootStyles.value?.getPropertyValue(v) || def || '';
 
 // Defaults for initializing the board.
-const marginTop = 60;
+const marginTop = 45;
 const marginRight = 20;
 const marginBottom = 20;
 const marginLeft = 300;
@@ -51,6 +51,8 @@ const drawBoard = (canvasWidth: number, canvasHeight: number) => {
   ctx.fillRect(marginLeft, marginTop, boardWidth, boardHeight);
   drawGrid(ctx, boardWidth, boardHeight);
   labelAxisY(ctx, sampleData.farmFields);
+  const stubAxisXLabels = [...Array(boardWidth / gridUnit)];
+  labelAxisX(ctx, stubAxisXLabels);
 
   // And finally the square.
   drawSquare(ctx, square.x, square.y);
@@ -96,14 +98,29 @@ const drawGrid = (ctx: CanvasRenderingContext2D, width: number, height: number) 
   }
 };
 
-const labelAxisY = (ctx: CanvasRenderingContext2D, labels: string[]) => {
+const labelAxisX = (ctx: CanvasRenderingContext2D, dates: Date[]) => {
+  const fontSize = marginTop * .40;
+  const textMarginLeft = gridUnit * .5;
+  const baseline = marginTop - .5 * fontSize;
+  ctx.fillStyle = getCssVar('--color-text');
+  ctx.font = `${fontSize}px ${getCssVar('--ff-font-family')}`;
+  ctx.textAlign = 'center';
+  const y = baseline;
+  dates.forEach((d, i) => {
+    const label = d.getDate().toString();
+    const x = marginLeft + i * gridUnit + textMarginLeft;
+    ctx.fillText(label, x, y);
+  });
+};
+
+const labelAxisY = (ctx: CanvasRenderingContext2D, farmLocations: string[]) => {
   ctx.fillStyle = getCssVar('--color-text');
   ctx.font = `${gridUnit * .80}px ${getCssVar('--ff-font-family')}`;
   ctx.textAlign = 'end';
   const x = marginLeft - 6;
-  labels.forEach((label, i) => {
+  farmLocations.forEach((loc, i) => {
     const y = marginTop + (i + 1) * gridUnit - gridUnit * .2;
-    ctx.fillText(label, x, y);
+    ctx.fillText(loc, x, y);
   });
 };
 
