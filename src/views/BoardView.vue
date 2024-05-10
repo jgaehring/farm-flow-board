@@ -103,8 +103,8 @@ const labelAxisY = (ctx: CanvasRenderingContext2D, labels: string[]) => {
 // so that the orientation and direction of draw actions can be confirmed.
 const drawSquare = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
   // Four points of the square.
-  const originX = x * gridUnit + marginLeft;
-  const originY = y * gridUnit + marginTop;
+  const originX = (x - 1) * gridUnit + marginLeft;
+  const originY = (y - 1) * gridUnit + marginTop;
   const terminusX = originX + gridUnit;
   const terminusY = originY + gridUnit;
 
