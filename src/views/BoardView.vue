@@ -222,10 +222,15 @@ const plotActions = (
         (date.valueOf() - start.valueOf()) / 24 / 60 / 60 / 1000
       );
       const y = location + 1;
-      const originX = (x - 1) * gridUnit + marginLeft;
-      const originY = (y - 1) * gridUnit + marginTop;
+      const originX = marginLeft + (x - .5) * gridUnit;
+      const originY = marginTop + (y - .5) * gridUnit;
+      const radius = gridUnit * (11 / 30);
+      const startAngle = 0;
+      const endAngle = 2 * Math.PI;
       ctx.fillStyle = color;
-      ctx.fillRect(originX, originY, gridUnit, gridUnit);
+      ctx.beginPath();
+      ctx.arc(originX, originY, radius, startAngle, endAngle);
+      ctx.fill();
     }
   });
 };
