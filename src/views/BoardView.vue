@@ -9,11 +9,11 @@ const getCssVar = (v: string, def?: string) =>
   rootStyles.value?.getPropertyValue(v) || def || '';
 
 // Defaults for initializing the board.
-const marginTop = 45;
+const marginTop = 60;
 const marginRight = 20;
 const marginBottom = 20;
-const marginLeft = 300;
-const gridUnit = 45;
+const marginLeft = 240;
+const gridUnit = 40;
 const lineWidth = 1.5;
 
 // Refs for canvas DOM element.
@@ -33,6 +33,22 @@ function createDateRange(start: Date, end: Date, prevRange = [] as Date[]) {
   if (nextStart.valueOf() >= end.valueOf()) return [...nextRange, end];
   return createDateRange(nextStart, end, nextRange);
 }
+const monthFmt = new Intl.DateTimeFormat(undefined, { month: 'long' });
+type MonthAttrs = { name: string, startCol: number, endCol: number };
+// Reducer function derives the x-axis grid coordinates covered by each month.
+const reduceDatesToMonths = (months: MonthAttrs[], d: Date) => {
+  const name = monthFmt.format(d);
+  const prev = months[months.length - 1];
+  if (!prev || prev.name !== name) {
+    const startCol = prev?.endCol || 0;
+    return [...months, { name, startCol, endCol: startCol + 1 }];
+  }
+  const endCol = prev.endCol + 1;
+  return [
+    ...months.slice(0, months.length - 1),
+    { ...prev, endCol }
+  ];
+};
 
 // Based on the length of one of the canvas axes, the margins along that axis,
 // and an array of elements to display, return a truncated shallow copy of those
@@ -123,27 +139,45 @@ const drawGrid = (ctx: CanvasRenderingContext2D, width: number, height: number) 
 };
 
 const labelAxisX = (ctx: CanvasRenderingContext2D, dates: Date[]) => {
-  const fontSize = marginTop * .40;
-  const textMarginLeft = gridUnit * .5;
-  const baseline = marginTop - .5 * fontSize;
-  ctx.fillStyle = getCssVar('--color-text');
-  ctx.font = `${fontSize}px ${getCssVar('--ff-font-family')}`;
-  ctx.textAlign = 'center';
-  const y = baseline;
+  // Label the x-axis with the date numeral directly above each column.
+  const dateLineheight = Math.floor(marginTop * (5 / 9));
+  const dateFontSize = Math.floor(dateLineheight * (5 / 9));
+  const dateBaseline = marginTop - Math.floor(dateLineheight * (1 / 3));
+  const dateTextMarginLeft = gridUnit * .5;
   dates.forEach((d, i) => {
     const label = d.getDate().toString();
-    const x = marginLeft + i * gridUnit + textMarginLeft;
-    ctx.fillText(label, x, y);
+    const x = marginLeft + i * gridUnit + dateTextMarginLeft;
+    ctx.fillStyle = getCssVar('--color-text');
+    ctx.font = `${dateFontSize}px ${getCssVar('--ff-font-family')}`;
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x, dateBaseline);
+  });
+
+  // Add the months across the top, spread out over the date numerals.
+  const months = dates.reduce(reduceDatesToMonths, []);
+  const monthLineheight = Math.floor(marginTop * (3 / 9));
+  const monthFontSize = Math.floor(monthLineheight * (2 / 3));
+  const monthBaseline = monthLineheight - Math.floor(monthLineheight * (1 / 5));
+  months.forEach((month) => {
+    const width = (month.endCol - month.startCol) * gridUnit;
+    ctx.strokeStyle = getCssVar('--ff-c-green-transparent');
+    const bgX = marginLeft + month.startCol * gridUnit;
+    ctx.strokeRect(bgX, 0, width, monthLineheight);
+    const textX = bgX + .5 * width;
+    ctx.fillStyle = getCssVar('--color-text');
+    ctx.font = `${monthFontSize}px ${getCssVar('--ff-font-family')}`;
+    ctx.textAlign = 'center';
+    ctx.fillText(month.name, textX, monthBaseline);
   });
 };
 
 const labelAxisY = (ctx: CanvasRenderingContext2D, farmLocations: string[]) => {
   ctx.fillStyle = getCssVar('--color-text');
-  ctx.font = `${gridUnit * .80}px ${getCssVar('--ff-font-family')}`;
+  ctx.font = `${gridUnit * .65}px ${getCssVar('--ff-font-family')}`;
   ctx.textAlign = 'end';
   const x = marginLeft - 6;
   farmLocations.forEach((loc, i) => {
-    const y = marginTop + (i + 1) * gridUnit - gridUnit * .2;
+    const y = marginTop + (i + 1) * gridUnit - gridUnit * .25;
     ctx.fillText(loc, x, y);
   });
 };
