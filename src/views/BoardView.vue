@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { reactive, ref, type Ref } from 'vue';
+import { ref, type Ref } from 'vue';
 import useResizableCanvas from '@/composables/useResizableCanvas';
-import { farmFields as fieldRange, randomActions } from './boardSampleData';
+import { type ActionRecord, farmFields as fieldRange, randomActions } from './boardSampleData';
 import useStyleDeclaration from '../composables/useStyleDeclaration';
 
 const rootStyles = useStyleDeclaration(':root');
@@ -21,8 +21,8 @@ const endDate = new Date(2024, 9);
 // Refs for canvas DOM element.
 const canvas: Ref<HTMLCanvasElement | null> = ref(null);
 
-// Grid coordinates for the filled square.
-const square = reactive({ x: 3, y: 9 });
+// All field actions that can (but won't always) be displayed.
+const actionRecords: Ref<ActionRecord[]> = ref([]);
 
 // Given a Date object, return a new Date object set 24 hours later.
 const plusDay = (d: Date) => new Date(d.valueOf() + 24 * 60 * 60 * 1000);
@@ -96,10 +96,17 @@ const drawBoard = (canvasWidth: number, canvasHeight: number) => {
   labelAxisX(ctx, displayDates);
 
   // Finally, plot a random scatter of actions on the grid.
-  const actionCount = Math.floor(Math.sqrt(displayFields.length * displayDates.length));
-  const firstAction = displayDates.slice(0, 1)[0];
-  const lastAction = displayDates.slice(-1)[0];
-  plotActions(ctx, actionCount, [firstAction, lastAction], displayFields);
+  const actionFrequency = 3; // coefficient to adjust total actions below
+  const actionCount = actionFrequency * Math.floor(
+    // Correlate total # of actions to the 2 main parameters, fields & dates.
+    Math.sqrt(fieldRange.length * dateRange.length)
+  );
+  const displayStart = displayDates.slice(0, 1)[0];
+  const displayEnd = displayDates.slice(-1)[0];
+  if (actionRecords.value.length <= 0) {
+    generateActions(actionCount, [startDate, endDate], fieldRange);
+  }
+  plotActions(ctx, [displayStart, displayEnd], displayFields);
 };
 
 const drawGrid = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
@@ -186,25 +193,41 @@ const labelAxisY = (ctx: CanvasRenderingContext2D, farmLocations: string[]) => {
   });
 };
 
-const plotActions = (
-  ctx: CanvasRenderingContext2D,
+const generateActions = (
   count: number,
   dateRange: [Date, Date],
   locations: string[],
-) => {
+): void => {
   const actions = randomActions(dateRange, locations);
   for (let i  = 0; i < count; i += 1) {
     const action = actions.next().value;
     if (action) {
-      const { color = 'tomato', date, location } = action;
-      const x = Math.floor((date.valueOf() - dateRange[0].valueOf()) / 24 / 60 / 60 / 1000) + 1;
+      actionRecords.value.push(action);
+    }
+  }
+};
+
+const plotActions = (
+  ctx: CanvasRenderingContext2D,
+  dateRange: [Date, Date],
+  locations: string[],
+) => {
+  actionRecords.value.forEach((action) => {
+    const { color = 'tomato', date, location } = action;
+    const [timestamp, start, end] = [date, ...dateRange].map(d => d.valueOf());
+    const locationIsDisplayed = action.location <= locations.length - 1;
+    const dateIsDisplayed = timestamp >= start && timestamp <= end;
+    if (locationIsDisplayed && dateIsDisplayed) {
+      const x = 1 + Math.floor(
+        (date.valueOf() - start.valueOf()) / 24 / 60 / 60 / 1000
+      );
       const y = location + 1;
       const originX = (x - 1) * gridUnit + marginLeft;
       const originY = (y - 1) * gridUnit + marginTop;
       ctx.fillStyle = color;
       ctx.fillRect(originX, originY, gridUnit, gridUnit);
     }
-  }
+  });
 };
 
 // Redraw the board whenever the canvas is resized.
