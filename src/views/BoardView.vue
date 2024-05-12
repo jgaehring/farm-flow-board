@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue';
 import useResizableCanvas from '@/composables/useResizableCanvas';
-import { type ActionRecord, farmFields as fieldRange, randomActions } from './boardSampleData';
+import { actionTypes, locationRecords, randomActions } from './boardSampleData';
+import { type ActionRecords, type LocationRecord } from './boardSampleData';
 import useStyleDeclaration from '../composables/useStyleDeclaration';
 
 const rootStyles = useStyleDeclaration(':root');
@@ -21,9 +22,6 @@ const endDate = new Date(2024, 9);
 // Refs for canvas DOM element.
 const canvas: Ref<HTMLCanvasElement | null> = ref(null);
 
-// All field actions that can (but won't always) be displayed.
-const actionRecords: Ref<ActionRecord[]> = ref([]);
-
 // Given a Date object, return a new Date object set 24 hours later.
 const plusDay = (d: Date) => new Date(d.valueOf() + 24 * 60 * 60 * 1000);
 // Given a starting Date object and an ending Date object, return an array of
@@ -35,6 +33,8 @@ function createDateRange(start: Date, end: Date, prevRange = [] as Date[]) {
   if (nextStart.valueOf() >= end.valueOf()) return [...nextRange, end];
   return createDateRange(nextStart, end, nextRange);
 }
+const dateRange = createDateRange(startDate, endDate);
+
 const monthFmt = new Intl.DateTimeFormat(undefined, { month: 'long' });
 type MonthAttrs = { name: string, startCol: number, endCol: number };
 // Reducer function derives the x-axis grid coordinates covered by each month.
@@ -68,6 +68,46 @@ function fitToGrid<T>(
   return truncatedElements;
 }
 
+const actionRecords: Ref<ActionRecords> = ref(new Map());
+locationRecords.forEach(({ id, name }) => {
+  actionRecords.value.set(id, { id, name, dates: [] });
+});
+
+const sameDate = (d1: Date, d2: Date) =>
+  d1.getMonth() === d2.getMonth() && d1.getDay() === d2.getDay();
+function generateActions(
+  count: number,
+  dateRange: [Date, Date],
+  locations: Map<number, LocationRecord>,
+): void {
+  const locationList = Array.from(locations.values()).map(l => l.name);
+  const actionGenerator = randomActions(dateRange, locationList);
+  for (let i  = 0; i < count; i += 1) {
+    const action = actionGenerator.next().value;
+    if (action) {
+      const { date, type } = action;
+      const actionType = actionTypes.get(type);
+      const location = actionRecords.value.get(action.location);
+      const matchingDate = location?.dates.find(a => sameDate(date, a.date));
+      if (matchingDate && actionType) {
+        const { id, name, color } = actionType;
+        matchingDate.actions.push({ id, name, color });
+      } else if (location && actionType){
+        const { id, name, color } = actionType;
+        location.dates.push({ date, actions: [{ id, name, color }]});
+      }
+    }
+  }
+}
+
+// Generate a random scatter of actions for the grid.
+const actionFrequency = 3; // coefficient to adjust total actions below
+const actionCount = actionFrequency * Math.floor(
+  // Correlate total # of actions to the 2 main parameters, fields & dates.
+  Math.sqrt(locationRecords.size * dateRange.length)
+);
+generateActions(actionCount, [startDate, endDate], locationRecords);
+
 const drawBoard = (canvasWidth: number, canvasHeight: number) => {
   const ctx = canvas.value?.getContext('2d');
   if (!ctx) {
@@ -80,10 +120,14 @@ const drawBoard = (canvasWidth: number, canvasHeight: number) => {
 
   // Adjust board width to fit the most rows within bounding box (canvas + margins)
   // without any rows partially cut off; similarly for height / columns.
-  const dateRange = createDateRange(startDate, endDate);
   const displayDates = fitToGrid(canvasWidth, marginLeft, marginRight, dateRange);
   const boardWidth = displayDates.length * gridUnit;
-  const displayFields = fitToGrid(canvasHeight, marginTop, marginBottom, fieldRange);
+  const displayFields = fitToGrid(
+    canvasHeight,
+    marginTop,
+    marginBottom,
+    Array.from(locationRecords.values()),
+  );
   const boardHeight = displayFields.length * gridUnit;
 
   // Draw the board's background and grid.
@@ -95,17 +139,8 @@ const drawBoard = (canvasWidth: number, canvasHeight: number) => {
   labelAxisY(ctx, displayFields);
   labelAxisX(ctx, displayDates);
 
-  // Finally, plot a random scatter of actions on the grid.
-  const actionFrequency = 3; // coefficient to adjust total actions below
-  const actionCount = actionFrequency * Math.floor(
-    // Correlate total # of actions to the 2 main parameters, fields & dates.
-    Math.sqrt(fieldRange.length * dateRange.length)
-  );
   const displayStart = displayDates.slice(0, 1)[0];
   const displayEnd = displayDates.slice(-1)[0];
-  if (actionRecords.value.length <= 0) {
-    generateActions(actionCount, [startDate, endDate], fieldRange);
-  }
   plotActions(ctx, [displayStart, displayEnd], displayFields);
 };
 
@@ -182,58 +217,50 @@ const labelAxisX = (ctx: CanvasRenderingContext2D, dates: Date[]) => {
   });
 };
 
-const labelAxisY = (ctx: CanvasRenderingContext2D, farmLocations: string[]) => {
+const labelAxisY = (ctx: CanvasRenderingContext2D, locations: LocationRecord[]) => {
   ctx.fillStyle = getCssVar('--color-text');
   ctx.font = `${gridUnit * .65}px ${getCssVar('--ff-font-family')}`;
   ctx.textAlign = 'end';
   const x = marginLeft - 6;
-  farmLocations.forEach((loc, i) => {
+  locations.forEach((loc, i) => {
     const y = marginTop + (i + 1) * gridUnit - gridUnit * .25;
-    ctx.fillText(loc, x, y);
+    ctx.fillText(loc.name, x, y);
   });
 };
 
-const generateActions = (
-  count: number,
-  dateRange: [Date, Date],
-  locations: string[],
-): void => {
-  const actions = randomActions(dateRange, locations);
-  for (let i  = 0; i < count; i += 1) {
-    const action = actions.next().value;
-    if (action) {
-      actionRecords.value.push(action);
-    }
-  }
-};
-
-const plotActions = (
+function plotActions(
   ctx: CanvasRenderingContext2D,
   dateRange: [Date, Date],
-  locations: string[],
-) => {
-  actionRecords.value.forEach((action) => {
-    const { color = 'tomato', date, location } = action;
-    const [timestamp, start, end] = [date, ...dateRange].map(d => d.valueOf());
-    const locationIsDisplayed = action.location <= locations.length - 1;
-    const dateIsDisplayed = timestamp >= start && timestamp <= end;
-    if (locationIsDisplayed && dateIsDisplayed) {
+  locations: LocationRecord[],
+) {
+  const [start, end] = dateRange.map(d => d.valueOf());
+  Array.from(actionRecords.value.values())
+    .filter(loc => {
+      const locationIsDisplayed = locations.some(l => loc.id === l.id);
+      return locationIsDisplayed;
+    })
+    .forEach((location) => {
+    location.dates.filter(({ date }) => {
+      const timestamp = date.valueOf();
+      const dateIsDisplayed = timestamp >= start && timestamp <= end;
+      return dateIsDisplayed;
+    }).forEach(({ date, actions }) => {
       const x = 1 + Math.floor(
         (date.valueOf() - start.valueOf()) / 24 / 60 / 60 / 1000
       );
-      const y = location + 1;
+      const y = location.id + 1;
       const originX = marginLeft + (x - .5) * gridUnit;
       const originY = marginTop + (y - .5) * gridUnit;
       const radius = gridUnit * (11 / 30);
       const startAngle = 0;
       const endAngle = 2 * Math.PI;
-      ctx.fillStyle = color;
+      ctx.fillStyle = actions[0]?.color || 'tomato';
       ctx.beginPath();
       ctx.arc(originX, originY, radius, startAngle, endAngle);
       ctx.fill();
-    }
+    });
   });
-};
+}
 
 // Redraw the board whenever the canvas is resized.
 useResizableCanvas(canvas, drawBoard);
