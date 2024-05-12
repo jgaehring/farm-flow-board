@@ -254,10 +254,18 @@ function plotActions(
       const radius = gridUnit * (11 / 30);
       const startAngle = 0;
       const endAngle = 2 * Math.PI;
-      ctx.fillStyle = actions[0]?.color || 'tomato';
-      ctx.beginPath();
-      ctx.arc(originX, originY, radius, startAngle, endAngle);
-      ctx.fill();
+      ctx.shadowColor = '#181818';
+      ctx.shadowBlur = 6;
+      ctx.shadowOffsetY = 3;
+      actions.forEach((a, i) => {
+        ctx.fillStyle = a.color || 'tomato';
+        ctx.beginPath();
+        ctx.arc(originX, originY - i * 6, radius, startAngle, endAngle);
+        ctx.fill();
+      });
+      ctx.shadowColor = '#181818';
+      ctx.shadowBlur = 0;
+      ctx.shadowBlur = 0;
     });
   });
 }
