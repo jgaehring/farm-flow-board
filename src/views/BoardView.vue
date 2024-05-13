@@ -319,7 +319,8 @@ useResizableCanvas(canvas, drawBoard);
 header {
   line-height: 1.5;
   height: 3rem;
-  padding: 1.5rem 2rem 0  2rem;
+  padding: .875rem 60px .875rem 240px;
+  text-align: center;
 }
 
 h1 {
