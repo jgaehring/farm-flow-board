@@ -131,7 +131,7 @@ const drawBoard = (canvasWidth: number, canvasHeight: number) => {
   const boardHeight = displayFields.length * gridUnit;
 
   // Draw the board's background and grid.
-  ctx.fillStyle = getCssVar('--vt-c-black-soft', '#222222');
+  ctx.fillStyle = getCssVar('--color-background-mute', 'light-dark(#fafafa, #222222)');
   ctx.strokeStyle = getCssVar('--ff-c-green-transparent', 'rgba(0, 189, 126, 0.3)');
   ctx.lineWidth = lineWidth;
   ctx.fillRect(marginLeft, marginTop, boardWidth, boardHeight);
