@@ -604,12 +604,20 @@ function plotActionsByDate(
   // Derive the coordinates & dimensions for the circular marker.
   const centerX = grid.origin.x + (indexX + .5) * grid.unit;
   const centerY = grid.origin.y + (indexY + .5) * grid.unit;
-  // Multiple actions on the same date must be staggered horizontally, so use
-  // two tenths of the grid unit as the spacing between each marker.
-  const space = grid.unit * .2;
   const radius = grid.unit * (11 / 30);
   const startAngle = 0;
   const endAngle = 2 * Math.PI;
+
+  // Multiple actions on the same date must be staggered horizontally, so use
+  // two tenths of the grid unit as the gap between each marker. Then calculate
+  // the length from the left edge of the leftmost marker to the right edge of
+  // the rightmost marker. It should be the diameter of just one marker, plus
+  // the combined lenth of all gaps, w/ one less gap than there are markers.
+  const gapCount = actions.length - 1;
+  const gapSize = grid.unit * .2;
+  const totalLength = 2 * radius + gapCount * gapSize;
+
+  // Set the shadow that will be applied to every marker.
   ctx.shadowColor = '#181818';
   ctx.shadowBlur = 6;
   ctx.shadowOffsetY = 3;
@@ -619,12 +627,14 @@ function plotActionsByDate(
     // it will be offset by a negative distance from center of the grid, if more
     // than half of actions.length it will be a positive value, and if exactly
     // half it will be zero.
-    const offsetX = (2 * i + 1 - actions.length) * (space / 2);
+    const offsetX = radius + i * gapSize - totalLength / 2;
+
     // Now draw the circle for the marker.
     ctx.fillStyle = a.color || 'tomato';
     ctx.beginPath();
     ctx.arc(centerX + offsetX, centerY, radius, startAngle, endAngle);
     ctx.fill();
   });
+
   ctx.restore(); // Now that drawing has finished, restore the context state.
 }
