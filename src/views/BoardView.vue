@@ -5,9 +5,10 @@ import { actionTypes, locationRecords, randomActions } from './boardSampleData';
 import { type ActionRecords, type LocationRecord } from './boardSampleData';
 import useStyleDeclaration from '../composables/useStyleDeclaration';
 
+// Get custom CSS properties (aka, variables) from stylesheet.
 const rootStyles = useStyleDeclaration(':root');
 const getCssVar = (v: string, def?: string) =>
-  rootStyles.value?.getPropertyValue(v) || def || '';
+  rootStyles.value?.getPropertyValue(v) || def || 'inherit';
 
 // Defaults for initializing the board.
 const marginTop = 60;
