@@ -68,9 +68,9 @@ function fitToGrid<T>(
   return truncatedElements;
 }
 
-const actionRecords: Ref<ActionRecords> = ref(new Map());
+const actionRecords: Ref<ActionRecords> = ref([]);
 locationRecords.forEach(({ id, name }) => {
-  actionRecords.value.set(id, { id, name, dates: [] });
+  actionRecords.value[id] = { id, name, dates: [] };
 });
 
 const sameDate = (d1: Date, d2: Date) =>
@@ -78,16 +78,15 @@ const sameDate = (d1: Date, d2: Date) =>
 function generateActions(
   count: number,
   dateRange: [Date, Date],
-  locations: Map<number, LocationRecord>,
+  locations: LocationRecord[],
 ): void {
-  const locationList = Array.from(locations.values()).map(l => l.name);
-  const actionGenerator = randomActions(dateRange, locationList);
+  const actionGenerator = randomActions(dateRange, locations.map(l => l.name));
   for (let i  = 0; i < count; i += 1) {
     const action = actionGenerator.next().value;
     if (action) {
       const { date, type } = action;
-      const actionType = actionTypes.get(type);
-      const location = actionRecords.value.get(action.location);
+      const actionType = actionTypes[type];
+      const location = actionRecords.value[action.location];
       const matchingDate = location?.dates.find(a => sameDate(date, a.date));
       if (matchingDate && actionType) {
         const { id, name, color } = actionType;
@@ -104,7 +103,7 @@ function generateActions(
 const actionFrequency = 6; // coefficient to adjust total actions below
 const actionCount = actionFrequency * Math.floor(
   // Correlate total # of actions to the 2 main parameters, fields & dates.
-  Math.sqrt(locationRecords.size * dateRange.length)
+  Math.sqrt(locationRecords.length * dateRange.length)
 );
 generateActions(actionCount, [startDate, endDate], locationRecords);
 
@@ -126,7 +125,7 @@ const drawBoard = (canvasWidth: number, canvasHeight: number) => {
     canvasHeight,
     marginTop,
     marginBottom,
-    Array.from(locationRecords.values()),
+    locationRecords,
   );
   const boardHeight = displayFields.length * gridUnit;
 
@@ -248,12 +247,10 @@ function plotActions(
   locations: LocationRecord[],
 ) {
   const [start, end] = dateRange.map(d => d.valueOf());
-  Array.from(actionRecords.value.values())
-    .filter(loc => {
-      const locationIsDisplayed = locations.some(l => loc.id === l.id);
-      return locationIsDisplayed;
-    })
-    .forEach((location) => {
+  actionRecords.value.filter(loc => {
+    const locationIsDisplayed = locations.some(l => loc.id === l.id);
+    return locationIsDisplayed;
+  }).forEach((location) => {
     location.dates.filter(({ date }) => {
       const timestamp = date.valueOf();
       const dateIsDisplayed = timestamp >= start && timestamp <= end;
@@ -304,7 +301,7 @@ useResizableCanvas(canvas, drawBoard);
         </canvas>
       </figure>
       <figcaption>
-        <span v-for="(action, i) in actionTypes.values()" :key="i">
+        <span v-for="(action, i) in actionTypes" :key="i">
           <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
             <circle cx="12" cy="12" r="12" :fill="action.color"/>
           </svg>
