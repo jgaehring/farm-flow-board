@@ -198,17 +198,31 @@ const labelAxisX = (ctx: CanvasRenderingContext2D, dates: Date[]) => {
     ctx.textAlign = 'center';
     ctx.fillText(label, x, dateBaseline);
   });
+  // Draw a bounding box around both month and date labels.
+  ctx.strokeStyle = getCssVar('--ff-c-green-transparent');
+  ctx.strokeRect(marginLeft, 0, dates.length * gridUnit, marginTop);
 
   // Add the months across the top, spread out over the date numerals.
   const months = dates.reduce(reduceDatesToMonths, []);
   const monthLineheight = Math.floor(marginTop * (3 / 9));
   const monthFontSize = Math.floor(monthLineheight * (2 / 3));
   const monthBaseline = monthLineheight - Math.floor(monthLineheight * (1 / 5));
-  months.forEach((month) => {
+  // Draw a horizontal rule between months and dates.
+  ctx.beginPath();
+  ctx.moveTo(marginLeft, monthLineheight);
+  ctx.lineTo(marginLeft + dates.length * gridUnit, monthLineheight);
+  ctx.stroke();
+  months.forEach((month, i) => {
     const width = (month.endCol - month.startCol) * gridUnit;
-    ctx.strokeStyle = getCssVar('--ff-c-green-transparent');
     const bgX = marginLeft + month.startCol * gridUnit;
-    ctx.strokeRect(bgX, 0, width, monthLineheight);
+    // Unless it's the first month, draw a vertical line as its left border to
+    // separate it from the previous month, stopping at the top of the grid.
+    if (i !== 0) {
+      ctx.beginPath();
+      ctx.moveTo(bgX, 0);
+      ctx.lineTo(bgX, marginTop);
+      ctx.stroke();
+    }
     const textX = bgX + .5 * width;
     ctx.fillStyle = getCssVar('--color-text');
     ctx.font = `${monthFontSize}px ${getCssVar('--ff-font-family')}`;
