@@ -298,11 +298,19 @@ useResizableCanvas(canvas, drawBoard);
       <h1>Farm Flow</h1>
     </header>
     <main>
-      <section>
+      <figure>
         <canvas id="the-board" ref="canvas" role="presentation" height="640" width="960">
           <p>Oops, forgot to add a fallback! &#x1F643;</p>
         </canvas>
-      </section>
+      </figure>
+      <figcaption>
+        <span v-for="(action, i) in actionTypes.values()" :key="i">
+          <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="12" :fill="action.color"/>
+          </svg>
+          &nbsp;{{action.name}}
+        </span>
+      </figcaption>
     </main>
   </Teleport>
 </template>
@@ -325,13 +333,35 @@ main {
   margin: auto;
 }
 
-section {
+figure {
   width: calc(100% - 2rem);
   height: calc(100% - 3rem);
   /** The canvas will resize, but not instantly. Setting overflow to hidden
-    * prevents a flash resize of the section.
+    * prevents a flash resize of the figure.
     */
   overflow: hidden;
+}
+
+figcaption {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100%;
+  width: 100%;
+  padding: 0 60px 0 240px;
+}
+
+figcaption span {
+  flex: 2 1 20%;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+figcaption svg {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
 }
 
 </style>
