@@ -101,7 +101,7 @@ function generateActions(
 }
 
 // Generate a random scatter of actions for the grid.
-const actionFrequency = 3; // coefficient to adjust total actions below
+const actionFrequency = 6; // coefficient to adjust total actions below
 const actionCount = actionFrequency * Math.floor(
   // Correlate total # of actions to the 2 main parameters, fields & dates.
   Math.sqrt(locationRecords.size * dateRange.length)
@@ -257,10 +257,13 @@ function plotActions(
       ctx.shadowColor = '#181818';
       ctx.shadowBlur = 6;
       ctx.shadowOffsetY = 3;
+      ctx.shadowOffsetX = -3;
       actions.forEach((a, i) => {
+        const spaceBetweenDots = gridUnit * .2;
+        const offsetX = (2 * i + 1 - actions.length) * (spaceBetweenDots / 2);
         ctx.fillStyle = a.color || 'tomato';
         ctx.beginPath();
-        ctx.arc(originX, originY - i * 6, radius, startAngle, endAngle);
+        ctx.arc(originX + offsetX, originY, radius, startAngle, endAngle);
         ctx.fill();
       });
       ctx.shadowColor = '#181818';
