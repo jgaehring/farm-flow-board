@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, type Ref } from 'vue';
+import { computed, ref, type Ref } from 'vue';
 import useResizableCanvas from '@/composables/useResizableCanvas';
 import { actionTypes, locationRecords, randomActions } from './boardSampleData';
 import { type ActionRecords, type LocationRecord } from './boardSampleData';
@@ -10,7 +10,7 @@ const rootStyles = useStyleDeclaration(':root');
 const getCssVar = (v: string, def?: string) =>
   rootStyles.value?.getPropertyValue(v) || def || 'inherit';
 
-// Defaults for initializing the board.
+// Constants for laying out the board.
 const marginTop = 60;
 const marginRight = 20;
 const marginBottom = 20;
@@ -22,6 +22,12 @@ const endDate = new Date(2024, 9);
 
 // Refs for canvas DOM element.
 const canvas: Ref<HTMLCanvasElement | null> = ref(null);
+const maxWidth: Ref<number> = ref(300); // <-- default width for any <canvas> element.
+const maxHeight: Ref<number> = ref(150); // <-- default height for any <canvas> element.
+const actionRecords: Ref<ActionRecords> = ref([]);
+locationRecords.forEach(({ id, name }) => {
+  actionRecords.value[id] = { id, name, dates: [] };
+});
 
 // Given a Date object, return a new Date object set 24 hours later.
 const plusDay = (d: Date) => new Date(d.valueOf() + 24 * 60 * 60 * 1000);
@@ -36,10 +42,13 @@ function createDateRange(start: Date, end: Date, prevRange = [] as Date[]) {
 }
 const dateRange = createDateRange(startDate, endDate);
 
+// Month format for the y-axis labels.
 const monthFmt = new Intl.DateTimeFormat(undefined, { month: 'long' });
-type MonthAttrs = { name: string, startCol: number, endCol: number };
 // Reducer function derives the x-axis grid coordinates covered by each month.
-const reduceDatesToMonths = (months: MonthAttrs[], d: Date) => {
+const reduceDatesToMonths = (
+  months: Array<{ name: string, startCol: number, endCol: number }>,
+  d: Date,
+) => {
   const name = monthFmt.format(d);
   const prev = months[months.length - 1];
   if (!prev || prev.name !== name) {
@@ -62,20 +71,52 @@ function fitToGrid<T>(
   marginEnd: number,
   elements: T[],
 ): T[] {
-  const maxDisplayWidth = axisLength - marginStart - marginEnd;
-  const maxColumns = Math.floor(maxDisplayWidth / gridUnit);
-  const gridCount = elements.length <= maxColumns ? elements.length : maxColumns;
-  const truncatedElements = elements.slice(0, gridCount);
+  const gridLength = axisLength - marginStart - marginEnd;
+  const gridElements = Math.floor(gridLength / gridUnit);
+  let startIndex = 0;
+  let stopIndex = startIndex + gridElements;
+  if (stopIndex >= elements.length) {
+    startIndex = elements.length - gridElements;
+    stopIndex = elements.length;
+  }
+  const truncatedElements = elements.slice(startIndex, stopIndex);
   return truncatedElements;
 }
 
-const actionRecords: Ref<ActionRecords> = ref([]);
-locationRecords.forEach(({ id, name }) => {
-  actionRecords.value[id] = { id, name, dates: [] };
+// Compute the board's dimensions and the range of values that can be displayed.
+// Adjust the width and height to fit as many columns and rows as possible
+// within the board's bounding box (ie, canvas + margins) w/o partially cutting
+// off any columns or rows; the last column/row should be fully displayed.
+const board = computed(() => {
+  const dates = fitToGrid(
+    maxWidth.value,
+    marginLeft,
+    marginRight,
+    dateRange,
+  );
+  const columns = dates.length;
+  const locations = fitToGrid(
+    maxHeight.value,
+    marginTop,
+    marginBottom,
+    locationRecords,
+  );
+  const rows = locations.length;
+  const grid = {
+    width: columns * gridUnit,
+    height: rows * gridUnit,
+  };
+  const width = grid.width + marginLeft + marginRight;
+  const height = grid.height + marginTop + marginBottom;
+  return { dates, locations, columns, rows, width, height, grid };
 });
 
+// Find out if two dates are the same, w/o regard to hours, minutes or smaller units.
 const sameDate = (d1: Date, d2: Date) =>
-  d1.getMonth() === d2.getMonth() && d1.getDay() === d2.getDay();
+  d1.getFullYear() === d2.getFullYear()
+  && d1.getMonth() === d2.getMonth()
+  && d1.getDay() === d2.getDay();
+
 function generateActions(
   count: number,
   dateRange: [Date, Date],
@@ -108,50 +149,29 @@ const actionCount = actionFrequency * Math.floor(
 );
 generateActions(actionCount, [startDate, endDate], locationRecords);
 
-const drawBoard = (canvasWidth: number, canvasHeight: number) => {
-  const ctx = canvas.value?.getContext('2d');
-  if (!ctx) {
-    console.warn(
-      'Aborted drawing the board because the canvas\'s rendering '
-      + 'context could not be found.',
-    );
-    return;
-  }
-
-  // Adjust board width to fit the most rows within bounding box (canvas + margins)
-  // without any rows partially cut off; similarly for height / columns.
-  const displayDates = fitToGrid(canvasWidth, marginLeft, marginRight, dateRange);
-  const boardWidth = displayDates.length * gridUnit;
-  const displayFields = fitToGrid(
-    canvasHeight,
-    marginTop,
-    marginBottom,
-    locationRecords,
-  );
-  const boardHeight = displayFields.length * gridUnit;
-
-  // Draw the board's background and grid.
+const drawBoard = (ctx: CanvasRenderingContext2D) => {
+  ctx.clearRect(0, 0, board.value.width, board.value.height);
+  // Draw the board's background and other attributes.
   ctx.fillStyle = getCssVar('--color-background-mute', 'light-dark(#fafafa, #222222)');
-  ctx.strokeStyle = getCssVar('--ff-c-green-transparent', 'rgba(0, 189, 126, 0.3)');
   ctx.lineWidth = lineWidth;
-  ctx.fillRect(marginLeft, marginTop, boardWidth, boardHeight);
-  drawGrid(ctx, boardWidth, boardHeight);
-  labelAxisY(ctx, displayFields);
-  labelAxisX(ctx, displayDates);
-
-  const displayStart = displayDates.slice(0, 1)[0];
-  const displayEnd = displayDates.slice(-1)[0];
-  plotActions(ctx, [displayStart, displayEnd], displayFields);
+  ctx.fillRect(marginLeft, marginTop, board.value.grid.width, board.value.grid.height);
+  drawGrid(ctx);
+  labelAxisY(ctx);
+  labelAxisX(ctx);
+  plotActions(ctx);
 };
 
-const drawGrid = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
+const drawGrid = (ctx: CanvasRenderingContext2D) => {
   // Set the x + y coordinates where each line will start (origin) & end (terminus).
   const originX = marginLeft;
   const originY = marginTop;
-  const terminusX = marginLeft + width;
-  const terminusY = marginTop + height;
+  const terminusX = marginLeft + board.value.grid.width;
+  const terminusY = marginTop + board.value.grid.height;
 
-  // Now loop through the horizontal gridlines...
+  // Use green transparent gridlines.
+  ctx.strokeStyle = getCssVar('--ff-c-green-transparent', 'rgba(0, 189, 126, 0.3)');
+
+  // First loop through the horizontal gridlines...
   for (
     // ...starting from the top...
     let y = originY + gridUnit;
@@ -184,7 +204,8 @@ const drawGrid = (ctx: CanvasRenderingContext2D, width: number, height: number) 
   }
 };
 
-const labelAxisX = (ctx: CanvasRenderingContext2D, dates: Date[]) => {
+const labelAxisX = (ctx: CanvasRenderingContext2D) => {
+  const { dates } = board.value;
   // Label the x-axis with the date numeral directly above each column.
   const dateLineheight = Math.floor(marginTop * (5 / 9));
   const dateFontSize = Math.floor(dateLineheight * (5 / 9));
@@ -231,27 +252,23 @@ const labelAxisX = (ctx: CanvasRenderingContext2D, dates: Date[]) => {
   });
 };
 
-const labelAxisY = (ctx: CanvasRenderingContext2D, locations: LocationRecord[]) => {
+const labelAxisY = (ctx: CanvasRenderingContext2D) => {
   ctx.fillStyle = getCssVar('--color-text');
   ctx.font = `${gridUnit * .65}px ${getCssVar('--ff-font-family')}`;
   ctx.textAlign = 'end';
   const x = marginLeft - 6;
-  locations.forEach((loc, i) => {
+  board.value.locations.forEach((loc, i) => {
     const y = marginTop + (i + 1) * gridUnit - gridUnit * .25;
     ctx.fillText(loc.name, x, y);
   });
 };
 
-function plotActions(
-  ctx: CanvasRenderingContext2D,
-  dateRange: [Date, Date],
-  locations: LocationRecord[],
-) {
-  const [start, end] = dateRange.map(d => d.valueOf());
-  actionRecords.value.filter(loc => {
-    const locationIsDisplayed = locations.some(l => loc.id === l.id);
-    return locationIsDisplayed;
-  }).forEach((location) => {
+function plotActions(ctx: CanvasRenderingContext2D) {
+  const start = board.value.dates.slice(0, 1)[0].valueOf();
+  const end = board.value.dates.slice(-1)[0].valueOf();
+  actionRecords.value.filter(loc =>
+    board.value.locations.some(l => loc.id === l.id)
+  ).forEach((location) => {
     location.dates.filter(({ date }) => {
       const timestamp = date.valueOf();
       const dateIsDisplayed = timestamp >= start && timestamp <= end;
@@ -286,7 +303,20 @@ function plotActions(
 }
 
 // Redraw the board whenever the canvas is resized.
-useResizableCanvas(canvas, drawBoard);
+useResizableCanvas(canvas, (width, height) => {
+  const ctx = canvas.value?.getContext('2d');
+  if (!ctx) {
+    console.warn(
+      'Aborted drawing the board because the canvas\'s rendering '
+      + 'context could not be found.',
+    );
+  } else {
+    // Reset all reactive board properties, clear the canvas, and redraw the board.
+    maxWidth.value = width;
+    maxHeight.value = height;
+    drawBoard(ctx);
+  }
+});
 
 </script>
 
