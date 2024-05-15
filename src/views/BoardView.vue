@@ -24,10 +24,6 @@ const endDate = new Date(2024, 9);
 const canvas: Ref<HTMLCanvasElement | null> = ref(null);
 const maxWidth: Ref<number> = ref(300); // <-- default width for any <canvas> element.
 const maxHeight: Ref<number> = ref(150); // <-- default height for any <canvas> element.
-const actionRecords: Ref<ActionRecords> = ref([]);
-locationRecords.forEach(({ id, name }) => {
-  actionRecords.value[id] = { id, name, dates: [] };
-});
 
 // Given a Date object, return a new Date object set 24 hours later.
 const plusDay = (d: Date) => new Date(d.valueOf() + 24 * 60 * 60 * 1000);
@@ -40,28 +36,17 @@ function createDateRange(start: Date, end: Date, prevRange = [] as Date[]) {
   if (nextStart.valueOf() >= end.valueOf()) return [...nextRange, end];
   return createDateRange(nextStart, end, nextRange);
 }
+
+// The collection of all field actions, first sorted by location, then within
+// each location sorted by date. The locations will be created first, with empty
+// dates arrays, and generateActions will populate the actions by date after
+// randomly generating them according to the possible locations and dates.
+const actionRecords: Ref<ActionRecords> = ref([]);
+locationRecords.forEach(({ id, name }) => {
+  actionRecords.value[id] = { id, name, dates: [] };
+});
+// Array of Date objects for every date within the specified range.
 const dateRange = createDateRange(startDate, endDate);
-
-// Month format for the y-axis labels.
-const monthFmt = new Intl.DateTimeFormat(undefined, { month: 'long' });
-// Reducer function derives the x-axis grid coordinates covered by each month.
-const reduceDatesToMonths = (
-  months: Array<{ name: string, startCol: number, endCol: number }>,
-  d: Date,
-) => {
-  const name = monthFmt.format(d);
-  const prev = months[months.length - 1];
-  if (!prev || prev.name !== name) {
-    const startCol = prev?.endCol || 0;
-    return [...months, { name, startCol, endCol: startCol + 1 }];
-  }
-  const endCol = prev.endCol + 1;
-  return [
-    ...months.slice(0, months.length - 1),
-    { ...prev, endCol }
-  ];
-};
-
 // The position of the board along x and y axes. The x coordinate corresponds to
 // the index of the date in the dateRange array that will occupy the first
 // column space. The y coordinate corresponds to the index of the location in
@@ -226,6 +211,26 @@ const drawGrid = (ctx: CanvasRenderingContext2D) => {
     ctx.lineTo(x, terminusY);
     ctx.stroke();
   }
+};
+
+// Month format for the x-axis labels.
+const monthFmt = new Intl.DateTimeFormat(undefined, { month: 'long' });
+// Reducer function derives the x-axis grid coordinates covered by each month.
+const reduceDatesToMonths = (
+  months: Array<{ name: string, startCol: number, endCol: number }>,
+  d: Date,
+) => {
+  const name = monthFmt.format(d);
+  const prev = months[months.length - 1];
+  if (!prev || prev.name !== name) {
+    const startCol = prev?.endCol || 0;
+    return [...months, { name, startCol, endCol: startCol + 1 }];
+  }
+  const endCol = prev.endCol + 1;
+  return [
+    ...months.slice(0, months.length - 1),
+    { ...prev, endCol }
+  ];
 };
 
 const labelAxisX = (ctx: CanvasRenderingContext2D) => {
