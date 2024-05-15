@@ -62,6 +62,12 @@ const reduceDatesToMonths = (
   ];
 };
 
+// The position of the board along x and y axes. The x coordinate corresponds to
+// the index of the date in the dateRange array that will occupy the first
+// column space. The y coordinate corresponds to the index of the location in
+// locationRecords array that will occupy the first row space.
+const currentIndex: Ref<{ x: number, y: number}> = ref({ x: 0, y: 0 });
+
 // Based on the length of one of the canvas axes, the margins along that axis,
 // and an array of elements to display, return a truncated shallow copy of those
 // elements that will fit within the canvas along that axis.
@@ -70,10 +76,11 @@ function fitToGrid<T>(
   marginStart: number,
   marginEnd: number,
   elements: T[],
+  index?: number,
 ): T[] {
   const gridLength = axisLength - marginStart - marginEnd;
   const gridElements = Math.floor(gridLength / gridUnit);
-  let startIndex = 0;
+  let startIndex = index || 0;
   let stopIndex = startIndex + gridElements;
   if (stopIndex >= elements.length) {
     startIndex = elements.length - gridElements;
@@ -93,6 +100,7 @@ const board = computed(() => {
     marginLeft,
     marginRight,
     dateRange,
+    currentIndex.value.x,
   );
   const columns = dates.length;
   const locations = fitToGrid(
@@ -100,6 +108,7 @@ const board = computed(() => {
     marginTop,
     marginBottom,
     locationRecords,
+    currentIndex.value.y,
   );
   const rows = locations.length;
   const grid = {
@@ -110,6 +119,21 @@ const board = computed(() => {
   const height = grid.height + marginTop + marginBottom;
   return { dates, locations, columns, rows, width, height, grid };
 });
+
+const minMax = (mn: number, mx: number, num: number): number =>
+  Math.max(mn, Math.min(mx, num));
+const scrollTo = (x: number, y: number) => {
+  const ctx = canvas.value?.getContext('2d');
+  const nextX = minMax(0, dateRange.length - board.value.columns, x);
+  const nextY = minMax(0, locationRecords.length - board.value.rows, y);
+  const positionChanged = nextX !== currentIndex.value.x
+    || nextY !== currentIndex.value.y
+  if (ctx && positionChanged) {
+    currentIndex.value.x = nextX;
+    currentIndex.value.y = nextY;
+    drawBoard(ctx);
+  }
+};
 
 // Find out if two dates are the same, w/o regard to hours, minutes or smaller units.
 const sameDate = (d1: Date, d2: Date) =>
@@ -266,20 +290,27 @@ const labelAxisY = (ctx: CanvasRenderingContext2D) => {
 function plotActions(ctx: CanvasRenderingContext2D) {
   const start = board.value.dates.slice(0, 1)[0].valueOf();
   const end = board.value.dates.slice(-1)[0].valueOf();
-  actionRecords.value.filter(loc =>
-    board.value.locations.some(l => loc.id === l.id)
-  ).forEach((location) => {
-    location.dates.filter(({ date }) => {
+  board.value.locations.reduce((actions, loc) => {
+    // Map the location to the actions records assigned to it, which are already
+    // grouped by location, then filter the dates based on the current date
+    // range. If no actions exist for that location or those dates, just provide
+    // and empty array for the dates.
+    const dates = actionRecords.value.find(aByLoc => aByLoc.id === loc.id)
+      ?.dates.filter(({ date }) => {
+        const timestamp = date.valueOf();
+        const dateIsDisplayed = timestamp >= start && timestamp <= end;
+        return dateIsDisplayed;
+    }) || [];
+    // Retain the location's name & id, then concat it to the list w/ the dates.
+    const { id, name } = loc;
+    return [...actions, { id, name, dates }];
+  }, [] as ActionRecords).forEach((actionsByLoc, locIndex) => {
+    actionsByLoc.dates.forEach(({ actions, date }) => {
       const timestamp = date.valueOf();
-      const dateIsDisplayed = timestamp >= start && timestamp <= end;
-      return dateIsDisplayed;
-    }).forEach(({ date, actions }) => {
-      const x = 1 + Math.floor(
-        (date.valueOf() - start.valueOf()) / 24 / 60 / 60 / 1000
-      );
-      const y = location.id + 1;
-      const originX = marginLeft + (x - .5) * gridUnit;
-      const originY = marginTop + (y - .5) * gridUnit;
+      const gridX = 1 + Math.floor((timestamp - start) / 24 / 60 / 60 / 1000);
+      const gridY = locIndex + 1;
+      const originX = marginLeft + (gridX - .5) * gridUnit;
+      const originY = marginTop + (gridY - .5) * gridUnit;
       const radius = gridUnit * (11 / 30);
       const startAngle = 0;
       const endAngle = 2 * Math.PI;
@@ -332,6 +363,20 @@ useResizableCanvas(canvas, (width, height) => {
         </canvas>
       </figure>
       <figcaption>
+        <div id="scroll-ctrls">
+          <button type="button" @click="scrollTo(currentIndex.x - 1, currentIndex.y)">
+            LEFT
+          </button>&nbsp;
+          <button type="button" @click="scrollTo(currentIndex.x, currentIndex.y - 1)">
+            UP
+          </button>&nbsp;
+          <button type="button" @click="scrollTo(currentIndex.x, currentIndex.y + 1)">
+            DOWN
+          </button>&nbsp;
+          <button type="button" @click="scrollTo(currentIndex.x + 1, currentIndex.y)">
+            RIGHT
+          </button>&nbsp;
+        </div>
         <span v-for="(action, i) in actionTypes" :key="i">
           <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
             <circle cx="12" cy="12" r="12" :fill="action.color"/>
@@ -372,6 +417,7 @@ figure {
 }
 
 figcaption {
+  position: relative;
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
@@ -393,4 +439,13 @@ figcaption svg {
   vertical-align: middle;
 }
 
+#scroll-ctrls {
+  position: absolute;
+  top: -4rem;
+}
+
+#scroll-ctrls span:hover {
+  color: var(--ff-c-green);
+  cursor: pointer;
+}
 </style>
