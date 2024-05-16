@@ -40,10 +40,6 @@ export default function drawBoard(
 ) {
   const { width, height, grid, margin, dates, locations } = board;
   ctx.clearRect(0, 0, width, height);
-  // Draw the board's background and other attributes.
-  ctx.fillStyle = grid.fill || getCssVar('--color-background-mute', 'light-dark(#fafafa, #222222)');
-  ctx.lineWidth = grid.lineWidth || 1.5;
-  ctx.fillRect(margin.left, margin.top, grid.width, grid.height);
   drawGrid(ctx, margin.left, margin.top, grid);
   labelAxisX(ctx, grid, margin, dates);
   labelAxisY(ctx, grid, margin, locations);
@@ -56,6 +52,11 @@ function drawGrid(
   originY: number,
   grid: GridProperties,
 ) {
+  // Draw the grid's background.
+  ctx.fillStyle = grid.fill || getCssVar('--color-background-mute', 'light-dark(#fafafa, #222222)');
+  ctx.lineWidth = grid.lineWidth || 1.5;
+  ctx.fillRect(originX, originY, grid.width, grid.height);
+
   // Set the x + y coordinates where each line will start (origin) & end (terminus).
   const terminusX = originX + grid.width;
   const terminusY = originY + grid.height;
