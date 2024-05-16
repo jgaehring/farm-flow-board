@@ -1,3 +1,4 @@
+import { reduce } from 'ramda';
 import useStyleDeclaration from '@/composables/useStyleDeclaration';
 import type { ActionRecords, LocationRecord } from '@/views/boardSampleData';
 
@@ -100,7 +101,7 @@ function drawGrid(
 // Month format for the x-axis labels.
 const monthFmt = new Intl.DateTimeFormat(undefined, { month: 'long' });
 // Reducer function derives the x-axis grid coordinates covered by each month.
-const reduceDatesToMonths = (
+const reduceDatesToMonths = reduce((
   months: Array<{ name: string, startCol: number, endCol: number }>,
   d: Date,
 ) => {
@@ -115,7 +116,7 @@ const reduceDatesToMonths = (
     ...months.slice(0, months.length - 1),
     { ...prev, endCol }
   ];
-};
+}, []);
 
 function labelAxisX(
   ctx: CanvasRenderingContext2D,
@@ -141,7 +142,7 @@ function labelAxisX(
   ctx.strokeRect(margin.left, 0, dates.length * grid.unit, margin.top);
 
   // Add the months across the top, spread out over the date numerals.
-  const months = dates.reduce(reduceDatesToMonths, []);
+  const months = reduceDatesToMonths(dates);
   const monthLineheight = Math.floor(margin.top * (3 / 9));
   const monthFontSize = Math.floor(monthLineheight * (2 / 3));
   const monthBaseline = monthLineheight - Math.floor(monthLineheight * (1 / 5));
