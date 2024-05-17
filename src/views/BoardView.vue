@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { computed, ref, type Ref } from 'vue';
+import { ref, type Ref } from 'vue';
 import useResizableCanvas from '@/composables/useResizableCanvas';
 import drawBoard from '@/canvas/board';
 import { actionTypes, locationRecords, randomActions } from './boardSampleData';
 import { type ActionRecords, type LocationRecord } from './boardSampleData';
 
 // Constants for laying out the board.
-const marginTop = 60;
-const marginRight = 20;
-const marginBottom = 20;
-const marginLeft = 240;
-const gridUnit = 40;
-const lineWidth = 1.5;
 const startDate = new Date(2024, 2, 28);
 const endDate = new Date(2024, 9);
+const gridConfig = {
+  unit: 40,
+  lineWidth: 1.5,
+  yAxisWidth: 240,
+  xAxisHeight: 60,
+};
 
 // Refs for canvas DOM element.
 const canvas: Ref<HTMLCanvasElement | null> = ref(null);
@@ -48,83 +48,26 @@ const dateRange = createDateRange(startDate, endDate);
 // locationRecords array that will occupy the first row space.
 const currentIndex: Ref<{ x: number, y: number}> = ref({ x: 0, y: 0 });
 
-// Based on the length of one of the canvas axes, the margins along that axis,
-// and an array of elements to display, return a truncated shallow copy of those
-// elements that will fit within the canvas along that axis.
-function fitToGrid<T>(
-  axisLength: number,
-  marginStart: number,
-  marginEnd: number,
-  elements: T[],
-  index?: number,
-): T[] {
-  const gridLength = axisLength - marginStart - marginEnd;
-  const gridElements = Math.floor(gridLength / gridUnit);
-  let startIndex = index || 0;
-  let stopIndex = startIndex + gridElements;
-  if (stopIndex >= elements.length) {
-    startIndex = elements.length - gridElements;
-    stopIndex = elements.length;
-  }
-  const truncatedElements = elements.slice(startIndex, stopIndex);
-  return truncatedElements;
-}
-
-// Compute the board's dimensions and the range of values that can be displayed.
-// Adjust the width and height to fit as many columns and rows as possible
-// within the board's bounding box (ie, canvas + margins) w/o partially cutting
-// off any columns or rows; the last column/row should be fully displayed.
-const board = computed(() => {
-  const dates = fitToGrid(
-    maxWidth.value,
-    marginLeft,
-    marginRight,
-    dateRange,
-    currentIndex.value.x,
-  );
-  const locations = fitToGrid(
-    maxHeight.value,
-    marginTop,
-    marginBottom,
-    locationRecords,
-    currentIndex.value.y,
-  );
-  const columns = dates.length;
-  const rows = locations.length;
-  return {
-    width: columns * gridUnit + marginLeft + marginRight,
-    height: rows * gridUnit + marginTop + marginBottom,
-    margin: {
-      top: marginTop,
-      right: marginRight,
-      bottom: marginBottom,
-      left: marginLeft,
-    },
-    grid: {
-      width: columns * gridUnit,
-      height: rows * gridUnit,
-      unit: gridUnit,
-      lineWidth,
-    },
-    dates,
-    locations,
-  };
-});
-
 const minMax = (mn: number, mx: number, num: number): number =>
   Math.max(mn, Math.min(mx, num));
 const scrollTo = (x: number, y: number) => {
   const ctx = canvas.value?.getContext('2d');
-  const columns = dateRange.length - board.value.dates.length;
-  const rows = locationRecords.length - board.value.locations.length
-  const nextX = minMax(0, columns, x);
-  const nextY = minMax(0, rows, y);
-  const positionChanged = nextX !== currentIndex.value.x
-    || nextY !== currentIndex.value.y
+  const maxGridWidth = maxWidth.value - gridConfig.yAxisWidth;
+  const maxDisplayDates = Math.floor(maxGridWidth / gridConfig.unit);
+  const xMaxIndex = dateRange.length - maxDisplayDates;
+  const maxGridHeight = maxWidth.value - gridConfig.xAxisHeight;
+  const maxDisplayLocations = Math.floor(maxGridHeight / gridConfig.unit);
+  const yMaxIndex = locationRecords.length - maxDisplayLocations;
+  const nextX = minMax(0, xMaxIndex, x);
+  const nextY = minMax(0, yMaxIndex, y);
+  const xChanged = nextX !== currentIndex.value.x;
+  const yChanged = nextY !== currentIndex.value.y;
+  const positionChanged = xChanged || yChanged;
   if (ctx && positionChanged) {
     currentIndex.value.x = nextX;
     currentIndex.value.y = nextY;
-    drawBoard(ctx, board.value, actionRecords.value);
+    const range = { x: dateRange, y: locationRecords }
+    drawBoard(ctx, range, gridConfig, actionRecords.value, currentIndex.value);
   }
 };
 
@@ -178,7 +121,8 @@ useResizableCanvas(canvas, (width, height) => {
     // Reset reactive canvas properties, clear the canvas, and redraw the board.
     maxWidth.value = width;
     maxHeight.value = height;
-    drawBoard(ctx, board.value, actionRecords.value);
+    const range = { x: dateRange, y: locationRecords }
+    drawBoard(ctx, range, gridConfig, actionRecords.value, currentIndex.value);
   }
 });
 

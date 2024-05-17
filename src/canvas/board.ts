@@ -7,60 +7,172 @@ const rootStyles = useStyleDeclaration(':root');
 const getCssVar = (v: string, def?: string) =>
   rootStyles.value?.getPropertyValue(v) || def || 'inherit';
 
+// Based on the length of one of the canvas axes, the margins along that axis,
+// and an array of elements to display, this function returns a truncated
+// shallow copy of the elements that will fit within the canvas along that axis.
+function fitToGrid<T>(
+  axisLength: number,
+  offset: number,
+  elements: T[],
+  unit: number,
+  index?: number,
+): T[] {
+  const gridLength = axisLength - offset;
+  const gridElements = Math.floor(gridLength / unit);
+  let startIndex = index || 0;
+  let stopIndex = startIndex + gridElements;
+  if (stopIndex >= elements.length) {
+    startIndex = elements.length - gridElements;
+    stopIndex = elements.length;
+  }
+  const truncatedElements = elements.slice(startIndex, stopIndex);
+  return truncatedElements;
+}
 
+interface BoxCoordinates {
+  origin: { x: number, y: number },
+  terminus: { x: number, y: number },
+}
 interface GridProperties {
   width: number,
   height: number,
+  coords: BoxCoordinates,
   unit: number,
   fill?: string,
   stroke?: string,
   lineWidth?: number,
 }
-
-interface BoardMargins {
-  top: number,
-  right: number,
-  bottom: number,
-  left: number,
+interface LabelProperties<Data> {
+  coords: BoxCoordinates,
+  width: number,
+  height: number,
+  data: Data[],
 }
-
+interface BoardLabels<XData, YData> {
+  x: LabelProperties<XData>,
+  y: LabelProperties<YData>,
+}
 interface BoardProperties {
   width: number,
   height: number,
-  margin: BoardMargins,
-  dates: Date[],
-  locations: LocationRecord[],
+  labels: BoardLabels<Date, LocationRecord>,
   grid: GridProperties,
+  index: { x: number, y: number },
+}
+interface RangeConfig<XData, YData> {
+  x: XData[],
+  y: YData[],
+}
+interface GridConfig {
+  unit: number,
+  lineWidth: number,
+  yAxisWidth: number,
+  xAxisHeight: number,
+}
+
+// Compute the board's dimensions and the range of values that can be displayed.
+// Adjust the width and height to fit as many columns and rows as possible
+// within the board's bounding box (ie, canvas + margins) w/o partially cutting
+// off any columns or rows; the last column/row should be fully displayed.
+function computeBoardProperties(
+  canvas: { width: number, height: number },
+  range: RangeConfig<Date, LocationRecord>,
+  grid: GridConfig,
+  index: { x: number, y: number },
+): BoardProperties {
+  const { unit, lineWidth } = grid;
+  const { yAxisWidth, xAxisHeight } = grid;
+  // const xOffset = grid.labels.yAxisWidth;
+  // const yOffset = grid.labels.xAxisHeight;
+  const dates = fitToGrid(
+    canvas.width,
+    yAxisWidth,
+    range.x,
+    grid.unit,
+    index.x,
+  );
+  const locations = fitToGrid(
+    canvas.height,
+    xAxisHeight,
+    range.y,
+    grid.unit,
+    index.y,
+  );
+  const columns = dates.length;
+  const rows = locations.length;
+  const gridWidth = columns * unit;
+  const gridHeight = rows * unit;
+  const boardWidth = yAxisWidth + gridWidth;
+  const boardHeight = xAxisHeight + gridHeight;
+  const labels: BoardLabels<Date, LocationRecord> = {
+    x: {
+      coords: {
+        origin: { x: yAxisWidth, y: 0 },
+        terminus: { x: boardWidth, y: xAxisHeight },
+      },
+      width: gridWidth,
+      height: xAxisHeight,
+      data: dates,
+    },
+    y: {
+      coords: {
+        origin: { x: 0, y: xAxisHeight },
+        terminus: { x: yAxisWidth, y: boardHeight },
+      },
+      width: yAxisWidth,
+      height: gridHeight,
+      data: locations,
+    },
+  }
+  return {
+    width: boardWidth,
+    height: boardHeight,
+    grid: { 
+      width: gridWidth,
+      height: gridHeight,
+      coords: {
+        origin: { x: yAxisWidth, y: xAxisHeight },
+        terminus: { x: boardWidth, y: boardHeight },
+      },
+      unit,
+      lineWidth,
+    },
+    labels,
+    index,
+  };
 }
 
 // Draw Farm Flow's main board.
 export default function drawBoard(
   ctx: CanvasRenderingContext2D,
-  board: BoardProperties,
+  range: RangeConfig<Date, LocationRecord>,
+  gridConfig: GridConfig,
   actionRecords: ActionRecords,
+  index: { x: number, y: number },
 ) {
-  const { width, height, grid, margin, dates, locations } = board;
+  const board = computeBoardProperties(ctx.canvas, range, gridConfig, index);
+  const { width, height, labels, grid } = board;
   ctx.clearRect(0, 0, width, height);
-  drawGrid(ctx, margin.left, margin.top, grid);
-  labelAxisX(ctx, grid, margin, dates);
-  labelAxisY(ctx, grid, margin, locations);
+  drawGrid(ctx, grid);
+  labelAxisX(ctx, grid, labels.x);
+  labelAxisY(ctx, grid, labels.y);
   plotActions(ctx, board, actionRecords);
 }
 
 function drawGrid(
   ctx: CanvasRenderingContext2D,
-  originX: number,
-  originY: number,
   grid: GridProperties,
 ) {
+  // The x + y coordinates where each line will start (origin) & end (terminus).
+  const {
+    origin: { x: originX, y: originY },
+    terminus: { x: terminusX, y: terminusY },
+  } = grid.coords;
+
   // Draw the grid's background.
   ctx.fillStyle = grid.fill || getCssVar('--color-background-mute', 'light-dark(#fafafa, #222222)');
   ctx.lineWidth = grid.lineWidth || 1.5;
   ctx.fillRect(originX, originY, grid.width, grid.height);
-
-  // Set the x + y coordinates where each line will start (origin) & end (terminus).
-  const terminusX = originX + grid.width;
-  const terminusY = originY + grid.height;
 
   // Default to green transparent gridlines.
   ctx.strokeStyle = grid.stroke || getCssVar('--ff-c-green-transparent', 'rgba(0, 189, 126, 0.3)');
@@ -121,17 +233,17 @@ const reduceDatesToMonths = reduce((
 function labelAxisX(
   ctx: CanvasRenderingContext2D,
   grid: GridProperties,
-  margin: BoardMargins,
-  dates: Date[],
+  label: LabelProperties<Date>,
 ) {
   // Label the x-axis with the date numeral directly above each column.
-  const dateLineheight = Math.floor(margin.top * (5 / 9));
+  const dateLineheight = Math.floor(label.height * (5 / 9));
   const dateFontSize = Math.floor(dateLineheight * (5 / 9));
-  const dateBaseline = margin.top - Math.floor(dateLineheight * (1 / 3));
+  const dateBaseline = label.height - Math.floor(dateLineheight * (1 / 3));
   const dateTextMarginLeft = grid.unit * .5;
+  const { coords: { origin }, data: dates } = label;
   dates.forEach((d, i) => {
     const label = d.getDate().toString();
-    const x = margin.left + i * grid.unit + dateTextMarginLeft;
+    const x = origin.x + i * grid.unit + dateTextMarginLeft;
     ctx.fillStyle = getCssVar('--color-text');
     ctx.font = `${dateFontSize}px ${getCssVar('--ff-font-family')}`;
     ctx.textAlign = 'center';
@@ -139,27 +251,27 @@ function labelAxisX(
   });
   // Draw a bounding box around both month and date labels.
   ctx.strokeStyle = grid.stroke || getCssVar('--ff-c-green-transparent');
-  ctx.strokeRect(margin.left, 0, dates.length * grid.unit, margin.top);
+  ctx.strokeRect(origin.x, 0, dates.length * grid.unit, label.height);
 
   // Add the months across the top, spread out over the date numerals.
   const months = reduceDatesToMonths(dates);
-  const monthLineheight = Math.floor(margin.top * (3 / 9));
+  const monthLineheight = Math.floor(label.height * (3 / 9));
   const monthFontSize = Math.floor(monthLineheight * (2 / 3));
   const monthBaseline = monthLineheight - Math.floor(monthLineheight * (1 / 5));
   // Draw a horizontal rule between months and dates.
   ctx.beginPath();
-  ctx.moveTo(margin.left, monthLineheight);
-  ctx.lineTo(margin.left + dates.length * grid.unit, monthLineheight);
+  ctx.moveTo(origin.x, monthLineheight);
+  ctx.lineTo(origin.x + dates.length * grid.unit, monthLineheight);
   ctx.stroke();
   months.forEach((month, i) => {
     const width = (month.endCol - month.startCol) * grid.unit;
-    const bgX = margin.left + month.startCol * grid.unit;
+    const bgX = origin.x + month.startCol * grid.unit;
     // Unless it's the first month, draw a vertical line as its left border to
     // separate it from the previous month, stopping at the top of the grid.
     if (i !== 0) {
       ctx.beginPath();
       ctx.moveTo(bgX, 0);
-      ctx.lineTo(bgX, margin.top);
+      ctx.lineTo(bgX, label.height);
       ctx.stroke();
     }
     const textX = bgX + .5 * width;
@@ -173,15 +285,15 @@ function labelAxisX(
 function labelAxisY(
   ctx: CanvasRenderingContext2D,
   grid: GridProperties,
-  margin: BoardMargins,
-  locations: LocationRecord[],
+  label: LabelProperties<LocationRecord>,
 ) {
+  const { coords: { origin }, data: locations } = label;
   ctx.fillStyle = getCssVar('--color-text');
   ctx.font = `${grid.unit * .65}px ${getCssVar('--ff-font-family')}`;
   ctx.textAlign = 'end';
-  const x = margin.left - 6;
+  const x = label.width - 6;
   locations.forEach((loc, i) => {
-    const y = margin.top + (i + 1) * grid.unit - grid.unit * .25;
+    const y = origin.y + (i + 1) * grid.unit - grid.unit * .25;
     ctx.fillText(loc.name, x, y);
   });
 }
@@ -191,9 +303,10 @@ function plotActions(
   board: BoardProperties,
   actionRecords: ActionRecords,
 ) {
-  const { grid, margin, locations } = board;
-  const start = board.dates.slice(0, 1)[0].valueOf();
-  const end = board.dates.slice(-1)[0].valueOf();
+  const { grid, labels } = board;
+  const { y: { data: locations }, x: { data: dateRange } } = labels;
+  const start = dateRange.slice(0, 1)[0].valueOf();
+  const end = dateRange.slice(-1)[0].valueOf();
   locations.reduce((actions, loc) => {
     // Map the location to the actions records assigned to it, which are already
     // grouped by location, then filter the dates based on the current date
@@ -214,8 +327,8 @@ function plotActions(
       const timestamp = date.valueOf();
       const gridX = 1 + Math.floor((timestamp - start) / 24 / 60 / 60 / 1000);
       const gridY = locIndex + 1;
-      const originX = margin.left + (gridX - .5) * grid.unit;
-      const originY = margin.top + (gridY - .5) * grid.unit;
+      const originX = grid.coords.origin.x + (gridX - .5) * grid.unit;
+      const originY = grid.coords.origin.y + (gridY - .5) * grid.unit;
       const radius = grid.unit * (11 / 30);
       const startAngle = 0;
       const endAngle = 2 * Math.PI;
