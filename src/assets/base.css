@@ -20,6 +20,18 @@
   --vt-c-text-dark-1: var(--vt-c-white);
   --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
 
+  --ff-c-black: #181818;
+  --ff-c-black-soft: #222222;
+  --ff-c-black-mute: #282828;
+  --ff-c-black-transparent-1: #181818aa;
+  --ff-c-black-transparent-2: #18181855;
+
+  --ff-c-white: #ffffff;
+  --ff-c-white-soft: #f8f8f8;
+  --ff-c-white-mute: #f2f2f2;
+  --ff-c-white-transparent-1: #ffffffcc;
+  --ff-c-white-transparent-2: #ffffff88;
+
   --ff-c-green: rgba(0, 189, 126, 1);
   --ff-c-green-transparent: rgba(0, 189, 126, 0.3);
 
