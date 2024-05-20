@@ -184,6 +184,7 @@ type translationEachCallback = (
 interface TranslationParameters {
   to: { x: number, y: number },
   from: { x: number, y: number },
+  duration?: number,
   afterAll?: translationAllCallback,
   afterEach?: translationEachCallback,
   beforeAll?: translationAllCallback,
@@ -230,7 +231,7 @@ export function translateBoard(
 
   let frame = 0;
   let starttime: DOMHighResTimeStamp = 0;
-  const durationTotal = 1024;
+  const durationTotal = translation.duration || 512;
   function animate(timestamp: DOMHighResTimeStamp) {
     // Set the starttime if needed and calculate how much time has passed.
     if (starttime === 0) starttime = timestamp;
