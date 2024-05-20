@@ -4,6 +4,10 @@ import useResizableCanvas from '@/composables/useResizableCanvas';
 import { drawBoard, translateBoard } from '@/canvas/board';
 import { actionTypes, locationRecords, randomActions } from './boardSampleData';
 import { type ActionRecords, type LocationRecord } from './boardSampleData';
+import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
+import IconChevronLeft from '@/assets/radix-icons/chevron-left.svg?component';
+import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
+import IconChevronUp from '@/assets/radix-icons/chevron-up.svg?component';
 
 // Refs for canvas DOM element.
 const canvas: Ref<HTMLCanvasElement | null> = ref(null);
@@ -57,15 +61,18 @@ const gridConfig = {
 // locationRecords array that will occupy the first row space.
 const currentIndex: Ref<{ x: number, y: number}> = ref({ x: 0, y: 0 });
 
+const maxIndex = (maxLength: number, axis: 'x'|'y') => {
+  const axisLength = axis === 'x' ? gridConfig.yAxisWidth : gridConfig.xAxisHeight;
+  const rangeLength = axis === 'x' ? dateRange.length : locationRecords.length;
+  const maxGridLength = maxLength - axisLength;
+  const maxDisplayDates = Math.floor(maxGridLength / gridConfig.unit);
+  return rangeLength - maxDisplayDates;
+};
 const minMax = (mn: number, mx: number, num: number): number =>
   Math.max(mn, Math.min(mx, num));
 const scrollTo = (x: number, y: number) => {
-  const maxGridWidth = maxWidth.value - gridConfig.yAxisWidth;
-  const maxDisplayDates = Math.floor(maxGridWidth / gridConfig.unit);
-  const xMaxIndex = dateRange.length - maxDisplayDates;
-  const maxGridHeight = maxWidth.value - gridConfig.xAxisHeight;
-  const maxDisplayLocations = Math.floor(maxGridHeight / gridConfig.unit);
-  const yMaxIndex = locationRecords.length - maxDisplayLocations;
+  const xMaxIndex = maxIndex(maxWidth.value, 'x');
+  const yMaxIndex = maxIndex(maxHeight.value, 'y');
   const nextX = minMax(0, xMaxIndex, x);
   const nextY = minMax(0, yMaxIndex, y);
   const xChanged = nextX !== currentIndex.value.x;
@@ -151,22 +158,36 @@ useResizableCanvas(canvas, (width, height) => {
         <canvas id="the-board" ref="canvas" role="presentation" height="640" width="960">
           <p>Oops, forgot to add a fallback! &#x1F643;</p>
         </canvas>
+        <button
+          type="button"
+          :disabled="currentIndex.x <= 0"
+          class="board-scroll-btn scroll-left"
+          @click="scrollTo(currentIndex.x - 7, currentIndex.y)">
+          <IconChevronLeft/>
+        </button>
+        <button
+          type="button"
+          :disabled="currentIndex.y <= 0"
+          class="board-scroll-btn scroll-up"
+          @click="scrollTo(currentIndex.x, currentIndex.y - 3)">
+          <IconChevronUp/>
+        </button>
+        <button
+          type="button"
+          :disabled="currentIndex.x >= maxIndex(maxHeight, 'y')"
+          class="board-scroll-btn scroll-down"
+          @click="scrollTo(currentIndex.x, currentIndex.y + 3)">
+          <IconChevronDown/>
+        </button>
+        <button
+          type="button"
+          :disabled="currentIndex.x >= maxIndex(maxWidth, 'x')"
+          class="board-scroll-btn scroll-right"
+          @click="scrollTo(currentIndex.x + 7, currentIndex.y)">
+          <IconChevronRight/>
+        </button>
       </figure>
       <figcaption>
-        <div id="scroll-ctrls">
-          <button type="button" @click="scrollTo(currentIndex.x - 7, currentIndex.y)">
-            LEFT
-          </button>&nbsp;
-          <button type="button" @click="scrollTo(currentIndex.x, currentIndex.y - 1)">
-            UP
-          </button>&nbsp;
-          <button type="button" @click="scrollTo(currentIndex.x, currentIndex.y + 1)">
-            DOWN
-          </button>&nbsp;
-          <button type="button" @click="scrollTo(currentIndex.x + 7, currentIndex.y)">
-            RIGHT
-          </button>&nbsp;
-        </div>
         <span v-for="(action, i) in actionTypes" :key="i">
           <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
             <circle cx="12" cy="12" r="12" :fill="action.color"/>
@@ -198,6 +219,7 @@ main {
 }
 
 figure {
+  position: relative;
   width: calc(100% - 2rem);
   height: calc(100% - 3rem);
   /** The canvas will resize, but not instantly. Setting overflow to hidden
@@ -206,8 +228,93 @@ figure {
   overflow: hidden;
 }
 
+.board-scroll-btn {
+  position: absolute;
+  background-color: var(--ff-c-white-transparent-1);
+  border: 1px solid var(--color-border);
+}
+
+.board-scroll-btn:hover {
+  background-color: var(--ff-c-white);
+  border-color: var(--color-border-hover);
+  cursor: pointer;
+}
+
+.board-scroll-btn:disabled {
+  border-color: var(--color-border);
+  background-color: var(--ff-c-white-transparent-2);
+  cursor: auto;
+}
+
+@media (prefers-color-scheme: dark) {
+  .board-scroll-btn {
+    background-color: var(--ff-c-black-transparent-1);
+  }
+  
+  .board-scroll-btn:hover {
+    background-color: var(--ff-c-black);
+  }
+  
+  .board-scroll-btn:disabled {
+    background-color: var(--ff-c-black-transparent-2);
+  }
+}
+
+.board-scroll-btn.board-scroll-btn.scroll-up,
+.board-scroll-btn.scroll-down {
+  width: 6rem;
+  height: 3rem;
+  left: calc(50% + 120px - 3rem);
+}
+
+.board-scroll-btn.scroll-right,
+.board-scroll-btn.scroll-left {
+  width: 3rem;
+  height: 6rem;
+  top: calc(50% - 3rem);
+}
+
+.board-scroll-btn.scroll-up {
+  top: -3rem;
+}
+
+.board-scroll-btn.scroll-right {
+  right: -3rem;
+}
+
+.board-scroll-btn.scroll-down {
+  bottom: -3rem;
+}
+
+.board-scroll-btn.scroll-left {
+  left: -3rem;
+}
+
+figure:hover .board-scroll-btn.scroll-up {
+  top: 75px;
+}
+
+figure:hover .board-scroll-btn.scroll-right {
+  right: 40px;
+}
+
+figure:hover .board-scroll-btn.scroll-down {
+  bottom: 40px;
+}
+
+figure:hover .board-scroll-btn.scroll-left {
+  left: 255px;
+}
+
+.board-scroll-btn svg {
+  stroke: var(--ff-c-green);
+}
+
+.board-scroll-btn:disabled svg {
+  stroke: var(--color-border);
+}
+
 figcaption {
-  position: relative;
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
@@ -227,15 +334,5 @@ figcaption svg {
   width: 24px;
   height: 24px;
   vertical-align: middle;
-}
-
-#scroll-ctrls {
-  position: absolute;
-  top: -4rem;
-}
-
-#scroll-ctrls span:hover {
-  color: var(--ff-c-green);
-  cursor: pointer;
 }
 </style>
