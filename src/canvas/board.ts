@@ -211,9 +211,16 @@ export function translateBoard(
   // just how much larger the offscreen canvas is compared to the main canvas.
   const deltas = {
     x: dX, y: dY,
-    width: ctx.canvas.width + dX * gridConfig.unit,
-    height: ctx.canvas.height + dY * gridConfig.unit,
+    width: dX * gridConfig.unit,
+    height: dY * gridConfig.unit,
   };
+  const canvasDeltas = {
+    width: ctx.canvas.width + Math.abs(deltas.width),
+    height: ctx.canvas.height + Math.abs(deltas.height),
+  };
+  // Positive (+1), if dX or dY is positive. Negatative (-1) if it's negative.
+  const signOfDx = dX !== 0 ? dX / Math.abs(dX) : 1;
+  const signOfDy = dY !== 0 ? dY / Math.abs(dY) : 1;
   // The index will always be the lowest x and y values displayed, whether the
   // translation is going from highest to lowest, or vice versa. 
   const index = {
@@ -221,7 +228,7 @@ export function translateBoard(
     y: Math.min(translation.to.y, translation.from.y),
   };
   // The properties of the board rendered while animating the translation.
-  const transBoard = computeBoardProperties(deltas, range, gridConfig, index);
+  const transBoard = computeBoardProperties(canvasDeltas, range, gridConfig, index);
 
   // Invoke the beforeAll() callback now that the deltas and board dimensions
   // have been calculated, but before the animation starts.
@@ -239,6 +246,14 @@ export function translateBoard(
     // Calculate the absolute progress ratio and the easing progress ratio.
     const progress = durationCurrent / durationTotal;
     const easing = easeInOutQuad(progress);
+    // Easing for the x + y axes' translation origins specifically, the
+    // translateX & translateY respectively, will differ whether the dX or dY
+    // is positive or negative. If dY or dY is POSITIVE, it will represent the
+    // progress so far, or in other words, the SUM of 0 + easing; if NEGATIVE,
+    // it will represent the portion of the translation delta that yet remains,
+    // that is, the DIFFERENCE of 1 - easing.
+    const easingX = ((signOfDx - 1) / 2 + easing);
+    const easingY = ((signOfDy - 1) / 2 + easing);
 
     // Mutable variable for determining the translation & clipping coordinates.
     let translateX = 0;
@@ -252,7 +267,7 @@ export function translateBoard(
     // passed to ctx.translate(x, y) and expand the coordinates of the clipping
     // box to include the X-AXIS labels, so they will be translated too.
     if (dX !== 0) {
-      translateX -= easing * dX * gridConfig.unit;
+      translateX = translateX - easingX * deltas.width;
       clipH = fromBoard.height;
       clipOrigin.y = 0;
     }
@@ -261,7 +276,7 @@ export function translateBoard(
     // passed to ctx.translate(x, y) and expand the coordinates of the clipping
     // box to include the Y-AXIS labels, so they will be translated too.
     if (dY !== 0) {
-      translateY -= easing * dY * gridConfig.unit;
+      translateY = translateY - easingY * deltas.height;
       clipW = fromBoard.width;
       clipOrigin.x = 0;
     }
