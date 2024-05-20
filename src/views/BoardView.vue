@@ -154,7 +154,7 @@ useResizableCanvas(canvas, (width, height) => {
       </figure>
       <figcaption>
         <div id="scroll-ctrls">
-          <button type="button" @click="scrollTo(currentIndex.x - 1, currentIndex.y)">
+          <button type="button" @click="scrollTo(currentIndex.x - 7, currentIndex.y)">
             LEFT
           </button>&nbsp;
           <button type="button" @click="scrollTo(currentIndex.x, currentIndex.y - 1)">
@@ -163,7 +163,7 @@ useResizableCanvas(canvas, (width, height) => {
           <button type="button" @click="scrollTo(currentIndex.x, currentIndex.y + 1)">
             DOWN
           </button>&nbsp;
-          <button type="button" @click="scrollTo(currentIndex.x + 1, currentIndex.y)">
+          <button type="button" @click="scrollTo(currentIndex.x + 7, currentIndex.y)">
             RIGHT
           </button>&nbsp;
         </div>
