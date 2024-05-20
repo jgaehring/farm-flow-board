@@ -5,16 +5,6 @@ import { drawBoard, translateBoard } from '@/canvas/board';
 import { actionTypes, locationRecords, randomActions } from './boardSampleData';
 import { type ActionRecords, type LocationRecord } from './boardSampleData';
 
-// Constants for laying out the board.
-const startDate = new Date(2024, 2, 28);
-const endDate = new Date(2024, 9);
-const gridConfig = {
-  unit: 40,
-  lineWidth: 1.5,
-  yAxisWidth: 240,
-  xAxisHeight: 60,
-};
-
 // Refs for canvas DOM element.
 const canvas: Ref<HTMLCanvasElement | null> = ref(null);
 const maxWidth: Ref<number> = ref(300); // <-- default width for any <canvas> element.
@@ -40,8 +30,27 @@ const actionRecords: Ref<ActionRecords> = ref([]);
 locationRecords.forEach(({ id, name }) => {
   actionRecords.value[id] = { id, name, dates: [] };
 });
+
+// Start and end dates used to populate the x-axis.
+const startDate = new Date(2024, 2, 28);
+const endDate = new Date(2024, 9);
 // Array of Date objects for every date within the specified range.
 const dateRange = createDateRange(startDate, endDate);
+
+// Date + location ranges combined so they can be easily passed to drawing functions.
+const range = {
+  x: dateRange,
+  y: locationRecords,
+};
+
+// Constants for laying out the grid.
+const gridConfig = {
+  unit: 40,
+  lineWidth: 1.5,
+  yAxisWidth: 240,
+  xAxisHeight: 60,
+};
+
 // The position of the board along x and y axes. The x coordinate corresponds to
 // the index of the date in the dateRange array that will occupy the first
 // column space. The y coordinate corresponds to the index of the location in
@@ -126,7 +135,6 @@ useResizableCanvas(canvas, (width, height) => {
     // Reset reactive canvas properties, clear the canvas, and redraw the board.
     maxWidth.value = width;
     maxHeight.value = height;
-    const range = { x: dateRange, y: locationRecords }
     drawBoard(ctx, range, gridConfig, actionRecords.value, currentIndex.value);
   }
 });
