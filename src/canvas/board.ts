@@ -29,15 +29,10 @@ function fitToGrid<T>(
   return truncatedElements;
 }
 
-interface BoxCoordinates {
-  origin: { x: number, y: number },
-  terminus: { x: number, y: number },
-}
-interface BoxProperties {
-  coords: BoxCoordinates,
-  width: number,
-  height: number,
-}
+interface Coordinates { x: number, y: number }
+interface BoxCoordinates { origin: Coordinates, terminus: Coordinates }
+interface BoxSize { width: number, height: number }
+type BoxProperties = BoxCoordinates & BoxSize;
 interface GridProperties extends BoxProperties {
   unit: number,
   fill?: string,
@@ -105,19 +100,15 @@ function computeBoardProperties(
   const boardHeight = xAxisHeight + gridHeight;
   const labels: BoardLabels<Date, LocationRecord> = {
     x: {
-      coords: {
-        origin: { x: yAxisWidth, y: 0 },
-        terminus: { x: boardWidth, y: xAxisHeight },
-      },
+      origin: { x: yAxisWidth, y: 0 },
+      terminus: { x: boardWidth, y: xAxisHeight },
       width: gridWidth,
       height: xAxisHeight,
       data: dates,
     },
     y: {
-      coords: {
-        origin: { x: 0, y: xAxisHeight },
-        terminus: { x: yAxisWidth, y: boardHeight },
-      },
+      origin: { x: 0, y: xAxisHeight },
+      terminus: { x: yAxisWidth, y: boardHeight },
       width: yAxisWidth,
       height: gridHeight,
       data: locations,
@@ -129,10 +120,8 @@ function computeBoardProperties(
     grid: { 
       width: gridWidth,
       height: gridHeight,
-      coords: {
-        origin: { x: yAxisWidth, y: xAxisHeight },
-        terminus: { x: boardWidth, y: boardHeight },
-      },
+      origin: { x: yAxisWidth, y: xAxisHeight },
+      terminus: { x: boardWidth, y: boardHeight },
       unit,
       lineWidth,
     },
@@ -176,13 +165,29 @@ function easeInOutQuad(x: number): number {
   return y;
 }
 
+
+type translationAllCallback = (
+  ctx: CanvasRenderingContext2D,
+  board: BoardProperties,
+  deltas: BoxSize & Coordinates,
+) => void;
+type translationEachCallback = (
+  ctx: CanvasRenderingContext2D,
+  board: BoardProperties,
+  deltas: BoxSize & Coordinates,
+  interval: {
+    translateX: number, translateY: number,
+    timestamp: DOMHighResTimeStamp,
+    progress: number, easing: number,
+  },
+) => void;
 interface TranslationParameters {
   to: { x: number, y: number },
   from: { x: number, y: number },
-  afterAll?: (ctx: CanvasRenderingContext2D) => void,
-  afterEach?: (ctx: CanvasRenderingContext2D) => void,
-  beforeAll?: (ctx: CanvasRenderingContext2D) => void,
-  beforeEach?: (ctx: CanvasRenderingContext2D) => void,
+  afterAll?: translationAllCallback,
+  afterEach?: translationEachCallback,
+  beforeAll?: translationAllCallback,
+  beforeEach?: translationEachCallback,
 }
 
 export function translateBoard(
@@ -214,18 +219,22 @@ export function translateBoard(
     x: Math.min(translation.to.x, translation.from.x),
     y: Math.min(translation.to.y, translation.from.y),
   };
-  // The properties of the board rendered offscreen to animate the translation.
-  const offscrBoard = computeBoardProperties(deltas, range, gridConfig, index);
+  // The properties of the board rendered while animating the translation.
+  const transBoard = computeBoardProperties(deltas, range, gridConfig, index);
 
-  if (typeof translation.beforeAll === 'function') translation.beforeAll(ctx);
+  // Invoke the beforeAll() callback now that the deltas and board dimensions
+  // have been calculated, but before the animation starts.
+  if (typeof translation.beforeAll === 'function') {
+    translation.beforeAll(ctx, transBoard, deltas);
+  }
 
   let frame = 0;
   let starttime: DOMHighResTimeStamp = 0;
   const durationTotal = 1024;
-  function animate(ts: DOMHighResTimeStamp) {
+  function animate(timestamp: DOMHighResTimeStamp) {
     // Set the starttime if needed and calculate how much time has passed.
-    if (starttime === 0) starttime = ts;
-    const durationCurrent = ts - starttime;
+    if (starttime === 0) starttime = timestamp;
+    const durationCurrent = timestamp - starttime;
     // Calculate the absolute progress ratio and the easing progress ratio.
     const progress = durationCurrent / durationTotal;
     const easing = easeInOutQuad(progress);
@@ -236,7 +245,7 @@ export function translateBoard(
     let { width: clipW, height: clipH } = fromBoard.grid;
     const {
       origin: clipOrigin, terminus: clipTerminus,
-    } = clone(fromBoard.grid.coords);
+    } = clone(fromBoard.grid);
 
     // If the board is translating along the X-AXIS, adjust the x-coordinate
     // passed to ctx.translate(x, y) and expand the coordinates of the clipping
@@ -256,9 +265,11 @@ export function translateBoard(
       clipOrigin.x = 0;
     }
 
-    //
-    if (typeof translation.beforeEach === 'function') {
-      translation.beforeEach(ctx);
+  // Invoke the beforeEach() callback now that the translation coordinates and
+  // easing have been calculated, but before clipping, translating, and drawing.
+  if (typeof translation.beforeEach === 'function') {
+      const cycle = { translateX, translateY, timestamp, progress, easing };
+      translation.beforeEach(ctx, transBoard, deltas, cycle);
     }
 
     // Apply a background fill, b/c most of each fill is transparent and so
@@ -280,10 +291,10 @@ export function translateBoard(
     // along the x and/or y axes, as well as eased progress of the animation,
     // which has already been factored into the translation coordinates.
     ctx.translate(translateX, translateY);
-    if (dX !== 0) labelAxisX(ctx, offscrBoard.grid, offscrBoard.labels.x);
-    if (dY !== 0) labelAxisY(ctx, offscrBoard.grid, offscrBoard.labels.y);
-    drawGrid(ctx, offscrBoard.grid);
-    plotActions(ctx, offscrBoard, actionRecords);
+    if (dX !== 0) labelAxisX(ctx, transBoard.grid, transBoard.labels.x);
+    if (dY !== 0) labelAxisY(ctx, transBoard.grid, transBoard.labels.y);
+    drawGrid(ctx, transBoard.grid);
+    plotActions(ctx, transBoard, actionRecords);
 
     // Restore the context to its prior state prior before the clipping and
     // translating operations, then just to be safe, transform the context back
@@ -293,7 +304,10 @@ export function translateBoard(
 
     if (progress < 1) {
     // If the animation hasn't finished, call afterEach() and resume the loop.
-      if (typeof translation.afterEach === 'function') translation.afterEach(ctx);
+      if (typeof translation.afterEach === 'function') {
+        const cycle = { translateX, translateY, timestamp, progress, easing };
+        translation.afterEach(ctx, transBoard, deltas, cycle);
+      }
       frame = window.requestAnimationFrame(animate);
     } else {
     // Otherwise run the necessary cleanup, render the board at its final
@@ -301,7 +315,9 @@ export function translateBoard(
       window.cancelAnimationFrame(frame);
       ctx.restore();
       drawBoard(ctx, range, gridConfig, actionRecords, translation.to);
-      if (typeof translation.afterAll === 'function') translation.afterAll(ctx);
+      if (typeof translation.afterAll === 'function') {
+        translation.afterAll(ctx, transBoard, deltas);
+      }
     }
   }
 
@@ -317,7 +333,7 @@ function drawGrid(
   const {
     origin: { x: originX, y: originY },
     terminus: { x: terminusX, y: terminusY },
-  } = grid.coords;
+  } = grid;
 
   // Draw the grid's background.
   ctx.fillStyle = grid.fill || getCssVar('--color-background-mute', 'light-dark(#fafafa, #222222)');
@@ -390,7 +406,7 @@ function labelAxisX(
   const dateFontSize = Math.floor(dateLineheight * (5 / 9));
   const dateBaseline = label.height - Math.floor(dateLineheight * (1 / 3));
   const dateTextMarginLeft = grid.unit * .5;
-  const { coords: { origin }, data: dates } = label;
+  const { origin, data: dates } = label;
   dates.forEach((d, i) => {
     const label = d.getDate().toString();
     const x = origin.x + i * grid.unit + dateTextMarginLeft;
@@ -437,7 +453,7 @@ function labelAxisY(
   grid: GridProperties,
   label: LabelProperties<LocationRecord>,
 ) {
-  const { coords: { origin }, data: locations } = label;
+  const { origin, data: locations } = label;
   ctx.fillStyle = getCssVar('--color-text');
   ctx.font = `${grid.unit * .65}px ${getCssVar('--ff-font-family')}`;
   ctx.textAlign = 'end';
@@ -477,8 +493,8 @@ function plotActions(
       const timestamp = date.valueOf();
       const gridX = 1 + Math.floor((timestamp - start) / 24 / 60 / 60 / 1000);
       const gridY = locIndex + 1;
-      const originX = grid.coords.origin.x + (gridX - .5) * grid.unit;
-      const originY = grid.coords.origin.y + (gridY - .5) * grid.unit;
+      const originX = grid.origin.x + (gridX - .5) * grid.unit;
+      const originY = grid.origin.y + (gridY - .5) * grid.unit;
       const radius = grid.unit * (11 / 30);
       const startAngle = 0;
       const endAngle = 2 * Math.PI;
