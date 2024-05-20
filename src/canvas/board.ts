@@ -139,8 +139,11 @@ export function drawBoard(
   index: { x: number, y: number },
 ): BoardProperties {
   const board = computeBoardProperties(ctx.canvas, range, gridConfig, index);
-  const { width, height, labels, grid } = board;
-  ctx.clearRect(0, 0, width, height);
+  const { labels, grid } = board;
+  // Clear the canvas & apply a fill so previous paints don't show through.
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.fillStyle = getCssVar('--color-background');
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   drawGrid(ctx, grid);
   labelAxisX(ctx, grid, labels.x);
   labelAxisY(ctx, grid, labels.y);
@@ -350,14 +353,16 @@ function drawGrid(
     origin: { x: originX, y: originY },
     terminus: { x: terminusX, y: terminusY },
   } = grid;
+  // Before drawing, always save the context's state.
+  ctx.save();
 
   // Draw the grid's background.
   ctx.fillStyle = grid.fill || getCssVar('--color-background-mute', 'light-dark(#fafafa, #222222)');
-  ctx.lineWidth = grid.lineWidth || 1.5;
   ctx.fillRect(originX, originY, grid.width, grid.height);
-
+  
   // Default to green transparent gridlines.
-  ctx.strokeStyle = grid.stroke || getCssVar('--ff-c-green-transparent', 'rgba(0, 189, 126, 0.3)');
+  ctx.lineWidth = grid.lineWidth || 1.5;
+  ctx.strokeStyle = grid.stroke || 'rgba(0, 189, 126, 0.3)';
 
   // First loop through the horizontal gridlines...
   for (
@@ -390,6 +395,8 @@ function drawGrid(
     ctx.lineTo(x, terminusY);
     ctx.stroke();
   }
+  // After all drawing operations complete, restore the context's original state.
+  ctx.restore();
 }
 
 // Month format for the x-axis labels.
@@ -423,6 +430,8 @@ function labelAxisX(
   const dateBaseline = label.height - Math.floor(dateLineheight * (1 / 3));
   const dateTextMarginLeft = grid.unit * .5;
   const { origin, data: dates } = label;
+  // Before drawing, always save the context's state.
+  ctx.save();
   dates.forEach((d, i) => {
     const label = d.getDate().toString();
     const x = origin.x + i * grid.unit + dateTextMarginLeft;
@@ -432,7 +441,7 @@ function labelAxisX(
     ctx.fillText(label, x, dateBaseline);
   });
   // Draw a bounding box around both month and date labels.
-  ctx.strokeStyle = grid.stroke || getCssVar('--ff-c-green-transparent');
+  ctx.strokeStyle = grid.stroke || 'rgba(0, 189, 126, 0.3)';
   ctx.strokeRect(origin.x, 0, dates.length * grid.unit, label.height);
 
   // Add the months across the top, spread out over the date numerals.
@@ -462,6 +471,8 @@ function labelAxisX(
     ctx.textAlign = 'center';
     ctx.fillText(month.name, textX, monthBaseline);
   });
+  // After all drawing operations complete, restore the context's original state.
+  ctx.restore();
 }
 
 function labelAxisY(
@@ -469,6 +480,8 @@ function labelAxisY(
   grid: GridProperties,
   label: LabelProperties<LocationRecord>,
 ) {
+  // Before drawing, always save the context's state.
+  ctx.save();
   const { origin, data: locations } = label;
   ctx.fillStyle = getCssVar('--color-text');
   ctx.font = `${grid.unit * .65}px ${getCssVar('--ff-font-family')}`;
@@ -478,6 +491,8 @@ function labelAxisY(
     const y = origin.y + (i + 1) * grid.unit - grid.unit * .25;
     ctx.fillText(loc.name, x, y);
   });
+  // After all drawing operations complete, restore the context's original state.
+  ctx.restore();
 }
 
 function plotActions(
@@ -485,6 +500,8 @@ function plotActions(
   board: BoardProperties,
   actionRecords: ActionRecords,
 ) {
+  // Before drawing, always save the context's state.
+  ctx.save();
   const { grid, labels } = board;
   const { y: { data: locations }, x: { data: dateRange } } = labels;
   const start = dateRange.slice(0, 1)[0].valueOf();
@@ -531,4 +548,6 @@ function plotActions(
       ctx.shadowBlur = 0;
     });
   });
+  // After all drawing operations complete, restore the context's original state.
+  ctx.restore();
 }
