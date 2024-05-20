@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue';
 import useResizableCanvas from '@/composables/useResizableCanvas';
-import drawBoard from '@/canvas/board';
+import { drawBoard, translateBoard } from '@/canvas/board';
 import { actionTypes, locationRecords, randomActions } from './boardSampleData';
 import { type ActionRecords, type LocationRecord } from './boardSampleData';
 
@@ -51,7 +51,6 @@ const currentIndex: Ref<{ x: number, y: number}> = ref({ x: 0, y: 0 });
 const minMax = (mn: number, mx: number, num: number): number =>
   Math.max(mn, Math.min(mx, num));
 const scrollTo = (x: number, y: number) => {
-  const ctx = canvas.value?.getContext('2d');
   const maxGridWidth = maxWidth.value - gridConfig.yAxisWidth;
   const maxDisplayDates = Math.floor(maxGridWidth / gridConfig.unit);
   const xMaxIndex = dateRange.length - maxDisplayDates;
@@ -63,11 +62,17 @@ const scrollTo = (x: number, y: number) => {
   const xChanged = nextX !== currentIndex.value.x;
   const yChanged = nextY !== currentIndex.value.y;
   const positionChanged = xChanged || yChanged;
-  if (ctx && positionChanged) {
-    currentIndex.value.x = nextX;
-    currentIndex.value.y = nextY;
-    const range = { x: dateRange, y: locationRecords }
-    drawBoard(ctx, range, gridConfig, actionRecords.value, currentIndex.value);
+  const ctx = canvas.value?.getContext('2d');
+  if (positionChanged && ctx) {
+    const translation = {
+      from: { x: currentIndex.value.x, y: currentIndex.value.y },
+      to: { x: nextX, y: nextY },
+      afterAll() {
+        currentIndex.value.x = nextX;
+        currentIndex.value.y = nextY;
+      },
+    };
+    translateBoard(ctx, range, gridConfig, actionRecords.value, translation);
   }
 };
 

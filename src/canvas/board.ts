@@ -1,4 +1,4 @@
-import { reduce } from 'ramda';
+import { clone, reduce } from 'ramda';
 import useStyleDeclaration from '@/composables/useStyleDeclaration';
 import type { ActionRecords, LocationRecord } from '@/views/boardSampleData';
 
@@ -33,19 +33,18 @@ interface BoxCoordinates {
   origin: { x: number, y: number },
   terminus: { x: number, y: number },
 }
-interface GridProperties {
+interface BoxProperties {
+  coords: BoxCoordinates,
   width: number,
   height: number,
-  coords: BoxCoordinates,
+}
+interface GridProperties extends BoxProperties {
   unit: number,
   fill?: string,
   stroke?: string,
   lineWidth?: number,
 }
-interface LabelProperties<Data> {
-  coords: BoxCoordinates,
-  width: number,
-  height: number,
+interface LabelProperties<Data> extends BoxProperties {
   data: Data[],
 }
 interface BoardLabels<XData, YData> {
@@ -143,13 +142,13 @@ function computeBoardProperties(
 }
 
 // Draw Farm Flow's main board.
-export default function drawBoard(
+export function drawBoard(
   ctx: CanvasRenderingContext2D,
   range: RangeConfig<Date, LocationRecord>,
   gridConfig: GridConfig,
   actionRecords: ActionRecords,
   index: { x: number, y: number },
-) {
+): BoardProperties {
   const board = computeBoardProperties(ctx.canvas, range, gridConfig, index);
   const { width, height, labels, grid } = board;
   ctx.clearRect(0, 0, width, height);
@@ -157,10 +156,161 @@ export default function drawBoard(
   labelAxisX(ctx, grid, labels.x);
   labelAxisY(ctx, grid, labels.y);
   plotActions(ctx, board, actionRecords);
+  return board;
+}
+
+/**
+ * easeInOutQuad: Quadratic easing function for both entering and exiting.
+ * @param x Absolute progress ratio from 0 (start) to 1 (end). In the case of an
+ * animation, x would be the time variable, advancing linearly from the time it
+ * begins to when it ends.
+ * @returns Eased progress ratio from 0 (start) to 1 (end). In the case of an
+ * animation, the return value would be the distance traveled expressed as a
+ * fraction of the total distance it will travel.
+ * @link https://easings.net/en#easeInOutQuad
+ */
+function easeInOutQuad(x: number): number {
+  const y = x < 0.5
+    ? 2 * x * x 
+    : 1 - Math.pow(-2 * x + 2, 2) / 2;
+  return y;
+}
+
+interface TranslationParameters {
+  to: { x: number, y: number },
+  from: { x: number, y: number },
+  afterAll?: (ctx: CanvasRenderingContext2D) => void,
+  afterEach?: (ctx: CanvasRenderingContext2D) => void,
+  beforeAll?: (ctx: CanvasRenderingContext2D) => void,
+  beforeEach?: (ctx: CanvasRenderingContext2D) => void,
+}
+
+export function translateBoard(
+  ctx: CanvasRenderingContext2D,
+  range: RangeConfig<Date, LocationRecord>,
+  gridConfig: GridConfig,
+  actionRecords: ActionRecords,
+  translation: TranslationParameters,
+) {
+  // The board properties for the translation's starting and ending points.
+  const fromBoard = computeBoardProperties(ctx.canvas, range, gridConfig, translation.from);
+
+  // Compute the offscreen canvas's board dimensions, which will be larger than
+  // the main canvas b/c it must include all gridpoints from the translation's
+  // starting to its ending position. The deltas of the x and y coordinates of
+  // the index will indicate the direction and magnitude of that change...
+  const dX = translation.to.x - translation.from.x;
+  const dY = translation.to.y - translation.from.y;
+  // ...meanwhilethe width and height deltas will indicate, in absolute terms,
+  // just how much larger the offscreen canvas is compared to the main canvas.
+  const deltas = {
+    x: dX, y: dY,
+    width: ctx.canvas.width + dX * gridConfig.unit,
+    height: ctx.canvas.height + dY * gridConfig.unit,
+  };
+  // The index will always be the lowest x and y values displayed, whether the
+  // translation is going from highest to lowest, or vice versa. 
+  const index = {
+    x: Math.min(translation.to.x, translation.from.x),
+    y: Math.min(translation.to.y, translation.from.y),
+  };
+  // The properties of the board rendered offscreen to animate the translation.
+  const offscrBoard = computeBoardProperties(deltas, range, gridConfig, index);
+
+  if (typeof translation.beforeAll === 'function') translation.beforeAll(ctx);
+
+  let frame = 0;
+  let starttime: DOMHighResTimeStamp = 0;
+  const durationTotal = 1024;
+  function animate(ts: DOMHighResTimeStamp) {
+    // Set the starttime if needed and calculate how much time has passed.
+    if (starttime === 0) starttime = ts;
+    const durationCurrent = ts - starttime;
+    // Calculate the absolute progress ratio and the easing progress ratio.
+    const progress = durationCurrent / durationTotal;
+    const easing = easeInOutQuad(progress);
+
+    // Mutable variable for determining the translation & clipping coordinates.
+    let translateX = 0;
+    let translateY = 0;
+    let { width: clipW, height: clipH } = fromBoard.grid;
+    const {
+      origin: clipOrigin, terminus: clipTerminus,
+    } = clone(fromBoard.grid.coords);
+
+    // If the board is translating along the X-AXIS, adjust the x-coordinate
+    // passed to ctx.translate(x, y) and expand the coordinates of the clipping
+    // box to include the X-AXIS labels, so they will be translated too.
+    if (dX !== 0) {
+      translateX -= easing * dX * gridConfig.unit;
+      clipH = fromBoard.height;
+      clipOrigin.y = 0;
+    }
+
+    // If the board is translating along the Y-AXIS, adjust the y-coordinate
+    // passed to ctx.translate(x, y) and expand the coordinates of the clipping
+    // box to include the Y-AXIS labels, so they will be translated too.
+    if (dY !== 0) {
+      translateY -= easing * dY * gridConfig.unit;
+      clipW = fromBoard.width;
+      clipOrigin.x = 0;
+    }
+
+    //
+    if (typeof translation.beforeEach === 'function') {
+      translation.beforeEach(ctx);
+    }
+
+    // Apply a background fill, b/c most of each fill is transparent and so
+    // the gridlines and text will get smeared out otherwise.
+    ctx.fillStyle = getCssVar('--color-background');
+    ctx.fillRect(clipOrigin.x, clipOrigin.y, clipW, clipH);
+    // Then save the context prior to clipping and translating.
+    ctx.save();
+
+    // Apply a clipping mask to the grid plus whichever label(s) may have moved.
+    ctx.beginPath();
+    ctx.moveTo(clipOrigin.x, clipOrigin.y);
+    ctx.lineTo(clipTerminus.x, clipOrigin.y);
+    ctx.lineTo(clipTerminus.x, clipTerminus.y);
+    ctx.lineTo(clipOrigin.x, clipTerminus.y);
+    ctx.clip();
+
+    // Translate the board context accounting for the amount the grid has moved
+    // along the x and/or y axes, as well as eased progress of the animation,
+    // which has already been factored into the translation coordinates.
+    ctx.translate(translateX, translateY);
+    if (dX !== 0) labelAxisX(ctx, offscrBoard.grid, offscrBoard.labels.x);
+    if (dY !== 0) labelAxisY(ctx, offscrBoard.grid, offscrBoard.labels.y);
+    drawGrid(ctx, offscrBoard.grid);
+    plotActions(ctx, offscrBoard, actionRecords);
+
+    // Restore the context to its prior state prior before the clipping and
+    // translating operations, then just to be safe, transform the context back
+    // to identity matrix while we're at it too.
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.restore();
+
+    if (progress < 1) {
+    // If the animation hasn't finished, call afterEach() and resume the loop.
+      if (typeof translation.afterEach === 'function') translation.afterEach(ctx);
+      frame = window.requestAnimationFrame(animate);
+    } else {
+    // Otherwise run the necessary cleanup, render the board at its final
+    // coordinates, and invoke the afterAll() translation callback.
+      window.cancelAnimationFrame(frame);
+      ctx.restore();
+      drawBoard(ctx, range, gridConfig, actionRecords, translation.to);
+      if (typeof translation.afterAll === 'function') translation.afterAll(ctx);
+    }
+  }
+
+  // Initialize the animation loop.
+  frame = window.requestAnimationFrame(animate);
 }
 
 function drawGrid(
-  ctx: CanvasRenderingContext2D,
+  ctx: CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D,
   grid: GridProperties,
 ) {
   // The x + y coordinates where each line will start (origin) & end (terminus).
@@ -231,7 +381,7 @@ const reduceDatesToMonths = reduce((
 }, []);
 
 function labelAxisX(
-  ctx: CanvasRenderingContext2D,
+  ctx: CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D,
   grid: GridProperties,
   label: LabelProperties<Date>,
 ) {
@@ -283,7 +433,7 @@ function labelAxisX(
 }
 
 function labelAxisY(
-  ctx: CanvasRenderingContext2D,
+  ctx: CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D,
   grid: GridProperties,
   label: LabelProperties<LocationRecord>,
 ) {
@@ -299,7 +449,7 @@ function labelAxisY(
 }
 
 function plotActions(
-  ctx: CanvasRenderingContext2D,
+  ctx: CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D,
   board: BoardProperties,
   actionRecords: ActionRecords,
 ) {
