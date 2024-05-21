@@ -21,7 +21,7 @@ export const locationRecords: LocationRecord[] = [
   { id: 18, name: 'Lilly 4' },
 ];
 
-type ActionType = { id: number, name: string, color: string };
+export type ActionType = { id: number, name: string, color: string };
 type ActionTypes = ActionType[];
 export const actionTypes: ActionTypes = [
   { id: 0, name: 'Tillage', color: 'royalblue' },
