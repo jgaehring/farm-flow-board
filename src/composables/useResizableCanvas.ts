@@ -6,7 +6,7 @@ declare type TargetCanvas = string|MaybeRefOrGetter<MaybeCanvas>;
 declare type ResizeCanvasCB = (width: number, height: number) => void;
 
 export default function useResizableCanvas(target: TargetCanvas, cb: ResizeCanvasCB) {
-  const canvas: Ref<MaybeCanvas> = isRef(target) ? target : ref(null);
+  const canvas = isRef(target) ? target : ref<MaybeCanvas>(null);
 
   if (typeof target === 'string') {
     onMounted(() => {

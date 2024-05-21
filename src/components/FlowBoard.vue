@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, type Ref } from 'vue';
+import { ref } from 'vue';
 import useResizableCanvas from '@/composables/useResizableCanvas';
 import { drawBoard, translateBoard } from '@/canvas/board';
 import { actionTypes, locationRecords, randomActions } from '../data/boardSampleData';
@@ -10,9 +10,9 @@ import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
 import IconChevronUp from '@/assets/radix-icons/chevron-up.svg?component';
 
 // Refs for canvas DOM element.
-const canvas: Ref<HTMLCanvasElement | null> = ref(null);
-const maxWidth: Ref<number> = ref(300); // <-- default width for any <canvas> element.
-const maxHeight: Ref<number> = ref(150); // <-- default height for any <canvas> element.
+const canvas = ref<HTMLCanvasElement | null>(null);
+const maxWidth = ref<number>(300); // <-- default width for any <canvas> element.
+const maxHeight = ref<number>(150); // <-- default height for any <canvas> element.
 
 // Given a Date object, return a new Date object set 24 hours later.
 const plusDay = (d: Date) => new Date(d.valueOf() + 24 * 60 * 60 * 1000);
@@ -30,7 +30,7 @@ function createDateRange(start: Date, end: Date, prevRange = [] as Date[]) {
 // each location sorted by date. The locations will be created first, with empty
 // dates arrays, and generateActions will populate the actions by date after
 // randomly generating them according to the possible locations and dates.
-const actionRecords: Ref<ActionRecords> = ref([]);
+const actionRecords = ref<ActionRecords>([]);
 locationRecords.forEach(({ id, name }) => {
   actionRecords.value[id] = { id, name, dates: [] };
 });
@@ -59,7 +59,7 @@ const gridConfig = {
 // the index of the date in the dateRange array that will occupy the first
 // column space. The y coordinate corresponds to the index of the location in
 // locationRecords array that will occupy the first row space.
-const currentIndex: Ref<{ x: number, y: number}> = ref({ x: 0, y: 0 });
+const currentIndex = ref<{ x: number, y: number}>({ x: 0, y: 0 });
 
 const maxIndex = (maxLength: number, axis: 'x'|'y') => {
   const axisLength = axis === 'x' ? gridConfig.yAxisWidth : gridConfig.xAxisHeight;
