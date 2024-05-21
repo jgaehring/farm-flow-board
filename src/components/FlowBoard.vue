@@ -202,6 +202,15 @@ figure {
   overflow: hidden;
 }
 
+canvas {
+  /**
+  * MUST ALWAYS BE DISPLAY BLOCK!
+  * Otherwise useResizeObserver may create an infinite loop if its parent node
+  * resizes or if any of ancestors resizes.
+  */
+  display: block;
+}
+
 .board-scroll-btn {
   position: absolute;
   background-color: var(--ff-c-white-transparent-1);
