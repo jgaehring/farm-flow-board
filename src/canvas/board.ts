@@ -19,10 +19,10 @@ function fitToGrid<T>(
 ): T[] {
   const gridLength = axisLength - offset;
   const gridElements = Math.floor(gridLength / unit);
-  let startIndex = index || 0;
+  let startIndex = typeof index === 'number' ? Math.max(index, 0) : 0;
   let stopIndex = startIndex + gridElements;
   if (stopIndex >= elements.length) {
-    startIndex = elements.length - gridElements;
+    startIndex = Math.max(elements.length - gridElements, 0);
     stopIndex = elements.length;
   }
   const truncatedElements = elements.slice(startIndex, stopIndex);
