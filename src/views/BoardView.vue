@@ -160,28 +160,28 @@ useResizableCanvas(canvas, (width, height) => {
         </canvas>
         <button
           type="button"
-          :disabled="currentIndex.x <= 0"
+          v-if="currentIndex.x > 0"
           class="board-scroll-btn scroll-left"
           @click="scrollTo(currentIndex.x - 7, currentIndex.y)">
           <IconChevronLeft/>
         </button>
         <button
           type="button"
-          :disabled="currentIndex.y <= 0"
+          v-if="currentIndex.y > 0"
           class="board-scroll-btn scroll-up"
           @click="scrollTo(currentIndex.x, currentIndex.y - 3)">
           <IconChevronUp/>
         </button>
         <button
           type="button"
-          :disabled="currentIndex.x >= maxIndex(maxHeight, 'y')"
+          v-if="currentIndex.x < maxIndex(maxHeight, 'y')"
           class="board-scroll-btn scroll-down"
           @click="scrollTo(currentIndex.x, currentIndex.y + 3)">
           <IconChevronDown/>
         </button>
         <button
           type="button"
-          :disabled="currentIndex.x >= maxIndex(maxWidth, 'x')"
+          v-if="currentIndex.x < maxIndex(maxWidth, 'x')"
           class="board-scroll-btn scroll-right"
           @click="scrollTo(currentIndex.x + 7, currentIndex.y)">
           <IconChevronRight/>
