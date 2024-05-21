@@ -1,6 +1,6 @@
 import { clone, reduce } from 'ramda';
 import useStyleDeclaration from '@/composables/useStyleDeclaration';
-import type { ActionRecords, LocationRecord } from '@/views/boardSampleData';
+import type { ActionRecords, LocationRecord } from '@/data/boardSampleData';
 
 // Get custom CSS properties (aka, variables) from stylesheet.
 const rootStyles = useStyleDeclaration(':root');
