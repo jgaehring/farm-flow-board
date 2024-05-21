@@ -8,7 +8,9 @@ import FlowBoard from '@/components/FlowBoard.vue';
       <h1>Farm Flow</h1>
     </header>
     <main>
-      <FlowBoard/>
+      <section class="board">
+        <FlowBoard/>
+      </section>
     </main>
   </Teleport>
 </template>
@@ -25,7 +27,7 @@ h1 {
   color: hsla(160, 100%, 37%, .8);
 }
 
-main {
+section.board {
   display: grid;
   place-items: center;
   min-height: calc(100vh - 3rem);
