@@ -1,12 +1,7 @@
 import { clone, mergeDeepLeft, reduce } from 'ramda';
-import useStyleDeclaration from '@/composables/useStyleDeclaration';
+import { getCssVar } from '@/composables/useStyleDeclaration';
 import type { ActionRecords, ActionType, LocationRecord } from '@/data/boardSampleData';
 import { sameDate } from '@/utils/date';
-
-// Get custom CSS properties (aka, variables) from stylesheet.
-const rootStyles = useStyleDeclaration(':root');
-const getCssVar = (v: string, def?: string) =>
-  rootStyles.value?.getPropertyValue(v) || def || 'inherit';
 
 interface Coordinates { x: number, y: number }
 interface BoxCoordinates { origin: Coordinates, terminus: Coordinates }
