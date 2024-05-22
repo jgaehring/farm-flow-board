@@ -78,16 +78,14 @@ provide(actionTypesKey, actionTypes);
 </script>
 
 <template>
-  <Teleport to="body">
-    <header>
-      <h1>Farm Flow</h1>
-    </header>
-    <main>
-      <section class="board">
-        <FlowBoard/>
-      </section>
-    </main>
-  </Teleport>
+  <header>
+    <h1>Farm Flow</h1>
+  </header>
+  <main>
+    <section class="board">
+      <FlowBoard/>
+    </section>
+  </main>
 </template>
 
 <style scoped>
