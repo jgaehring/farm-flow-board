@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@vueuse/core": "^10.9.0",
+    "radix-vue": "^1.8.1",
     "ramda": "^0.30.0",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
