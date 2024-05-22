@@ -2,8 +2,8 @@
 import { inject, ref } from 'vue';
 import useResizableCanvas from '@/composables/useResizableCanvas';
 import { drawBoard, translateBoard } from '@/canvas/board';
-import { type ActionType, type ActionRecords, type LocationRecord } from '@/data/boardSampleData';
-import { actionRecordsKey, actionTypesKey, dateRangeKey, locationRecordsKey } from '@/data/providerKeys';
+import { type ActionRecords, type LocationRecord } from '@/data/boardSampleData';
+import { actionRecordsKey, dateRangeKey, locationRecordsKey } from '@/data/providerKeys';
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
 import IconChevronLeft from '@/assets/radix-icons/chevron-left.svg?component';
 import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
@@ -17,7 +17,6 @@ const maxHeight = ref<number>(150); // <-- default height for any <canvas> eleme
 // The collection of all field actions, first sorted by location, then within
 // each location sorted by date.
 const actionRecords = inject<ActionRecords>(actionRecordsKey) || [];
-const actionTypes = inject<ActionType[]>(actionTypesKey) || [];
 const locationRecords = inject<LocationRecord[]>(locationRecordsKey) || [];
 
 // Array of Date objects for every date within the specified range.
@@ -125,14 +124,6 @@ useResizableCanvas(canvas, (width, height) => {
       <IconChevronRight/>
     </button>
   </figure>
-  <figcaption>
-    <span v-for="(action, i) in actionTypes" :key="i">
-      <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="12" r="12" :fill="action.color"/>
-      </svg>
-      &nbsp;{{action.name}}
-    </span>
-  </figcaption>
 </template>
 
 <style scoped>
@@ -239,27 +230,5 @@ figure:hover .board-scroll-btn.scroll-left {
 
 .board-scroll-btn:disabled svg {
   stroke: var(--color-border);
-}
-
-figcaption {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
-  align-items: flex-start;
-  height: 100%;
-  width: 100%;
-  padding: 0 60px 0 240px;
-}
-
-figcaption span {
-  flex: 2 1 20%;
-  font-size: 1.5rem;
-  text-align: center;
-}
-
-figcaption svg {
-  width: 24px;
-  height: 24px;
-  vertical-align: middle;
 }
 </style>

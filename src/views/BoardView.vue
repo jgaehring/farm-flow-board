@@ -4,6 +4,7 @@ import { actionRecordsKey, locationRecordsKey, dateRangeKey, actionTypesKey } fr
 import { actionTypes, locationRecords, randomActions } from '@/data/boardSampleData';
 import { type ActionRecords, type LocationRecord } from '@/data/boardSampleData';
 import FlowBoard from '@/components/FlowBoard.vue';
+import FlowBoardActions from '@/components/FlowBoardActions.vue';
 
 // The collection of all field actions, first sorted by location, then within
 // each location sorted by date. The locations will be created first, with empty
@@ -84,6 +85,7 @@ provide(actionTypesKey, actionTypes);
   <main>
     <section class="board">
       <FlowBoard/>
+      <FlowBoardActions/>
     </section>
   </main>
 </template>
