@@ -5,6 +5,7 @@ import { actionTypes, locationRecords, randomActions } from '@/data/boardSampleD
 import { type ActionRecords, type LocationRecord } from '@/data/boardSampleData';
 import FlowBoard from '@/components/FlowBoard.vue';
 import FlowBoardActions from '@/components/FlowBoardActions.vue';
+import { createDateRange, sameDate } from '@/utils/date';
 
 // The collection of all field actions, first sorted by location, then within
 // each location sorted by date. The locations will be created first, with empty
@@ -15,29 +16,11 @@ locationRecords.forEach(({ id, name }) => {
   actionRecords.value[id] = { id, name, dates: [] };
 });
 
-// Given a Date object, return a new Date object set 24 hours later.
-const plusDay = (d: Date) => new Date(d.valueOf() + 24 * 60 * 60 * 1000);
-// Given a starting Date object and an ending Date object, return an array of
-// Date objects spanning that date range, including the start and end dates.
-function createDateRange(start: Date, end: Date, prevRange = [] as Date[]) {
-  if (start.valueOf() >= end.valueOf()) return [...prevRange, end];
-  const nextRange = [...prevRange, start];
-  const nextStart = plusDay(start);
-  if (nextStart.valueOf() >= end.valueOf()) return [...nextRange, end];
-  return createDateRange(nextStart, end, nextRange);
-}
-
 // Start and end dates used to populate the x-axis.
 const startDate = new Date(2024, 2, 28);
 const endDate = new Date(2024, 9);
 // Array of Date objects for every date within the specified range.
 const dateRange = createDateRange(startDate, endDate);
-
-// Find out if two dates are the same, w/o regard to hours, minutes or smaller units.
-const sameDate = (d1: Date, d2: Date) =>
-  d1.getFullYear() === d2.getFullYear()
-  && d1.getMonth() === d2.getMonth()
-  && d1.getDay() === d2.getDay();
 
 function generateActions(
   count: number,
