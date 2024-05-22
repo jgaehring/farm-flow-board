@@ -1,4 +1,4 @@
-import { clone, reduce } from 'ramda';
+import { clone, mergeDeepLeft, reduce } from 'ramda';
 import useStyleDeclaration from '@/composables/useStyleDeclaration';
 import type { ActionRecords, ActionType, LocationRecord } from '@/data/boardSampleData';
 import { sameDate } from '@/utils/date';
@@ -7,6 +7,88 @@ import { sameDate } from '@/utils/date';
 const rootStyles = useStyleDeclaration(':root');
 const getCssVar = (v: string, def?: string) =>
   rootStyles.value?.getPropertyValue(v) || def || 'inherit';
+
+interface Coordinates { x: number, y: number }
+interface BoxCoordinates { origin: Coordinates, terminus: Coordinates }
+interface BoxSize { width: number, height: number }
+type BoxProperties = BoxCoordinates & BoxSize;
+interface GridProperties extends BoxProperties {
+  columns: number,
+  rows: number,
+  unit: number,
+  fill: string,
+  stroke: string,
+  lineWidth: number,
+}
+
+interface LabelProperties<V> extends BoxProperties {
+  values: V[],
+  color: string,
+  fontFamily: string,
+}
+interface BoardLabels<XData, YData> {
+  x: LabelProperties<XData>,
+  y: LabelProperties<YData>,
+}
+interface BoardProperties {
+  width: number,
+  height: number,
+  labels: BoardLabels<Date, LocationRecord>,
+  grid: GridProperties,
+  index: { x: number, y: number },
+  style: {
+    fill: string,
+    stroke: string,
+  },
+}
+interface RangeConfig<XData, YData> {
+  x: XData[],
+  y: YData[],
+}
+interface GridOptions {
+  unit?: number,
+  yAxisWidth?: number,
+  xAxisHeight?: number,
+  lineWidth?: number,
+  fill?: string,
+  stroke?: string,
+}
+interface FontOptions {
+  color?: string,
+  fontFamily?: string,
+}
+interface LabelOptions {
+  yAxisWidth?: number,
+  xAxisHeight?: number,
+  font?: FontOptions,
+}
+interface StyleOptions {
+  fill?: string,
+  stroke?: string,
+  grid?: GridOptions,
+  labels?: LabelOptions,
+}
+
+interface StyleProperties {
+  fill: string,
+  stroke: string,
+  font: {
+    color: string,
+    fontFamily: string,
+  }
+  grid: {
+    unit: number,
+    yAxisWidth: number,
+    xAxisHeight: number,
+    lineWidth: number,
+    fill: string,
+    stroke: string,
+  },
+  labels: {
+    yAxisWidth: number,
+    xAxisHeight: number,
+  },
+}
 
 // Based on the length of one of the canvas axes, the margins along that axis,
 // and an array of elements to display, this function returns a truncated
@@ -30,41 +112,26 @@ function fitToGrid<T>(
   return truncatedElements;
 }
 
-interface Coordinates { x: number, y: number }
-interface BoxCoordinates { origin: Coordinates, terminus: Coordinates }
-interface BoxSize { width: number, height: number }
-type BoxProperties = BoxCoordinates & BoxSize;
-interface GridProperties extends BoxProperties {
-  unit: number,
-  fill?: string,
-  stroke?: string,
-  lineWidth?: number,
-}
-
-interface LabelProperties<Data> extends BoxProperties {
-  data: Data[],
-}
-interface BoardLabels<XData, YData> {
-  x: LabelProperties<XData>,
-  y: LabelProperties<YData>,
-}
-interface BoardProperties {
-  width: number,
-  height: number,
-  labels: BoardLabels<Date, LocationRecord>,
-  grid: GridProperties,
-  index: { x: number, y: number },
-}
-interface RangeConfig<XData, YData> {
-  x: XData[],
-  y: YData[],
-}
-interface GridConfig {
-  unit: number,
-  lineWidth: number,
-  yAxisWidth: number,
-  xAxisHeight: number,
-}
+// Fallbacks for Style Options
+type applyStyleFallbacks = (style: StyleOptions) => StyleProperties;
+const applyStyleFallbacks = mergeDeepLeft({
+  fill: getCssVar('--color-background'),
+  stroke: 'rgba(0, 189, 126, 0.3)',
+  font: {
+    color: getCssVar('--color-text'),
+    fontFamily: getCssVar('--ff-font-family'),
+  },
+  labels: {
+    yAxisWidth: 240,
+    xAxisHeight: 60,
+  },
+  grid: {
+    unit: 40,
+    lineWidth: 1.5,
+    fill: getCssVar('--color-background-mute', '#282828'),
+    stroke: 'rgba(0, 189, 126, 0.3)',
+  },
+});
 
 // Compute the board's dimensions and the range of values that can be displayed.
 // Adjust the width and height to fit as many columns and rows as possible
@@ -73,13 +140,11 @@ interface GridConfig {
 function computeBoardProperties(
   canvas: { width: number, height: number },
   range: RangeConfig<Date, LocationRecord>,
-  grid: GridConfig,
   index: { x: number, y: number },
+  style?: StyleOptions,
 ): BoardProperties {
-  const { unit, lineWidth } = grid;
-  const { yAxisWidth, xAxisHeight } = grid;
-  // const xOffset = grid.labels.yAxisWidth;
-  // const yOffset = grid.labels.xAxisHeight;
+  const sureStyle = applyStyleFallbacks(style || {});
+  const { labels: { yAxisWidth, xAxisHeight }, grid } = sureStyle;
   const dates = fitToGrid(
     canvas.width,
     yAxisWidth,
@@ -96,8 +161,8 @@ function computeBoardProperties(
   );
   const columns = dates.length;
   const rows = locations.length;
-  const gridWidth = columns * unit;
-  const gridHeight = rows * unit;
+  const gridWidth = columns * grid.unit;
+  const gridHeight = rows * grid.unit;
   const boardWidth = yAxisWidth + gridWidth;
   const boardHeight = xAxisHeight + gridHeight;
   const labels: BoardLabels<Date, LocationRecord> = {
@@ -106,29 +171,41 @@ function computeBoardProperties(
       terminus: { x: boardWidth, y: xAxisHeight },
       width: gridWidth,
       height: xAxisHeight,
-      data: dates,
+      values: dates,
+      color: sureStyle.font.color,
+      fontFamily: sureStyle.font.fontFamily,
     },
     y: {
       origin: { x: 0, y: xAxisHeight },
       terminus: { x: yAxisWidth, y: boardHeight },
       width: yAxisWidth,
       height: gridHeight,
-      data: locations,
+      values: locations,
+      color: sureStyle.font.color,
+      fontFamily: sureStyle.font.fontFamily,
     },
   }
   return {
     width: boardWidth,
     height: boardHeight,
-    grid: { 
+    grid: {
       width: gridWidth,
       height: gridHeight,
+      unit: grid.unit,
       origin: { x: yAxisWidth, y: xAxisHeight },
       terminus: { x: boardWidth, y: boardHeight },
-      unit,
-      lineWidth,
+      rows,
+      columns,
+      lineWidth: grid.lineWidth,
+      fill: grid.fill,
+      stroke: grid.stroke,
     },
     labels,
     index,
+    style: {
+      fill: sureStyle.fill,
+      stroke: sureStyle.stroke,
+    },
   };
 }
 
@@ -136,15 +213,15 @@ function computeBoardProperties(
 export function drawBoard(
   ctx: CanvasRenderingContext2D,
   range: RangeConfig<Date, LocationRecord>,
-  gridConfig: GridConfig,
   actionRecords: ActionRecords,
   index: { x: number, y: number },
+  style: StyleOptions,
 ): BoardProperties {
-  const board = computeBoardProperties(ctx.canvas, range, gridConfig, index);
+  const board = computeBoardProperties(ctx.canvas, range, index, style);
   const { labels, grid } = board;
   // Clear the canvas & apply a fill so previous paints don't show through.
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  ctx.fillStyle = getCssVar('--color-background');
+  ctx.fillStyle = board.style.fill;
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   drawGrid(ctx, grid);
   labelAxisX(ctx, grid, labels.x);
@@ -169,7 +246,6 @@ function easeInOutQuad(x: number): number {
     : 1 - Math.pow(-2 * x + 2, 2) / 2;
   return y;
 }
-
 
 type translationAllCallback = (
   ctx: CanvasRenderingContext2D,
@@ -199,12 +275,12 @@ interface TranslationParameters {
 export function translateBoard(
   ctx: CanvasRenderingContext2D,
   range: RangeConfig<Date, LocationRecord>,
-  gridConfig: GridConfig,
   actionRecords: ActionRecords,
   translation: TranslationParameters,
+  style: StyleOptions,
 ) {
   // The board properties for the translation's starting and ending points.
-  const fromBoard = computeBoardProperties(ctx.canvas, range, gridConfig, translation.from);
+  const fromBoard = computeBoardProperties(ctx.canvas, range, translation.from, style);
 
   // Compute the offscreen canvas's board dimensions, which will be larger than
   // the main canvas b/c it must include all gridpoints from the translation's
@@ -216,8 +292,8 @@ export function translateBoard(
   // just how much larger the offscreen canvas is compared to the main canvas.
   const deltas = {
     x: dX, y: dY,
-    width: dX * gridConfig.unit,
-    height: dY * gridConfig.unit,
+    width: dX * fromBoard.grid.unit,
+    height: dY * fromBoard.grid.unit,
   };
   const canvasDeltas = {
     width: ctx.canvas.width + Math.abs(deltas.width),
@@ -233,7 +309,7 @@ export function translateBoard(
     y: Math.min(translation.to.y, translation.from.y),
   };
   // The properties of the board rendered while animating the translation.
-  const transBoard = computeBoardProperties(canvasDeltas, range, gridConfig, index);
+  const transBoard = computeBoardProperties(canvasDeltas, range, index, style);
 
   // Invoke the beforeAll() callback now that the deltas and board dimensions
   // have been calculated, but before the animation starts.
@@ -295,7 +371,7 @@ export function translateBoard(
 
     // Apply a background fill, b/c most of each fill is transparent and so
     // the gridlines and text will get smeared out otherwise.
-    ctx.fillStyle = getCssVar('--color-background');
+    ctx.fillStyle = fromBoard.style.fill;
     ctx.fillRect(clipOrigin.x, clipOrigin.y, clipW, clipH);
     // Then save the context prior to clipping and translating.
     ctx.save();
@@ -335,7 +411,7 @@ export function translateBoard(
     // coordinates, and invoke the afterAll() translation callback.
       window.cancelAnimationFrame(frame);
       ctx.restore();
-      drawBoard(ctx, range, gridConfig, actionRecords, translation.to);
+      drawBoard(ctx, range, actionRecords, translation.to, style);
       if (typeof translation.afterAll === 'function') {
         translation.afterAll(ctx, transBoard, deltas);
       }
@@ -358,13 +434,11 @@ function drawGrid(
   // Before drawing, always save the context's state.
   ctx.save();
 
-  // Draw the grid's background.
-  ctx.fillStyle = grid.fill || getCssVar('--color-background-mute', 'light-dark(#fafafa, #222222)');
+  // Draw the grid's background & gridlines.
+  ctx.fillStyle = grid.fill;
   ctx.fillRect(originX, originY, grid.width, grid.height);
-  
-  // Default to green transparent gridlines.
-  ctx.lineWidth = grid.lineWidth || 1.5;
-  ctx.strokeStyle = grid.stroke || 'rgba(0, 189, 126, 0.3)';
+  ctx.lineWidth = grid.lineWidth;
+  ctx.strokeStyle = grid.stroke;
 
   // First loop through the horizontal gridlines...
   for (
@@ -431,19 +505,19 @@ function labelAxisX(
   const dateFontSize = Math.floor(dateLineheight * (5 / 9));
   const dateBaseline = label.height - Math.floor(dateLineheight * (1 / 3));
   const dateTextMarginLeft = grid.unit * .5;
-  const { origin, data: dates } = label;
+  const { origin, values: dates } = label;
   // Before drawing, always save the context's state.
   ctx.save();
   dates.forEach((d, i) => {
-    const label = d.getDate().toString();
+    const text = d.getDate().toString();
     const x = origin.x + i * grid.unit + dateTextMarginLeft;
-    ctx.fillStyle = getCssVar('--color-text');
-    ctx.font = `${dateFontSize}px ${getCssVar('--ff-font-family')}`;
+    ctx.fillStyle = label.color;
+    ctx.font = `${dateFontSize}px ${label.fontFamily}`;
     ctx.textAlign = 'center';
-    ctx.fillText(label, x, dateBaseline);
+    ctx.fillText(text, x, dateBaseline);
   });
   // Draw a bounding box around both month and date labels.
-  ctx.strokeStyle = grid.stroke || 'rgba(0, 189, 126, 0.3)';
+  ctx.strokeStyle = grid.stroke;
   ctx.strokeRect(origin.x, 0, dates.length * grid.unit, label.height);
 
   // Add the months across the top, spread out over the date numerals.
@@ -468,8 +542,8 @@ function labelAxisX(
       ctx.stroke();
     }
     const textX = bgX + .5 * width;
-    ctx.fillStyle = getCssVar('--color-text');
-    ctx.font = `${monthFontSize}px ${getCssVar('--ff-font-family')}`;
+    ctx.fillStyle = label.color;
+    ctx.font = `${monthFontSize}px ${label.fontFamily}`;
     ctx.textAlign = 'center';
     ctx.fillText(month.name, textX, monthBaseline);
   });
@@ -484,9 +558,9 @@ function labelAxisY(
 ) {
   // Before drawing, always save the context's state.
   ctx.save();
-  const { origin, data: locations } = label;
-  ctx.fillStyle = getCssVar('--color-text');
-  ctx.font = `${grid.unit * .65}px ${getCssVar('--ff-font-family')}`;
+  const { origin, values: locations } = label;
+  ctx.fillStyle = label.color;
+  ctx.font = `${grid.unit * .65}px ${label.fontFamily}`;
   ctx.textAlign = 'end';
   const x = label.width - 6;
   locations.forEach((loc, i) => {
@@ -503,8 +577,8 @@ function plotActions (
   actionRecords: ActionRecords,
 ) {
   const { grid, labels: { x, y } } = board;
-  y.data.forEach((location, indexY) => {
-    plotActionsByLocation(ctx, grid, x.data, actionRecords, location, indexY);
+  y.values.forEach((location, indexY) => {
+    plotActionsByLocation(ctx, grid, x.values, actionRecords, location, indexY);
   });
 }
 

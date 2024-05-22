@@ -29,11 +29,15 @@ const range = {
 };
 
 // Constants for laying out the grid.
-const gridConfig = {
-  unit: 40,
-  lineWidth: 1.5,
-  yAxisWidth: 240,
-  xAxisHeight: 60,
+const style = {
+  grid: {
+    unit: 40,
+    lineWidth: 1.5,
+  },
+  labels: {
+    yAxisWidth: 240,
+    xAxisHeight: 60,
+  },
 };
 
 // The position of the board along x and y axes. The x coordinate corresponds to
@@ -43,10 +47,10 @@ const gridConfig = {
 const currentIndex = ref<{ x: number, y: number}>({ x: 0, y: 0 });
 
 const maxIndex = (maxLength: number, axis: 'x'|'y') => {
-  const axisLength = axis === 'x' ? gridConfig.yAxisWidth : gridConfig.xAxisHeight;
+  const axisLength = axis === 'x' ? style.labels.yAxisWidth : style.labels.xAxisHeight;
   const rangeLength = axis === 'x' ? dateRange.length : locationRecords.length;
   const maxGridLength = maxLength - axisLength;
-  const maxDisplayDates = Math.floor(maxGridLength / gridConfig.unit);
+  const maxDisplayDates = Math.floor(maxGridLength / style.grid.unit);
   return rangeLength - maxDisplayDates;
 };
 const minMax = (mn: number, mx: number, num: number): number =>
@@ -69,7 +73,7 @@ const scrollTo = (x: number, y: number) => {
         currentIndex.value.y = nextY;
       },
     };
-    translateBoard(ctx, range, gridConfig, actionRecords, translation);
+    translateBoard(ctx, range, actionRecords, translation, style);
   }
 };
 
@@ -85,7 +89,7 @@ useResizableCanvas(canvas, (width, height) => {
     // Reset reactive canvas properties, clear the canvas, and redraw the board.
     maxWidth.value = width;
     maxHeight.value = height;
-    drawBoard(ctx, range, gridConfig, actionRecords, currentIndex.value);
+    drawBoard(ctx, range, actionRecords, currentIndex.value, style);
   }
 });
 </script>
