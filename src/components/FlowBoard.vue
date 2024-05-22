@@ -129,8 +129,8 @@ useResizableCanvas(canvas, (width, height) => {
 <style scoped>
 figure {
   position: relative;
-  width: calc(100% - 2rem);
-  height: calc(100% - 3rem);
+  width: 100%;
+  height: 100%;
   /** The canvas will resize, but not instantly. Setting overflow to hidden
     * prevents a flash resize of the figure.
     */

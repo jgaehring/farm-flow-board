@@ -79,33 +79,44 @@ provide(actionTypesKey, actionTypes);
 </script>
 
 <template>
-  <header>
-    <h1>Farm Flow</h1>
-  </header>
-  <main>
-    <section class="board">
+  <div class="layout">
+    <header>
+      <h1>Farm Flow</h1>
+    </header>
+    <main>
       <FlowBoard/>
+    </main>
+    <footer>
       <FlowBoardActions/>
-    </section>
-  </main>
+    </footer>
+  </div>
 </template>
 
 <style scoped>
+.layout {
+  display: flex;
+  flex-direction: column;
+  width: auto;
+  height: 100%;
+}
+
 header {
+  flex: 0 1 6rem;
   line-height: 1.5;
-  height: 3rem;
-  padding: .875rem 60px .875rem 240px;
-  text-align: center;
+  padding: 1.5rem 3rem 1.5rem calc(3rem + 240px);
 }
 
 h1 {
   color: hsla(160, 100%, 37%, .8);
 }
 
-section.board {
-  display: grid;
-  place-items: center;
-  min-height: calc(100vh - 3rem);
-  margin: auto;
+main {
+  flex: 4 1 calc(100vh - 12rem);
+  width: 100%;
+  padding: 0 3rem;
+}
+
+footer {
+  flex: 1 1 6rem;
 }
 </style>
