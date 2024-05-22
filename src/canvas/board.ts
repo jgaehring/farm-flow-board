@@ -1,6 +1,7 @@
 import { clone, reduce } from 'ramda';
 import useStyleDeclaration from '@/composables/useStyleDeclaration';
-import type { ActionRecords, LocationRecord } from '@/data/boardSampleData';
+import type { ActionRecords, ActionType, LocationRecord } from '@/data/boardSampleData';
+import { sameDate } from '@/utils/date';
 
 // Get custom CSS properties (aka, variables) from stylesheet.
 const rootStyles = useStyleDeclaration(':root');
@@ -39,6 +40,7 @@ interface GridProperties extends BoxProperties {
   stroke?: string,
   lineWidth?: number,
 }
+
 interface LabelProperties<Data> extends BoxProperties {
   data: Data[],
 }
@@ -495,59 +497,65 @@ function labelAxisY(
   ctx.restore();
 }
 
-function plotActions(
+function plotActions (
   ctx: CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D,
   board: BoardProperties,
   actionRecords: ActionRecords,
 ) {
-  // Before drawing, always save the context's state.
-  ctx.save();
-  const { grid, labels } = board;
-  const { y: { data: locations }, x: { data: dateRange } } = labels;
-  const start = dateRange.slice(0, 1)[0].valueOf();
-  const end = dateRange.slice(-1)[0].valueOf();
-  locations.reduce((actions, loc) => {
-    // Map the location to the actions records assigned to it, which are already
-    // grouped by location, then filter the dates based on the current date
-    // range. If no actions exist for that location or those dates, just provide
-    // and empty array for the dates.
-    const dates = actionRecords
-      .find(aByLoc => aByLoc.id === loc.id)?.dates
-      .filter((aByDate) => {
-        const timestamp = aByDate.date.valueOf();
-        const dateIsDisplayed = timestamp >= start && timestamp <= end;
-        return dateIsDisplayed;
-      }) || [];
-    // Retain the location's name & id, then concat it to the list w/ the dates.
-    const { id, name } = loc;
-    return [...actions, { id, name, dates }];
-  }, [] as ActionRecords).forEach((actionsByLoc, locIndex) => {
-    actionsByLoc.dates.forEach(({ actions, date }) => {
-      const timestamp = date.valueOf();
-      const gridX = 1 + Math.floor((timestamp - start) / 24 / 60 / 60 / 1000);
-      const gridY = locIndex + 1;
-      const originX = grid.origin.x + (gridX - .5) * grid.unit;
-      const originY = grid.origin.y + (gridY - .5) * grid.unit;
-      const radius = grid.unit * (11 / 30);
-      const startAngle = 0;
-      const endAngle = 2 * Math.PI;
-      ctx.shadowColor = '#181818';
-      ctx.shadowBlur = 6;
-      ctx.shadowOffsetY = 3;
-      ctx.shadowOffsetX = -3;
-      actions.forEach((a, i) => {
-        const spaceBetweenDots = grid.unit * .2;
-        const offsetX = (2 * i + 1 - actions.length) * (spaceBetweenDots / 2);
-        ctx.fillStyle = a.color || 'tomato';
-        ctx.beginPath();
-        ctx.arc(originX + offsetX, originY, radius, startAngle, endAngle);
-        ctx.fill();
-      });
-      ctx.shadowColor = '#181818';
-      ctx.shadowBlur = 0;
-      ctx.shadowBlur = 0;
-    });
+  const { grid, labels: { x, y } } = board;
+  y.data.forEach((location, indexY) => {
+    plotActionsByLocation(ctx, grid, x.data, actionRecords, location, indexY);
   });
-  // After all drawing operations complete, restore the context's original state.
-  ctx.restore();
+}
+
+function plotActionsByLocation(
+  ctx: CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D,
+  grid: GridProperties,
+  dateSeq: Date[],
+  actionRecords: ActionRecords,
+  location: LocationRecord,
+  indexY: number,
+) {
+  const records = actionRecords.find(loc => loc.id === location.id)?.dates || [];
+  dateSeq.forEach((date, indexX) => {
+    const rec = records.find(r => sameDate(r.date, date));
+    if (rec) plotActionsByDate(ctx, grid, rec.actions, indexX, indexY);
+  });
+}
+
+function plotActionsByDate(
+  ctx: CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D,
+  grid: GridProperties,
+  actions: ActionType[],
+  indexX: number,
+  indexY: number,
+) {
+  ctx.save(); // Before drawing, always save the context state.
+
+  // Derive the coordinates & dimensions for the circular marker.
+  const centerX = grid.origin.x + (indexX + .5) * grid.unit;
+  const centerY = grid.origin.y + (indexY + .5) * grid.unit;
+  // Multiple actions on the same date must be staggered horizontally, so use
+  // two tenths of the grid unit as the spacing between each marker.
+  const space = grid.unit * .2;
+  const radius = grid.unit * (11 / 30);
+  const startAngle = 0;
+  const endAngle = 2 * Math.PI;
+  ctx.shadowColor = '#181818';
+  ctx.shadowBlur = 6;
+  ctx.shadowOffsetY = 3;
+  ctx.shadowOffsetX = -3;
+  actions.forEach((a, i) => {
+    // If the marker's index, i, is less than half the number of total actions,
+    // it will be offset by a negative distance from center of the grid, if more
+    // than half of actions.length it will be a positive value, and if exactly
+    // half it will be zero.
+    const offsetX = (2 * i + 1 - actions.length) * (space / 2);
+    // Now draw the circle for the marker.
+    ctx.fillStyle = a.color || 'tomato';
+    ctx.beginPath();
+    ctx.arc(centerX + offsetX, centerY, radius, startAngle, endAngle);
+    ctx.fill();
+  });
+  ctx.restore(); // Now that drawing has finished, restore the context state.
 }
