@@ -1,6 +1,7 @@
 // Find out if two dates are the same, w/o regard to hours, minutes or smaller units.
 export const sameDate = (d1: Date, d2: Date) =>
-  d1.getFullYear() === d2.getFullYear()
+  d1 instanceof Date && d2 instanceof Date
+  && d1.getFullYear() === d2.getFullYear()
   && d1.getMonth() === d2.getMonth()
   && d1.getDate() === d2.getDate();
 
