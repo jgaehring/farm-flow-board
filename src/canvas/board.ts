@@ -3,6 +3,8 @@ import { getCssVar } from '@/composables/useStyleDeclaration';
 import type { ActionRecords, ActionType, LocationRecord } from '@/data/boardSampleData';
 import { sameDate } from '@/utils/date';
 
+type CanvasContext = CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D;
+
 interface Coordinates { x: number, y: number }
 interface BoxCoordinates { origin: Coordinates, terminus: Coordinates }
 interface BoxSize { width: number, height: number }
@@ -206,7 +208,7 @@ function computeBoardProperties(
 
 // Draw Farm Flow's main board.
 export function drawBoard(
-  ctx: CanvasRenderingContext2D,
+  ctx: CanvasContext,
   range: RangeConfig<Date, LocationRecord>,
   actionRecords: ActionRecords,
   index: { x: number, y: number },
@@ -243,12 +245,12 @@ function easeInOutQuad(x: number): number {
 }
 
 type translationAllCallback = (
-  ctx: CanvasRenderingContext2D,
+  ctx: CanvasContext,
   board: BoardProperties,
   deltas: BoxSize & Coordinates,
 ) => void;
 type translationEachCallback = (
-  ctx: CanvasRenderingContext2D,
+  ctx: CanvasContext,
   board: BoardProperties,
   deltas: BoxSize & Coordinates,
   interval: {
@@ -268,7 +270,7 @@ interface TranslationParameters {
 }
 
 export function translateBoard(
-  ctx: CanvasRenderingContext2D,
+  ctx: CanvasContext,
   range: RangeConfig<Date, LocationRecord>,
   actionRecords: ActionRecords,
   translation: TranslationParameters,
@@ -418,7 +420,7 @@ export function translateBoard(
 }
 
 function drawGrid(
-  ctx: CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D,
+  ctx: CanvasContext,
   grid: GridProperties,
 ) {
   // The x + y coordinates where each line will start (origin) & end (terminus).
@@ -491,7 +493,7 @@ const reduceDatesToMonths = reduce((
 }, []);
 
 function labelAxisX(
-  ctx: CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D,
+  ctx: CanvasContext,
   grid: GridProperties,
   label: LabelProperties<Date>,
 ) {
@@ -547,7 +549,7 @@ function labelAxisX(
 }
 
 function labelAxisY(
-  ctx: CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D,
+  ctx: CanvasContext,
   grid: GridProperties,
   label: LabelProperties<LocationRecord>,
 ) {
@@ -567,7 +569,7 @@ function labelAxisY(
 }
 
 function plotActions (
-  ctx: CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D,
+  ctx: CanvasContext,
   board: BoardProperties,
   actionRecords: ActionRecords,
 ) {
@@ -578,7 +580,7 @@ function plotActions (
 }
 
 function plotActionsByLocation(
-  ctx: CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D,
+  ctx: CanvasContext,
   grid: GridProperties,
   dateSeq: Date[],
   actionRecords: ActionRecords,
@@ -593,7 +595,7 @@ function plotActionsByLocation(
 }
 
 function plotActionsByDate(
-  ctx: CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D,
+  ctx: CanvasContext,
   grid: GridProperties,
   actions: ActionType[],
   indexX: number,
