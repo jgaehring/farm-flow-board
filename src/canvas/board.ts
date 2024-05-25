@@ -1,4 +1,4 @@
-import { clone, mergeDeepLeft, reduce } from 'ramda';
+import { clone, mergeDeepRight, reduce } from 'ramda';
 import { getCssVar } from '@/composables/useStyleDeclaration';
 import type { ActionRecords, ActionType, LocationRecord } from '@/data/boardSampleData';
 import { sameDate } from '@/utils/date';
@@ -9,13 +9,15 @@ interface Coordinates { x: number, y: number }
 interface BoxCoordinates { origin: Coordinates, terminus: Coordinates }
 interface BoxSize { width: number, height: number }
 type BoxProperties = BoxCoordinates & BoxSize;
-interface GridProperties extends BoxProperties {
-  columns: number,
-  rows: number,
-  unit: number,
+interface GridStyles {
   fill: string,
   stroke: string,
   lineWidth: number,
+}
+interface GridProperties extends BoxProperties, GridStyles {
+  columns: number,
+  rows: number,
+  unit: number,
 }
 
 interface LabelProperties<V> extends BoxProperties {
@@ -32,6 +34,7 @@ interface BoardProperties {
   height: number,
   labels: BoardLabels<Date, LocationRecord>,
   grid: GridProperties,
+  highlight: GridStyles,
   index: { x: number, y: number },
   style: {
     fill: string,
@@ -59,10 +62,16 @@ interface LabelOptions {
   xAxisHeight?: number,
   font?: FontOptions,
 }
+interface HighlightOptions {
+  fill?: string,
+  stroke?: string,
+  lineWidth?: number,
+}
 interface StyleOptions {
   fill?: string,
   stroke?: string,
   grid?: GridOptions,
+  highlight?: HighlightOptions,
   labels?: LabelOptions,
 }
 
@@ -81,6 +90,7 @@ interface StyleProperties {
     fill: string,
     stroke: string,
   },
+  highlight: GridStyles,
   labels: {
     yAxisWidth: number,
     xAxisHeight: number,
@@ -111,8 +121,8 @@ function fitToGrid<T>(
 
 // Fallbacks for Style Options
 type applyStyleFallbacks = (style: StyleOptions) => StyleProperties;
-const applyStyleFallbacks = mergeDeepLeft({
-  fill: getCssVar('--color-background'),
+const applyStyleFallbacks = mergeDeepRight({
+  fill: '#181818',
   stroke: 'rgba(0, 189, 126, 0.3)',
   font: {
     color: getCssVar('--color-text'),
@@ -125,8 +135,13 @@ const applyStyleFallbacks = mergeDeepLeft({
   grid: {
     unit: 40,
     lineWidth: 1.5,
-    fill: getCssVar('--color-background-mute', '#282828'),
-    stroke: 'rgba(0, 189, 126, 0.3)',
+    fill: getCssVar('--color-background-soft'),
+    stroke: getCssVar('--ff-c-green-transparent'),
+  },
+  highlight: {
+    fill: '#282828',
+    stroke: getCssVar('--ff-c-green-transparent'),
+    lineWidth: 1.5,
   },
 });
 
@@ -141,7 +156,7 @@ function computeBoardProperties(
   style?: StyleOptions,
 ): BoardProperties {
   const sureStyle = applyStyleFallbacks(style || {});
-  const { labels: { yAxisWidth, xAxisHeight }, grid } = sureStyle;
+  const { labels: { yAxisWidth, xAxisHeight }, grid, highlight } = sureStyle;
   const dates = fitToGrid(
     canvas.width,
     yAxisWidth,
@@ -197,6 +212,7 @@ function computeBoardProperties(
       fill: grid.fill,
       stroke: grid.stroke,
     },
+    highlight,
     labels,
     index,
     style: {
@@ -594,6 +610,76 @@ function plotActionsByLocation(
   });
 }
 
+export type HighlightGenerator = Generator<void, void, [number, number, number?, number?]>;
+export function* addHighlighter(
+  ctx: CanvasContext,
+  range: RangeConfig<Date, LocationRecord>,
+  actionRecords: ActionRecords,
+  origin: { x: number, y: number },
+  style?: StyleOptions,
+): Generator<void, void, [number, number, number?, number?]> {
+  const board = computeBoardProperties(ctx.canvas, range, origin, style);
+  const { grid, labels } = board;
+  const gridHL = { ...grid, ...board.highlight };
+  function refresh(vector: [[x: number, y: number], [prevX: number, prevY: number]]): void {
+    const [position, prevPosition] = vector;
+    const x = Math.floor((position[0] - labels.y.width) / grid.unit);
+    const prevX = Math.floor((prevPosition[0] - labels.y.width) / grid.unit);
+    const y = Math.floor((position[1] - labels.x.height) / grid.unit);
+    const prevY = Math.floor((prevPosition[1] - labels.x.height) / grid.unit);
+
+    if (x !== prevX || y !== prevY) {
+      // Redraw the previous row and column first, restoring the default colors,
+      // so this doesn't paint over any newly highlighted cells. 
+      const prevDate = labels.x.values[prevX];
+      labels.y.values.forEach((location, indexY) => {
+        if (prevDate) drawCellGrid(ctx, grid, prevX, indexY);
+        const records = actionRecords.find(l => l.id === location.id)?.dates || [];
+        const rec = records.find(r => sameDate(r.date, prevDate));
+        if (rec) plotActionsByDate(ctx, grid, rec.actions, prevX, indexY);
+      });
+      const { x: { values: dates } } = labels;
+      const prevLoc = labels.y.values[prevY];
+      const prevRecs = actionRecords.find(l => l.id === prevLoc?.id)?.dates || [];
+      dates.forEach((date, indexX) => {
+        if (prevLoc) drawCellGrid(ctx, grid, indexX, prevY);
+        const rec = prevRecs.find(r => sameDate(r.date, date));
+        if (rec) plotActionsByDate(ctx, grid, rec.actions, indexX, prevY);
+      });
+
+      // Now draw the highlighted rows & columns.
+      const date = labels.x.values[x];
+      labels.y.values.forEach((location, indexY) => {
+        if (date) drawCellGrid(ctx, gridHL, x, indexY);
+        const records = actionRecords.find(l => l.id === location.id)?.dates || [];
+        const rec = records.find(r => sameDate(r.date, date));
+        if (rec) plotActionsByDate(ctx, gridHL, rec.actions, x, indexY);
+      });
+      const location = labels.y.values[y];
+      const records = actionRecords.find(l => l.id === location?.id)?.dates || [];
+      dates.forEach((date, indexX) => {
+        if (location) drawCellGrid(ctx, gridHL, indexX, y);
+        const rec = records.find(r => sameDate(r.date, date));
+        if (rec) plotActionsByDate(ctx, gridHL, rec.actions, indexX, y);
+      });
+    }
+  }
+  const previous = [-1, -1];
+  while (true) {
+    let [prevX, prevY] = previous;
+    const position = yield;
+    const [x, y, ...prev] = position;
+    if (typeof prev[0] === 'number' && typeof prev[1] === 'number') {
+      prevX = prev[0];
+      prevY = prev[1];
+    }
+    previous[x] = x;
+    previous[y] = y;
+    refresh([[x, y], [prevX, prevY]]);
+  }
+
+}
+
 function plotActionsByDate(
   ctx: CanvasContext,
   grid: GridProperties,
@@ -619,11 +705,6 @@ function plotActionsByDate(
   const gapSize = grid.unit * .2;
   const totalLength = 2 * radius + gapCount * gapSize;
 
-  // Set the shadow that will be applied to every marker.
-  ctx.shadowColor = '#181818';
-  ctx.shadowBlur = 6;
-  ctx.shadowOffsetY = 3;
-  ctx.shadowOffsetX = -3;
   actions.forEach((a, i) => {
     // If the marker's index, i, is less than half the number of total actions,
     // it will be offset by a negative distance from center of the grid, if more
@@ -635,8 +716,38 @@ function plotActionsByDate(
     ctx.fillStyle = a.color || 'tomato';
     ctx.beginPath();
     ctx.arc(centerX + offsetX, centerY, radius, startAngle, endAngle);
+
+    // Apply a shadow to every marker.
+    ctx.shadowColor = '#181818';
+    ctx.shadowBlur = 6;
+    ctx.shadowOffsetY = 3;
+    ctx.shadowOffsetX = -3;
     ctx.fill();
+
+    // Reset shadow to default values.
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
   });
 
   ctx.restore(); // Now that drawing has finished, restore the context state.
+}
+
+// Draw the background & gridlines for a single grid cell.
+function drawCellGrid(
+  ctx: CanvasContext,
+  grid: GridProperties,
+  indexX: number,
+  indexY: number,
+) {
+  const originX = grid.origin.x + (indexX) * grid.unit;
+  const originY = grid.origin.y + (indexY) * grid.unit;
+  ctx.clearRect(originX, originY, grid.unit, grid.unit);
+  const innerLineW = grid.lineWidth / 2;
+  ctx.lineWidth = innerLineW;
+  ctx.fillStyle = grid.fill;
+  ctx.fillRect(originX - innerLineW, originY - innerLineW, grid.unit, grid.unit);
+  ctx.strokeStyle = grid.stroke;
+  ctx.strokeRect(originX - innerLineW, originY - innerLineW, grid.unit, grid.unit);
 }

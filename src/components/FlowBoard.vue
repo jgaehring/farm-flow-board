@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { inject, ref } from 'vue';
+import { inject, ref, watch } from 'vue';
+import { useMouseInElement } from '@vueuse/core';
 import useResizableCanvas from '@/composables/useResizableCanvas';
-import { drawBoard, translateBoard } from '@/canvas/board';
+import { addHighlighter, drawBoard, translateBoard } from '@/canvas/board';
+import { type HighlightGenerator } from '@/canvas/board';
 import { type ActionRecords, type LocationRecord } from '@/data/boardSampleData';
 import { actionRecordsKey, dateRangeKey, locationRecordsKey } from '@/data/providerKeys';
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
@@ -77,6 +79,7 @@ const scrollTo = (x: number, y: number) => {
   }
 };
 
+const highlighter = ref<HighlightGenerator|null>(null);
 // Redraw the board whenever the canvas is resized.
 useResizableCanvas(canvas, (width, height) => {
   const ctx = canvas.value?.getContext('2d');
@@ -90,8 +93,18 @@ useResizableCanvas(canvas, (width, height) => {
     maxWidth.value = width;
     maxHeight.value = height;
     drawBoard(ctx, range, actionRecords, currentIndex.value, style);
+    highlighter.value = addHighlighter(
+      ctx, range, actionRecords, currentIndex.value, style,
+    );
   }
 });
+
+const mouse = useMouseInElement(canvas);
+watch([mouse.elementX, mouse.elementY], (position, prevPosition) => {
+  if (mouse.isOutside.value || !highlighter.value) return;
+  highlighter.value.next([...position, ...prevPosition]);
+});
+
 </script>
 
 <template>
