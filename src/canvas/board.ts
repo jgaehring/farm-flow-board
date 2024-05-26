@@ -725,9 +725,9 @@ function plotActionsByDate(
     ctx.arc(centerX + offsetX, centerY, radius, startAngle, endAngle);
 
     // Apply a shadow to every marker.
-    ctx.shadowColor = '#181818';
-    ctx.shadowBlur = 6;
-    ctx.shadowOffsetY = 3;
+    ctx.shadowColor = '#18181888';
+    ctx.shadowBlur = 3;
+    ctx.shadowOffsetY = 1.5;
     ctx.shadowOffsetX = -3;
     ctx.fill();
 
@@ -756,5 +756,5 @@ function drawCellGrid(
   ctx.fillStyle = grid.fill;
   ctx.fillRect(originX - innerLineW, originY - innerLineW, grid.unit, grid.unit);
   ctx.strokeStyle = grid.stroke;
-  ctx.strokeRect(originX - innerLineW, originY - innerLineW, grid.unit, grid.unit);
+  ctx.strokeRect(originX - innerLineW / 2, originY - innerLineW / 2, grid.unit, grid.unit);
 }
