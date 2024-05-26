@@ -623,44 +623,51 @@ export function* addHighlighter(
   const gridHL = { ...grid, ...board.highlight };
   function refresh(vector: [[x: number, y: number], [prevX: number, prevY: number]]): void {
     const [position, prevPosition] = vector;
-    const x = Math.floor((position[0] - labels.y.width) / grid.unit);
+    const curX = Math.floor((position[0] - labels.y.width) / grid.unit);
     const prevX = Math.floor((prevPosition[0] - labels.y.width) / grid.unit);
-    const y = Math.floor((position[1] - labels.x.height) / grid.unit);
+    const curY = Math.floor((position[1] - labels.x.height) / grid.unit);
     const prevY = Math.floor((prevPosition[1] - labels.x.height) / grid.unit);
 
-    if (x !== prevX || y !== prevY) {
-      // Redraw the previous row and column first, restoring the default colors,
-      // so this doesn't paint over any newly highlighted cells. 
-      const prevDate = labels.x.values[prevX];
-      labels.y.values.forEach((location, indexY) => {
-        if (prevDate) drawCellGrid(ctx, grid, prevX, indexY);
-        const records = actionRecords.find(l => l.id === location.id)?.dates || [];
-        const rec = records.find(r => sameDate(r.date, prevDate));
+    if (curX !== prevX || curY !== prevY) {
+      const { x: { values: dateLabels } } = labels;
+      const { y: { values: locLabels } } = labels;
+
+      // Redraw the grid backgrounds for the previous column & row first,
+      // restoring the default colors, before the currently highlighted col/row.
+      // That way the previous cells won't paint over newly highlighted cells.
+      const prevDateCol = labels.x.values[prevX];
+      if (prevDateCol) locLabels.forEach((_, i) => drawCellGrid(ctx, grid, prevX, i));
+      const prevLocRow = labels.y.values[prevY];
+      if (prevLocRow) dateLabels.forEach((_, i) => drawCellGrid(ctx, grid, i, prevY));
+      const curDateCol = labels.x.values[curX];
+      if (curDateCol) locLabels.forEach((_, i) => drawCellGrid(ctx, gridHL, curX, i));
+      const curLocRow = labels.y.values[curY];
+      if (curLocRow) dateLabels.forEach((_, i) => drawCellGrid(ctx, gridHL, i, curY));
+
+      // Plot the actions for previous column.
+      locLabels.forEach((eachLoc, indexY) => {
+        const prevColRecs = actionRecords.find(l => l.id === eachLoc.id)?.dates || [];
+        const rec = prevColRecs.find(r => sameDate(r.date, prevDateCol));
         if (rec) plotActionsByDate(ctx, grid, rec.actions, prevX, indexY);
       });
-      const { x: { values: dates } } = labels;
-      const prevLoc = labels.y.values[prevY];
-      const prevRecs = actionRecords.find(l => l.id === prevLoc?.id)?.dates || [];
-      dates.forEach((date, indexX) => {
-        if (prevLoc) drawCellGrid(ctx, grid, indexX, prevY);
-        const rec = prevRecs.find(r => sameDate(r.date, date));
+      // Plot the actions for the previous row.
+      const prevRowRecs = actionRecords.find(l => l.id === prevLocRow?.id)?.dates || [];
+      dateLabels.forEach((eachDate, indexX) => {
+        const rec = prevRowRecs.find(r => sameDate(r.date, eachDate));
         if (rec) plotActionsByDate(ctx, grid, rec.actions, indexX, prevY);
       });
 
-      // Now draw the highlighted rows & columns.
-      const date = labels.x.values[x];
-      labels.y.values.forEach((location, indexY) => {
-        if (date) drawCellGrid(ctx, gridHL, x, indexY);
-        const records = actionRecords.find(l => l.id === location.id)?.dates || [];
-        const rec = records.find(r => sameDate(r.date, date));
-        if (rec) plotActionsByDate(ctx, gridHL, rec.actions, x, indexY);
+      // Plot the actions for the current (highlighted) column.
+      locLabels.forEach((eachLoc, eachY) => {
+        const colRecs = actionRecords.find(l => l.id === eachLoc.id)?.dates || [];
+        const rec = colRecs.find(r => sameDate(r.date, curDateCol));
+        if (rec) plotActionsByDate(ctx, gridHL, rec.actions, curX, eachY);
       });
-      const location = labels.y.values[y];
-      const records = actionRecords.find(l => l.id === location?.id)?.dates || [];
-      dates.forEach((date, indexX) => {
-        if (location) drawCellGrid(ctx, gridHL, indexX, y);
-        const rec = records.find(r => sameDate(r.date, date));
-        if (rec) plotActionsByDate(ctx, gridHL, rec.actions, indexX, y);
+      // Plot the actions for the current (highlighted) row.
+      const rowRecs = actionRecords.find(l => l.id === curLocRow?.id)?.dates || [];
+      dateLabels.forEach((eachDate, eachX) => {
+        const rec = rowRecs.find(r => sameDate(r.date, eachDate));
+        if (rec) plotActionsByDate(ctx, gridHL, rec.actions, eachX, curY);
       });
     }
   }
