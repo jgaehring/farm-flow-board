@@ -48,6 +48,9 @@ const style = {
 // locationRecords array that will occupy the first row space.
 const currentIndex = ref<{ x: number, y: number}>({ x: 0, y: 0 });
 
+// For highlighting the row & column on hover.
+const highlighter = ref<HighlightGenerator|null>(null);
+
 const maxIndex = (maxLength: number, axis: 'x'|'y') => {
   const axisLength = axis === 'x' ? style.labels.yAxisWidth : style.labels.xAxisHeight;
   const rangeLength = axis === 'x' ? dateRange.length : locationRecords.length;
@@ -73,13 +76,15 @@ const scrollTo = (x: number, y: number) => {
       afterAll() {
         currentIndex.value.x = nextX;
         currentIndex.value.y = nextY;
+        highlighter.value = addHighlighter(
+          ctx, range, actionRecords, currentIndex.value, style,
+        );
       },
     };
     translateBoard(ctx, range, actionRecords, translation, style);
   }
 };
 
-const highlighter = ref<HighlightGenerator|null>(null);
 // Redraw the board whenever the canvas is resized.
 useResizableCanvas(canvas, (width, height) => {
   const ctx = canvas.value?.getContext('2d');
