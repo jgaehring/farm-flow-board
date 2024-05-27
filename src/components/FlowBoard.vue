@@ -106,7 +106,7 @@ useResizableCanvas(canvas, (width, height) => {
 
 const mouse = useMouseInElement(canvas);
 watch([mouse.elementX, mouse.elementY], (position, prevPosition) => {
-  if (mouse.isOutside.value || !highlighter.value) return;
+  if (!highlighter.value) return;
   highlighter.value.next([...position, ...prevPosition]);
 });
 
