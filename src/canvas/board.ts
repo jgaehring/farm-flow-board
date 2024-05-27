@@ -682,12 +682,23 @@ export function* addHighlighter(
       const lookaheadX = curX + directionX
       const lookbehindX = prevX - directionX
 
+      // Don't use shadows to repaint the actions in the lookahead/lookbehind
+      // columns, because their grid cell's background is not being repainted,
+      // and the shadows are transparent and will darken cumulatively.
+      const markerStyles = {
+        shadowColor: 'transparent',
+        shadowBlur: 0,
+        shadowOffsetX: 0,
+        shadowOffsetY: 0,
+      };
+      const gridLALB: GridProperties = { ...grid, markers: markerStyles };
+
       // Add lookahead and lookbehind to the start of the list before plotting
       // the actions again. This will prevent any overflowing markers for dates
       // with multiple actionsfrom being painted over.
       const rowsAndColsPlusLookaheads: RowsAndColumns = [
-        [lookaheadX, null, grid],
-        [lookbehindX, null, grid],
+        [lookaheadX, null, gridLALB],
+        [lookbehindX, null, gridLALB],
         ...rowsAndCols,
       ];
       // Re-plot the actions in the effected rows/cols.
