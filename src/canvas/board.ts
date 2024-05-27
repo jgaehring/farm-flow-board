@@ -621,7 +621,7 @@ export function* addHighlighter(
   const board = computeBoardProperties(ctx.canvas, range, origin, style);
   const { grid, labels } = board;
   const gridHL = { ...grid, ...board.highlight };
-  function refresh(vector: [[x: number, y: number], [prevX: number, prevY: number]]): void {
+  function refresh(vector: [[curX: number, curY: number], [prevX: number, prevY: number]]): void {
     const [position, prevPosition] = vector;
     const curX = Math.floor((position[0] - labels.y.width) / grid.unit);
     const prevX = Math.floor((prevPosition[0] - labels.y.width) / grid.unit);
@@ -635,14 +635,33 @@ export function* addHighlighter(
       // Redraw the grid backgrounds for the previous column & row first,
       // restoring the default colors, before the currently highlighted col/row.
       // That way the previous cells won't paint over newly highlighted cells.
-      const prevDateCol = labels.x.values[prevX];
+      const prevDateCol = dateLabels[prevX];
       if (prevDateCol) locLabels.forEach((_, i) => drawCellGrid(ctx, grid, prevX, i));
-      const prevLocRow = labels.y.values[prevY];
+      const prevLocRow = locLabels[prevY];
       if (prevLocRow) dateLabels.forEach((_, i) => drawCellGrid(ctx, grid, i, prevY));
-      const curDateCol = labels.x.values[curX];
+      const curDateCol = dateLabels[curX];
       if (curDateCol) locLabels.forEach((_, i) => drawCellGrid(ctx, gridHL, curX, i));
-      const curLocRow = labels.y.values[curY];
+      const curLocRow = locLabels[curY];
       if (curLocRow) dateLabels.forEach((_, i) => drawCellGrid(ctx, gridHL, i, curY));
+
+      const directionX = curX - prevX
+      const lookaheadX = curX + directionX
+      const lookbehindX = prevX - directionX
+      const lookaheadDate = dateLabels[lookaheadX];
+      const lookbehindDate = dateLabels[lookbehindX];
+
+      // Plot the actions for the lookahead column.
+      locLabels.forEach((eachLoc, indexY) => {
+        const lookaheadRecs = actionRecords.find(l => l.id === eachLoc.id)?.dates || [];
+        const rec = lookaheadRecs.find(r => sameDate(r.date, lookaheadDate));
+        if (rec) plotActionsByDate(ctx, grid, rec.actions, lookaheadX, indexY);
+      });
+      // Plot the actions for the lookbehind column.
+      locLabels.forEach((eachLoc, indexY) => {
+        const lookbehindRecs = actionRecords.find(l => l.id === eachLoc.id)?.dates || [];
+        const rec = lookbehindRecs.find(r => sameDate(r.date, lookbehindDate));
+        if (rec) plotActionsByDate(ctx, grid, rec.actions, lookbehindX, indexY);
+      });
 
       // Plot the actions for previous column.
       locLabels.forEach((eachLoc, indexY) => {
