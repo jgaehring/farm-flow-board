@@ -9,6 +9,14 @@ interface Coordinates { x: number, y: number }
 interface BoxCoordinates { origin: Coordinates, terminus: Coordinates }
 interface BoxSize { width: number, height: number }
 type BoxProperties = BoxCoordinates & BoxSize;
+
+interface MarkerStyles {
+  shadowColor: string,
+  shadowBlur: number,
+  shadowOffsetY: number,
+  shadowOffsetX: number,
+}
+
 interface GridStyles {
   fill: string,
   stroke: string,
@@ -18,6 +26,7 @@ interface GridProperties extends BoxProperties, GridStyles {
   columns: number,
   rows: number,
   unit: number,
+  markers: MarkerStyles,
 }
 
 interface LabelProperties<V> extends BoxProperties {
@@ -73,6 +82,12 @@ interface StyleOptions {
   grid?: GridOptions,
   highlight?: HighlightOptions,
   labels?: LabelOptions,
+  markers?: {
+    shadowColor?: string,
+    shadowBlur?: number,
+    shadowOffsetY?: number,
+    shadowOffsetX?: number,
+  },
 }
 
 interface StyleProperties {
@@ -95,6 +110,7 @@ interface StyleProperties {
     yAxisWidth: number,
     xAxisHeight: number,
   },
+  markers: MarkerStyles,
 }
 
 // Based on the length of one of the canvas axes, the margins along that axis,
@@ -143,6 +159,12 @@ const applyStyleFallbacks = mergeDeepRight({
     stroke: getCssVar('--ff-c-green-transparent'),
     lineWidth: 1.5,
   },
+  markers: {
+    shadowColor: '#18181888',
+    shadowBlur: 3,
+    shadowOffsetY: 1.5,
+    shadowOffsetX: -3,
+  },
 });
 
 // Compute the board's dimensions and the range of values that can be displayed.
@@ -156,7 +178,7 @@ function computeBoardProperties(
   style?: StyleOptions,
 ): BoardProperties {
   const sureStyle = applyStyleFallbacks(style || {});
-  const { labels: { yAxisWidth, xAxisHeight }, grid, highlight } = sureStyle;
+  const { labels: { yAxisWidth, xAxisHeight }, grid, highlight, markers, } = sureStyle;
   const dates = fitToGrid(
     canvas.width,
     yAxisWidth,
@@ -211,6 +233,7 @@ function computeBoardProperties(
       lineWidth: grid.lineWidth,
       fill: grid.fill,
       stroke: grid.stroke,
+      markers,
     },
     highlight,
     labels,
@@ -744,10 +767,10 @@ function plotActionsByDate(
     ctx.arc(centerX + offsetX, centerY, radius, startAngle, endAngle);
 
     // Apply a shadow to every marker.
-    ctx.shadowColor = '#18181888';
-    ctx.shadowBlur = 3;
-    ctx.shadowOffsetY = 1.5;
-    ctx.shadowOffsetX = -3;
+    ctx.shadowColor = grid.markers.shadowColor;
+    ctx.shadowBlur = grid.markers.shadowBlur;
+    ctx.shadowOffsetX = grid.markers.shadowOffsetX;
+    ctx.shadowOffsetY = grid.markers.shadowOffsetY;
     ctx.fill();
 
     // Reset shadow to default values.
