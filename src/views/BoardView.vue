@@ -5,6 +5,7 @@ import { actionTypes, locationRecords, randomActions } from '@/data/boardSampleD
 import type { ActionRecords, LocationRecord } from '@/data/boardSampleData';
 import FlowBoard from '@/components/FlowBoard.vue';
 import FlowBoardActions from '@/components/FlowBoardActions.vue';
+import FlowMenubar from '@/components/FlowBoardMenubar.vue';
 import { createDateRange, sameDate } from '@/utils/date';
 
 // The collection of all field actions, first sorted by location, then within
@@ -65,6 +66,9 @@ provide(actionTypesKey, actionTypes);
   <div class="layout">
     <header>
       <h1>Farm Flow</h1>
+      <div class="menubar">
+        <FlowMenubar/>
+      </div>
     </header>
     <main>
       <FlowBoard/>
@@ -84,13 +88,17 @@ provide(actionTypesKey, actionTypes);
 }
 
 header {
-  flex: 0 1 6rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   line-height: 1.5;
   padding: 1.5rem 3rem 1.5rem calc(3rem + 240px);
 }
 
 h1 {
+  display: inline-block;
   color: hsla(160, 100%, 37%, .8);
+  margin-right: 1.5rem;
 }
 
 main {
