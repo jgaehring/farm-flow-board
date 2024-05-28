@@ -473,8 +473,16 @@ function drawGrid(
   // Draw the grid's background & gridlines.
   ctx.fillStyle = grid.fill;
   ctx.fillRect(originX, originY, grid.width, grid.height);
-  ctx.lineWidth = grid.lineWidth;
   ctx.strokeStyle = grid.stroke;
+  const outlineWidth = grid.lineWidth / 2;
+  ctx.lineWidth = outlineWidth;
+  ctx.strokeRect(
+    originX - outlineWidth / 2,
+    originY - outlineWidth / 2,
+    grid.width + outlineWidth,
+    grid.height + outlineWidth,
+  );
+  ctx.lineWidth = grid.lineWidth;
 
   // First loop through the horizontal gridlines...
   for (
