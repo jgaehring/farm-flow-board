@@ -2,7 +2,7 @@
 import { provide, ref } from 'vue';
 import { actionRecordsKey, locationRecordsKey, dateRangeKey, actionTypesKey } from '@/data/providerKeys';
 import { actionTypes, locationRecords, randomActions } from '@/data/boardSampleData';
-import { type ActionRecords, type LocationRecord } from '@/data/boardSampleData';
+import type { ActionRecords, LocationRecord } from '@/data/boardSampleData';
 import FlowBoard from '@/components/FlowBoard.vue';
 import FlowBoardActions from '@/components/FlowBoardActions.vue';
 import { createDateRange, sameDate } from '@/utils/date';

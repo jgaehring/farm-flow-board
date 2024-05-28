@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { inject } from 'vue';
-import { type ActionType } from '@/data/boardSampleData';
+import type { ActionType } from '@/data/boardSampleData';
 import { actionTypesKey } from '@/data/providerKeys';
 
 const actionTypes = inject<ActionType[]>(actionTypesKey) || [];
