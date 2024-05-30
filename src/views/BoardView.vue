@@ -7,6 +7,7 @@ import FlowBoard from '@/components/FlowBoard.vue';
 import FlowBoardActions from '@/components/FlowBoardActions.vue';
 import FlowMenubar from '@/components/FlowBoardMenubar.vue';
 import { createDateRange, sameDate } from '@/utils/date';
+import LogoType from '@/assets/logotype_color.svg?component';
 
 // The collection of all field actions, first sorted by location, then within
 // each location sorted by date. The locations will be created first, with empty
@@ -65,7 +66,7 @@ provide(actionTypesKey, actionTypes);
 <template>
   <div class="layout">
     <header>
-      <h1>Farm Flow</h1>
+      <LogoType/>
       <div class="menubar">
         <FlowMenubar/>
       </div>
@@ -93,6 +94,11 @@ header {
   justify-content: flex-start;
   line-height: 1.5;
   padding: 1.5rem 3rem 1.5rem calc(3rem + 240px);
+}
+
+.layout header svg {
+  height: 35px;
+  margin-right: .75rem;
 }
 
 h1 {
