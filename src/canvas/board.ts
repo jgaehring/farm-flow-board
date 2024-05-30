@@ -135,14 +135,20 @@ function fitToGrid<T>(
   return truncatedElements;
 }
 
+function lightDark<L, D>(light: L, dark: D): L|D {
+  const mQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  return mQuery.matches ? dark : light;
+}
+
 // Fallbacks for Style Options
-type applyStyleFallbacks = (style: StyleOptions) => StyleProperties;
-const applyStyleFallbacks = mergeDeepRight({
-  fill: '#181818',
-  stroke: 'rgba(0, 189, 126, 0.3)',
+const applyStyleFallbacks = (style: StyleOptions): StyleProperties => mergeDeepRight({
+  fill: getCssVar('--color-background') || lightDark('#ffffff', '#181818'),
+  stroke: getCssVar('--ff-c-green-transparent') || 'rgba(0, 189, 126, 0.3)',
   font: {
-    color: getCssVar('--color-text'),
-    fontFamily: getCssVar('--ff-font-family'),
+    color: getCssVar('--color-text') || lightDark('#2c3e50', '#ffffff'),
+    fontFamily: getCssVar('--ff-font-family')
+      || `Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, `
+      + `Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif`,
   },
   labels: {
     yAxisWidth: 240,
@@ -150,22 +156,24 @@ const applyStyleFallbacks = mergeDeepRight({
   },
   grid: {
     unit: 40,
+    yAxisWidth: 240,
+    xAxisHeight: 60,
     lineWidth: 1.5,
-    fill: getCssVar('--color-background-soft'),
-    stroke: getCssVar('--ff-c-green-transparent'),
+    fill: getCssVar('--color-background-soft') || lightDark('#f8f8f8', '#222222'),
+    stroke: getCssVar('--ff-c-green-transparent') || 'rgba(0, 189, 126, 0.3)',
   },
   highlight: {
-    fill: '#282828',
-    stroke: getCssVar('--ff-c-green-transparent'),
+    fill: getCssVar('--color-background-mute') || lightDark('#f2f2f2','#282828'),
+    stroke: getCssVar('--ff-c-green-transparent') || 'rgba(0, 189, 126, 0.3)',
     lineWidth: 1.5,
   },
   markers: {
-    shadowColor: '#18181888',
+    shadowColor: lightDark('rgba(84, 84, 84, 0.24)', 'rgba(60, 60, 60, 0.29)'),
     shadowBlur: 3,
     shadowOffsetY: 1.5,
     shadowOffsetX: -3,
   },
-});
+}, style);
 
 // Compute the board's dimensions and the range of values that can be displayed.
 // Adjust the width and height to fit as many columns and rows as possible

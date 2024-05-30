@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { inject, ref, watch } from 'vue';
-import { useMouseInElement } from '@vueuse/core';
+import { tryOnMounted, useMouseInElement } from '@vueuse/core';
 import useResizableCanvas from '@/composables/useResizableCanvas';
 import { addHighlighter, drawBoard, translateBoard } from '@/canvas/board';
 import type { HighlightGenerator } from '@/canvas/board';
@@ -109,6 +109,23 @@ watch([mouse.elementX, mouse.elementY], (position, prevPosition) => {
   if (!highlighter.value) return;
   highlighter.value.next([...position, ...prevPosition]);
 });
+
+tryOnMounted(() => {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    const ctx = canvas.value?.getContext('2d');
+    if (!ctx) {
+      console.warn(
+        'Aborted drawing the board because the canvas\'s rendering '
+        + 'context could not be found.',
+      );
+    } else {
+      drawBoard(ctx, range, actionRecords, currentIndex.value, style)
+      highlighter.value = addHighlighter(
+        ctx, range, actionRecords, currentIndex.value, style,
+      );
+    }
+  });
+})
 
 </script>
 
