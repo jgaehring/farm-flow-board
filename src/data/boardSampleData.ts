@@ -1,3 +1,8 @@
+import { reduce } from 'ramda';
+import corn2023 from './corn2023';
+import soy2023 from './soy2023';
+import { sameDate } from '@/utils/date';
+
 export type LocationRecord = { id: number, name: string };
 export const locationRecords: LocationRecord[] = [
   { id: 0, name: 'Home' },
@@ -35,34 +40,45 @@ export const actionTypes: ActionTypes = [
   { id: 8, name: 'ZAP', color: 'rosybrown' },
 ];
 
+export type CropType = { id: number, name: string, color: string };
+export const cropTypes: CropType[] = [
+  { id: 0, name: 'Corn', color: 'royalblue' },
+  { id: 1, name: 'Soy', color: 'orangered' },
+];
+
 type ActionsByDate = { date: Date, actions: ActionType[] };
 type ActionsByLocation = { id: number, name: string, dates: ActionsByDate[] };
-export type ActionRecords = ActionsByLocation[]
-export const toLocationsMap = (locs: string[]): ActionRecords => 
-  locs.map((name: string, id: number) => ({ id, name, dates: [] }));
+export type ActionRecords = ActionsByLocation[];
 
-export const locationsMap: Array<{
-  name: string, actions: ActionRecords[],
-}> = [
-  { name: 'Home', actions: [] },
-  { name: 'Johnson', actions: [] },
-  { name: 'Cotter', actions: [] },
-  { name: 'Lake', actions: [] },
-  { name: 'Wendorff 220', actions: [] },
-  { name: 'Wendorff 60', actions: [] },
-  { name: 'Yak', actions: [] },
-  { name: 'Boonie', actions: [] },
-  { name: 'Heatwole', actions: [] },
-  { name: 'Stockholm Home', actions: [] },
-  { name: 'Stockholm East', actions: [] },
-  { name: 'Carlson', actions: [] },
-  { name: 'Hlwd 1', actions: [] },
-  { name: 'Hlwd 2', actions: [] },
-  { name: 'Hlwd 3', actions: [] },
-  { name: 'Lilly 1', actions: [] },
-  { name: 'Lilly 2', actions: [] },
-  { name: 'Lilly 3', actions: [] },
-  { name: 'Lilly 4', actions: [] },
+type RawCropAction = { date: string, name: string, notes: string };
+type RawCropRecord = {
+  location: string,
+  actions: RawCropAction[]
+}
+const cultivType = actionTypes[2]; // default for unknown actions in sample data
+const cropToActionRecords = reduce((actions: ActionsByLocation[], crop: RawCropRecord) => {
+  const { location: name } = crop;
+  const location = locationRecords.find(loc => loc.name === name);
+  if (!location) return actions;
+  const { id } = location;
+  const dates = crop.actions.reduce((byDate: ActionsByDate[], raw: RawCropAction) => {
+    const action = actionTypes.find(a => a.name === raw.name) || cultivType;
+    const date = new Date(raw.date);
+    const i = byDate.findIndex(a => sameDate(a.date, date));
+    if (i < 0) return [...byDate, { date, actions: [action] }];
+    return [
+      ...byDate.slice(0, i),
+      { date, actions: byDate[i].actions.concat(action) },
+      ...byDate.slice(i + 1),
+    ];
+  }, [] as ActionsByDate[]);
+  const byLocation: ActionsByLocation = { id, name, dates };
+  return [...actions, byLocation];
+}, []);
+
+export const crop2023 = [
+  ...cropToActionRecords(corn2023),
+  ...cropToActionRecords(soy2023),
 ];
 
 export type RandomAction = { color?: string, date: Date, location: number, type: number };

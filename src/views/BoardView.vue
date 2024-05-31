@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { provide, ref } from 'vue';
+import { computed, provide, ref } from 'vue';
 import { actionRecordsKey, locationRecordsKey, dateRangeKey, actionTypesKey } from '@/data/providerKeys';
-import { actionTypes, locationRecords, randomActions } from '@/data/boardSampleData';
+import { actionTypes, crop2023, locationRecords, randomActions } from '@/data/boardSampleData';
 import type { ActionRecords, LocationRecord } from '@/data/boardSampleData';
 import FlowBoard from '@/components/FlowBoard.vue';
 import FlowBoardActions from '@/components/FlowBoardActions.vue';
@@ -19,10 +19,10 @@ locationRecords.forEach(({ id, name }) => {
 });
 
 // Start and end dates used to populate the x-axis.
-const startDate = new Date(2024, 2, 28);
-const endDate = new Date(2024, 9);
+const startDate = ref<Date>(new Date(2024, 2, 28));
+const endDate = ref<Date>(new Date(2024, 9));
 // Array of Date objects for every date within the specified range.
-const dateRange = createDateRange(startDate, endDate);
+const dateRange = computed(() => createDateRange(startDate.value, endDate.value));
 
 function generateActions(
   count: number,
@@ -48,15 +48,31 @@ function generateActions(
   }
 }
 
-// Generate a random scatter of actions for the grid.
-const actionFrequency = 6; // coefficient to adjust total actions below
-const actionCount = actionFrequency * Math.floor(
-  // Correlate total # of actions to the 2 main parameters, fields & dates.
-  Math.sqrt(locationRecords.length * dateRange.length)
-);
-generateActions(actionCount, [startDate, endDate], locationRecords);
+function loadBoard(name: '2024'|'2023'|'random') {
+  if (name === 'random') {
+    actionRecords.value = [];
+    startDate.value = new Date(2024, 2, 28);
+    endDate.value = new Date(2024, 9);
+    locationRecords.forEach(({ id, name }) => {
+      actionRecords.value[id] = { id, name, dates: [] };
+    });
+    // Generate a random scatter of actions for the grid.
+    const actionFrequency = 6; // coefficient to adjust total actions below
+    const actionCount = actionFrequency * Math.floor(
+      // Correlate total # of actions to the 2 main parameters, fields & dates.
+      Math.sqrt(locationRecords.length * dateRange.value.length)
+    );
+    generateActions(actionCount, [startDate.value, endDate.value], locationRecords);
+  } else {
+    startDate.value = new Date(2023, 4, 6);
+    endDate.value = new Date(2023, 10, 15);
+    actionRecords.value = name === '2023' ? crop2023 : [];
+  }
+}
 
-provide(actionRecordsKey, actionRecords.value);
+loadBoard('2023');
+
+provide(actionRecordsKey, actionRecords);
 provide(locationRecordsKey, locationRecords);
 provide(dateRangeKey, dateRange);
 provide(actionTypesKey, actionTypes);

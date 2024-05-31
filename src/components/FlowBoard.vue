@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { inject, ref, watch } from 'vue';
+import { inject, ref, unref, watch } from 'vue';
+import type { Ref } from "vue";
 import { tryOnMounted, useMouseInElement } from '@vueuse/core';
 import useResizableCanvas from '@/composables/useResizableCanvas';
 import { addHighlighter, drawBoard, translateBoard } from '@/canvas/board';
@@ -18,17 +19,11 @@ const maxHeight = ref<number>(150); // <-- default height for any <canvas> eleme
 
 // The collection of all field actions, first sorted by location, then within
 // each location sorted by date.
-const actionRecords = inject<ActionRecords>(actionRecordsKey) || [];
+const actionRecords = inject<Ref<ActionRecords>>(actionRecordsKey) || [];
 const locationRecords = inject<LocationRecord[]>(locationRecordsKey) || [];
 
-// Array of Date objects for every date within the specified range.
-const dateRange = inject<Date[]>(dateRangeKey) || [];
-
-// Date + location ranges combined so they can be easily passed to drawing functions.
-const range = {
-  x: dateRange,
-  y: locationRecords,
-};
+// Array of Date objects for every calendar day within the specified range.
+const dateRange = inject<Ref<Date[]>>(dateRangeKey) || [];
 
 // Constants for laying out the grid.
 const style = {
@@ -53,7 +48,7 @@ const highlighter = ref<HighlightGenerator|null>(null);
 
 const maxIndex = (maxLength: number, axis: 'x'|'y') => {
   const axisLength = axis === 'x' ? style.labels.yAxisWidth : style.labels.xAxisHeight;
-  const rangeLength = axis === 'x' ? dateRange.length : locationRecords.length;
+  const rangeLength = axis === 'x' ? unref(dateRange).length : locationRecords.length;
   const maxGridLength = maxLength - axisLength;
   const maxDisplayDates = Math.floor(maxGridLength / style.grid.unit);
   return rangeLength - maxDisplayDates;
@@ -70,6 +65,7 @@ const scrollTo = (x: number, y: number) => {
   const positionChanged = xChanged || yChanged;
   const ctx = canvas.value?.getContext('2d');
   if (positionChanged && ctx) {
+    const range = { x: unref(dateRange), y: locationRecords };
     const translation = {
       from: { x: currentIndex.value.x, y: currentIndex.value.y },
       to: { x: nextX, y: nextY },
@@ -77,11 +73,11 @@ const scrollTo = (x: number, y: number) => {
         currentIndex.value.x = nextX;
         currentIndex.value.y = nextY;
         highlighter.value = addHighlighter(
-          ctx, range, actionRecords, currentIndex.value, style,
+          ctx, range, unref(actionRecords), currentIndex.value, style,
         );
       },
     };
-    translateBoard(ctx, range, actionRecords, translation, style);
+    translateBoard(ctx, range, unref(actionRecords), translation, style);
   }
 };
 
@@ -97,9 +93,10 @@ useResizableCanvas(canvas, (width, height) => {
     // Reset reactive canvas properties, clear the canvas, and redraw the board.
     maxWidth.value = width;
     maxHeight.value = height;
-    drawBoard(ctx, range, actionRecords, currentIndex.value, style);
+    const range = { x: unref(dateRange), y: locationRecords };
+    drawBoard(ctx, range, unref(actionRecords), currentIndex.value, style);
     highlighter.value = addHighlighter(
-      ctx, range, actionRecords, currentIndex.value, style,
+      ctx, range, unref(actionRecords), currentIndex.value, style,
     );
   }
 });
@@ -119,9 +116,10 @@ tryOnMounted(() => {
         + 'context could not be found.',
       );
     } else {
-      drawBoard(ctx, range, actionRecords, currentIndex.value, style)
+      const range = { x: unref(dateRange), y: locationRecords };
+      drawBoard(ctx, range, unref(actionRecords), currentIndex.value, style)
       highlighter.value = addHighlighter(
-        ctx, range, actionRecords, currentIndex.value, style,
+        ctx, range, unref(actionRecords), currentIndex.value, style,
       );
     }
   });
