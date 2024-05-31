@@ -46,6 +46,22 @@ const currentIndex = ref<{ x: number, y: number}>({ x: 0, y: 0 });
 // For highlighting the row & column on hover.
 const highlighter = ref<HighlightGenerator|null>(null);
 
+const drawToCanvas = () => {
+  const ctx = canvas.value?.getContext('2d');
+  if (!ctx) {
+    console.warn(
+      'Aborted drawing the board because the canvas\'s rendering '
+      + 'context could not be found.',
+    );
+  } else {
+    const range = { x: unref(dateRange), y: locationRecords };
+    drawBoard(ctx, range, unref(actionRecords), currentIndex.value, style);
+    highlighter.value = addHighlighter(
+      ctx, range, unref(actionRecords), currentIndex.value, style,
+    );
+  }
+}
+
 const maxIndex = (maxLength: number, axis: 'x'|'y') => {
   const axisLength = axis === 'x' ? style.labels.yAxisWidth : style.labels.xAxisHeight;
   const rangeLength = axis === 'x' ? unref(dateRange).length : locationRecords.length;
@@ -81,24 +97,13 @@ const scrollTo = (x: number, y: number) => {
   }
 };
 
+
 // Redraw the board whenever the canvas is resized.
 useResizableCanvas(canvas, (width, height) => {
-  const ctx = canvas.value?.getContext('2d');
-  if (!ctx) {
-    console.warn(
-      'Aborted drawing the board because the canvas\'s rendering '
-      + 'context could not be found.',
-    );
-  } else {
-    // Reset reactive canvas properties, clear the canvas, and redraw the board.
-    maxWidth.value = width;
-    maxHeight.value = height;
-    const range = { x: unref(dateRange), y: locationRecords };
-    drawBoard(ctx, range, unref(actionRecords), currentIndex.value, style);
-    highlighter.value = addHighlighter(
-      ctx, range, unref(actionRecords), currentIndex.value, style,
-    );
-  }
+  // Reset reactive canvas properties, clear the canvas, and redraw the board.
+  maxWidth.value = width;
+  maxHeight.value = height;
+  drawToCanvas();
 });
 
 const mouse = useMouseInElement(canvas);
@@ -107,22 +112,11 @@ watch([mouse.elementX, mouse.elementY], (position, prevPosition) => {
   highlighter.value.next([...position, ...prevPosition]);
 });
 
+watch([actionRecords, dateRange], drawToCanvas);
+
 tryOnMounted(() => {
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    const ctx = canvas.value?.getContext('2d');
-    if (!ctx) {
-      console.warn(
-        'Aborted drawing the board because the canvas\'s rendering '
-        + 'context could not be found.',
-      );
-    } else {
-      const range = { x: unref(dateRange), y: locationRecords };
-      drawBoard(ctx, range, unref(actionRecords), currentIndex.value, style)
-      highlighter.value = addHighlighter(
-        ctx, range, unref(actionRecords), currentIndex.value, style,
-      );
-    }
-  });
+  window.matchMedia('(prefers-color-scheme: dark)')
+    .addEventListener('change', drawToCanvas);
 })
 
 </script>

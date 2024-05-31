@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { computed, provide, ref } from 'vue';
-import { actionRecordsKey, locationRecordsKey, dateRangeKey, actionTypesKey } from '@/data/providerKeys';
+import { actionRecordsKey, locationRecordsKey, dateRangeKey, actionTypesKey, boardIdKey } from '@/data/providerKeys';
 import { actionTypes, crop2023, locationRecords, randomActions } from '@/data/boardSampleData';
 import type { ActionRecords, LocationRecord } from '@/data/boardSampleData';
 import FlowBoard from '@/components/FlowBoard.vue';
 import FlowBoardActions from '@/components/FlowBoardActions.vue';
-import FlowMenubar from '@/components/FlowBoardMenubar.vue';
+import FlowBoardMenubar from '@/components/FlowBoardMenubar.vue';
 import { createDateRange, sameDate } from '@/utils/date';
 import LogoType from '@/assets/logotype_color.svg?component';
+
+const boardId = ref<'2023'|'random'>('2023');
 
 // The collection of all field actions, first sorted by location, then within
 // each location sorted by date. The locations will be created first, with empty
@@ -48,7 +50,7 @@ function generateActions(
   }
 }
 
-function loadBoard(name: '2024'|'2023'|'random') {
+function loadBoard(name: '2023'|'random') {
   if (name === 'random') {
     actionRecords.value = [];
     startDate.value = new Date(2024, 2, 28);
@@ -69,13 +71,13 @@ function loadBoard(name: '2024'|'2023'|'random') {
     actionRecords.value = name === '2023' ? crop2023 : [];
   }
 }
-
-loadBoard('2023');
+loadBoard(boardId.value);
 
 provide(actionRecordsKey, actionRecords);
 provide(locationRecordsKey, locationRecords);
 provide(dateRangeKey, dateRange);
 provide(actionTypesKey, actionTypes);
+provide(boardIdKey, boardId);
 
 </script>
 
@@ -86,7 +88,7 @@ provide(actionTypesKey, actionTypes);
         <LogoType/>
       </div>
       <div class="menubar">
-        <FlowMenubar/>
+        <FlowBoardMenubar @select-board="loadBoard"/>
       </div>
     </header>
     <main>

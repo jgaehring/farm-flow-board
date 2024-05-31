@@ -1,14 +1,22 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 import { Menubar } from 'radix-vue/namespaced'
 import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
 import IconCheck from '@/assets/radix-icons/check.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
+import { boardIdKey } from '@/data/providerKeys';
 
 const currentMenu = ref('')
 const checkboxOne = ref(false)
 const checkboxTwo = ref(false)
-const boardData = ref('2024')
+const boardId = inject<'2023'|'random'>(boardIdKey);
+const boardRadio = ref<'2023'|'random'|undefined>(boardId);
+const emit = defineEmits(['select-board']);
+function handleSelectBoard(e: any) {
+  if (typeof e === 'string') {
+    emit('select-board', e);
+  }
+}
 </script>
 
 <template>
@@ -57,16 +65,9 @@ const boardData = ref('2024')
               <Menubar.SubContent
                 class="MenubarContent"
                 :align-offset="-5">
-                <Menubar.RadioGroup v-model="boardData">
-
-                  <Menubar.RadioItem
-                    class="MenubarCheckboxItem inset"
-                    value="2024">
-                    <Menubar.ItemIndicator class="MenubarItemIndicator">
-                      <IconDotFilled />
-                    </Menubar.ItemIndicator>
-                    2024 Crops
-                  </Menubar.RadioItem>
+                <Menubar.RadioGroup
+                  v-model="boardRadio"
+                  @update:model-value="handleSelectBoard">
 
                   <Menubar.RadioItem
                     class="MenubarCheckboxItem inset"
