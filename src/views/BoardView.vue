@@ -66,7 +66,9 @@ provide(actionTypesKey, actionTypes);
 <template>
   <div class="layout">
     <header>
-      <LogoType/>
+      <div class="logotype">
+        <LogoType/>
+      </div>
       <div class="menubar">
         <FlowMenubar/>
       </div>
@@ -93,18 +95,17 @@ header {
   align-items: center;
   justify-content: flex-start;
   line-height: 1.5;
-  padding: 1.5rem 3rem 1.5rem calc(3rem + 240px);
+  height: 5.5rem;
 }
 
-.layout header svg {
-  height: 35px;
-  margin-right: .75rem;
+.logotype {
+  flex: 0 0 calc(240px + 3rem);
+  padding-top: .375rem;
+  text-align: center;
 }
 
-h1 {
-  display: inline-block;
-  color: hsla(160, 100%, 37%, .8);
-  margin-right: 1.5rem;
+.logotype svg {
+  height: 3.75rem;
 }
 
 main {

@@ -214,10 +214,10 @@ button {
   outline: none;
   user-select: none;
   font-weight: 500;
-  line-height: 1;
+  line-height: 1.5;
   border-radius: 4px;
   color: var(--ff-c-green);
-  font-size: 13px;
+  font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -246,13 +246,13 @@ button {
 :deep(.MenubarCheckboxItem),
 :deep(.MenubarRadioItem) {
   all: unset;
-  font-size: 13px;
-  line-height: 1;
+  font-size: 15px;
+  line-height: 1.5;
   color: var(--ff-c-green);
   border-radius: 4px;
   display: flex;
   align-items: center;
-  height: 25px;
+  height: 30px;
   padding: 0 10px;
   position: relative;
   user-select: none;
