@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject, ref, unref, watch } from 'vue';
 import type { Ref } from "vue";
-import { tryOnMounted, useMouseInElement } from '@vueuse/core';
+import { useMediaQuery, useMouseInElement } from '@vueuse/core';
 import useResizableCanvas from '@/composables/useResizableCanvas';
 import { addHighlighter, drawBoard, translateBoard } from '@/canvas/board';
 import type { HighlightGenerator } from '@/canvas/board';
@@ -62,6 +62,9 @@ const drawToCanvas = () => {
   }
 }
 
+const colorSchemePref = useMediaQuery('(prefers-color-scheme: dark)');
+watch([actionRecords, dateRange, colorSchemePref], drawToCanvas);
+
 const maxIndex = (maxLength: number, axis: 'x'|'y') => {
   const axisLength = axis === 'x' ? style.labels.yAxisWidth : style.labels.xAxisHeight;
   const rangeLength = axis === 'x' ? unref(dateRange).length : locationRecords.length;
@@ -97,7 +100,6 @@ const scrollTo = (x: number, y: number) => {
   }
 };
 
-
 // Redraw the board whenever the canvas is resized.
 useResizableCanvas(canvas, (width, height) => {
   // Reset reactive canvas properties, clear the canvas, and redraw the board.
@@ -111,14 +113,6 @@ watch([mouse.elementX, mouse.elementY], (position, prevPosition) => {
   if (!highlighter.value) return;
   highlighter.value.next([...position, ...prevPosition]);
 });
-
-watch([actionRecords, dateRange], drawToCanvas);
-
-tryOnMounted(() => {
-  window.matchMedia('(prefers-color-scheme: dark)')
-    .addEventListener('change', drawToCanvas);
-})
-
 </script>
 
 <template>
