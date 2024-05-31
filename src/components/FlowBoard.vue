@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref, unref, watch } from 'vue';
+import { computed, inject, ref, unref, watch } from 'vue';
 import type { Ref } from "vue";
 import { useMediaQuery, useMouseInElement } from '@vueuse/core';
 import useResizableCanvas from '@/composables/useResizableCanvas';
@@ -65,20 +65,29 @@ const drawToCanvas = () => {
 const colorSchemePref = useMediaQuery('(prefers-color-scheme: dark)');
 watch([actionRecords, dateRange, colorSchemePref], drawToCanvas);
 
-const maxIndex = (maxLength: number, axis: 'x'|'y') => {
-  const axisLength = axis === 'x' ? style.labels.yAxisWidth : style.labels.xAxisHeight;
-  const rangeLength = axis === 'x' ? unref(dateRange).length : locationRecords.length;
-  const maxGridLength = maxLength - axisLength;
-  const maxDisplayDates = Math.floor(maxGridLength / style.grid.unit);
-  return rangeLength - maxDisplayDates;
-};
+// When scrolling, where `m` is the maximum width of the x- or y-axis that can
+// be displayed, `n` is the hypothetical length of the axis if all possible
+// values were displayed, and `u` is the unit length of each grid cell, then the
+// highest value for the grid index, `i`, will be `(n - m) / u`, rounded down.
+const maxi = computed<{ x: number, y: number }>(() => {
+  const totalValuesX = unref(dateRange).length;
+  const totalValuesY = locationRecords.length;
+  const maxGridW = maxWidth.value - style.labels.yAxisWidth;
+  const maxGridH = maxHeight.value - style.labels.xAxisHeight;
+  const maxValuesX = Math.floor(maxGridW / style.grid.unit);
+  const maxValuesY = Math.floor(maxGridH / style.grid.unit);
+  return {
+    x: totalValuesX - maxValuesX,
+    y: totalValuesY - maxValuesY,
+  };
+});
+// Find the nearest possible numeric value, given a set of minimum and maximum
+// bounds; i.e.: y = min <= x <= max.
 const minMax = (mn: number, mx: number, num: number): number =>
   Math.max(mn, Math.min(mx, num));
 const scrollTo = (x: number, y: number) => {
-  const xMaxIndex = maxIndex(maxWidth.value, 'x');
-  const yMaxIndex = maxIndex(maxHeight.value, 'y');
-  const nextX = minMax(0, xMaxIndex, x);
-  const nextY = minMax(0, yMaxIndex, y);
+  const nextX = minMax(0, maxi.value.x, x);
+  const nextY = minMax(0, maxi.value.y, y);
   const xChanged = nextX !== currentIndex.value.x;
   const yChanged = nextY !== currentIndex.value.y;
   const positionChanged = xChanged || yChanged;
@@ -136,14 +145,14 @@ watch([mouse.elementX, mouse.elementY], (position, prevPosition) => {
     </button>
     <button
       type="button"
-      v-if="currentIndex.x < maxIndex(maxHeight, 'y')"
+      v-if="currentIndex.x < maxi.y"
       class="board-scroll-btn scroll-down"
       @click="scrollTo(currentIndex.x, currentIndex.y + 3)">
       <IconChevronDown/>
     </button>
     <button
       type="button"
-      v-if="currentIndex.x < maxIndex(maxWidth, 'x')"
+      v-if="currentIndex.x < maxi.x"
       class="board-scroll-btn scroll-right"
       @click="scrollTo(currentIndex.x + 7, currentIndex.y)">
       <IconChevronRight/>
