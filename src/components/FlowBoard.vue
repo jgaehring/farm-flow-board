@@ -19,11 +19,11 @@ const maxHeight = ref<number>(150); // <-- default height for any <canvas> eleme
 
 // The collection of all field actions, first sorted by location, then within
 // each location sorted by date.
-const actionRecords = inject<Ref<ActionRecords>>(actionRecordsKey) || [];
-const locationRecords = inject<LocationRecord[]>(locationRecordsKey) || [];
+const actionRecords = inject<Ref<ActionRecords>>(actionRecordsKey, ref<ActionRecords>([]));
+const locationRecords = inject<LocationRecord[]>(locationRecordsKey, []);
 
 // Array of Date objects for every calendar day within the specified range.
-const dateRange = inject<Ref<Date[]>>(dateRangeKey) || [];
+const dateRange = inject<Ref<Date[]>>(dateRangeKey, ref<Date[]>([]));
 
 // Constants for laying out the grid.
 const style = {

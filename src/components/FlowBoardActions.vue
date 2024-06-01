@@ -3,7 +3,7 @@ import { inject } from 'vue';
 import type { ActionType } from '@/data/boardSampleData';
 import { actionTypesKey } from '@/data/providerKeys';
 
-const actionTypes = inject<ActionType[]>(actionTypesKey) || [];
+const actionTypes = inject<ActionType[]>(actionTypesKey, []);
 </script>
 
 <template>
