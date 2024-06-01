@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { computed, inject, ref, unref, watch } from 'vue';
+import { computed, inject, provide, ref, unref, watch } from 'vue';
 import type { Ref } from "vue";
 import { useMediaQuery, useMouseInElement } from '@vueuse/core';
 import useResizableCanvas from '@/composables/useResizableCanvas';
 import { addHighlighter, drawBoard, translateBoard } from '@/canvas/board';
 import type { HighlightGenerator } from '@/canvas/board';
 import type { ActionRecords, LocationRecord } from '@/data/boardSampleData';
-import { actionRecordsKey, dateRangeKey, locationRecordsKey } from '@/data/providerKeys';
+import { actionRecordsKey, dateRangeKey, indexPositionKey, locationRecordsKey } from '@/data/providerKeys';
+import FlowBoardInteractiveLayer from '@/components/FlowBoardInteractiveLayer.vue'
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
 import IconChevronLeft from '@/assets/radix-icons/chevron-left.svg?component';
 import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
@@ -42,6 +43,7 @@ const style = {
 // column space. The y coordinate corresponds to the index of the location in
 // locationRecords array that will occupy the first row space.
 const currentIndex = ref<{ x: number, y: number}>({ x: 0, y: 0 });
+provide(indexPositionKey, currentIndex);
 
 // For highlighting the row & column on hover.
 const highlighter = ref<HighlightGenerator|null>(null);
@@ -126,6 +128,11 @@ watch([mouse.elementX, mouse.elementY], (position, prevPosition) => {
 
 <template>
   <figure>
+    <FlowBoardInteractiveLayer
+      :x="mouse.elementPositionX"
+      :y="mouse.elementPositionX"
+      :width="mouse.elementWidth"
+      :height="mouse.elementHeight"/>
     <canvas id="the-board" ref="canvas" role="presentation" height="640" width="960">
       <p>Oops, forgot to add a fallback! &#x1F643;</p>
     </canvas>

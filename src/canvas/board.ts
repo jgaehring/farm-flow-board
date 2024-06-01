@@ -179,7 +179,7 @@ const applyStyleFallbacks = (style: StyleOptions): StyleProperties => mergeDeepR
 // Adjust the width and height to fit as many columns and rows as possible
 // within the board's bounding box (ie, canvas + margins) w/o partially cutting
 // off any columns or rows; the last column/row should be fully displayed.
-function computeBoardProperties(
+export function computeBoardProperties(
   canvas: { width: number, height: number },
   range: RangeConfig<Date, LocationRecord>,
   index: { x: number, y: number },
