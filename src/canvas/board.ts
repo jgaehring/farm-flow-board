@@ -1,7 +1,7 @@
 import { clone, mergeDeepRight, reduce } from 'ramda';
-import getCssVar from '@/composables/useStyleDeclaration';
 import type { ActionRecords, ActionType, LocationRecord } from '@/data/boardSampleData';
 import { sameDate } from '@/utils/date';
+import getCssVar from '@/utils/getCssVar';
 
 type CanvasContext = CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D;
 
