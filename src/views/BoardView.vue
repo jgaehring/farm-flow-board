@@ -87,6 +87,7 @@ provide(boardIdKey, boardId);
       <div class="logotype">
         <LogoType/>
       </div>
+      <h1>{{ boardId === '2023' ? 'Crop 2023' : 'Random' }}</h1>
       <div class="menubar">
         <FlowBoardMenubar @select-board="loadBoard"/>
       </div>
@@ -124,6 +125,10 @@ header {
 
 .logotype svg {
   height: 3.75rem;
+}
+
+h1 {
+  margin-right: 1.5rem;
 }
 
 main {
