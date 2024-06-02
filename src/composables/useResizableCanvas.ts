@@ -1,5 +1,5 @@
-import { isRef, onMounted, ref, type MaybeRefOrGetter, type Ref } from 'vue';
-import { useParentElement, useResizeObserver } from '@vueuse/core';
+import { isRef, ref, type MaybeRefOrGetter, type Ref } from 'vue';
+import { tryOnMounted, useParentElement, useResizeObserver } from '@vueuse/core';
 
 declare type MaybeCanvas = HTMLCanvasElement|null;
 declare type TargetCanvas = string|MaybeRefOrGetter<MaybeCanvas>;
@@ -9,7 +9,7 @@ export default function useResizableCanvas(target: TargetCanvas, cb: ResizeCanva
   const canvas = isRef(target) ? target : ref<MaybeCanvas>(null);
 
   if (typeof target === 'string') {
-    onMounted(() => {
+    tryOnMounted(() => {
       canvas.value = document.getElementById(target) as HTMLCanvasElement;
     });
   }
