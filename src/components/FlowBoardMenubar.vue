@@ -32,22 +32,22 @@ function handleSelectBoard(e: any) {
           :align="'start'"
           :side-offset="5"
           :align-offset="-3">
-          <Menubar.Item class="MenubarItem">
+          <Menubar.Item class="MenubarItem" disabled>
             New Board
             <div class="RightSlot">
               ⌘ N
             </div>
           </Menubar.Item>
 
-          <Menubar.Item class="MenubarItem">
+          <Menubar.Item class="MenubarItem" disabled>
             Duplicate
           </Menubar.Item>
 
-          <Menubar.Item class="MenubarItem">
+          <Menubar.Item class="MenubarItem" disabled>
             Import Data
           </Menubar.Item>
 
-          <Menubar.Item class="MenubarItem">
+          <Menubar.Item class="MenubarItem" disabled>
             Export Data
           </Menubar.Item>
 
@@ -94,15 +94,15 @@ function handleSelectBoard(e: any) {
 
           <Menubar.Separator class="MenubarSeparator" />
 
-          <Menubar.Item class="MenubarItem">
+          <Menubar.Item class="MenubarItem" disabled>
             Edit Board Info
           </Menubar.Item>
 
-          <Menubar.Item class="MenubarItem">
+          <Menubar.Item class="MenubarItem" disabled>
             Preferences
           </Menubar.Item>
 
-          <Menubar.Item class="MenubarItem">
+          <Menubar.Item class="MenubarItem" disabled>
             Reports
           </Menubar.Item>
 
@@ -120,10 +120,10 @@ function handleSelectBoard(e: any) {
           :align="'start'"
           :side-offset="5"
           :align-offset="-3">
-          <Menubar.Item class="MenubarItem">
+          <Menubar.Item class="MenubarItem" disabled>
             Sort
           </Menubar.Item>
-          <Menubar.Item class="MenubarItem">
+          <Menubar.Item class="MenubarItem" disabled>
             Filter
           </Menubar.Item>
         </Menubar.Content>
@@ -142,6 +142,7 @@ function handleSelectBoard(e: any) {
           :align-offset="-14">
           <Menubar.CheckboxItem
             v-model:checked="checkboxOne"
+            disabled
             class="MenubarCheckboxItem inset">
             <Menubar.ItemIndicator class="MenubarItemIndicator">
               <IconCheck />
@@ -150,6 +151,7 @@ function handleSelectBoard(e: any) {
           </Menubar.CheckboxItem>
           <Menubar.CheckboxItem
             v-model:checked="checkboxTwo"
+            disabled
             class="MenubarCheckboxItem inset">
             <Menubar.ItemIndicator class="MenubarItemIndicator">
               <IconCheck />
@@ -157,7 +159,7 @@ function handleSelectBoard(e: any) {
             Show Rainfall
           </Menubar.CheckboxItem>
           <Menubar.Separator class="MenubarSeparator" />
-          <Menubar.Item class="MenubarItem inset">
+          <Menubar.Item class="MenubarItem inset" disabled>
             Jump to date...
             <div class="RightSlot">
               ⌘ J
@@ -177,17 +179,17 @@ function handleSelectBoard(e: any) {
           :align="'start'"
           :side-offset="5"
           :align-offset="-14">
-          <Menubar.Item class="MenubarItem">
+          <Menubar.Item class="MenubarItem" disabled>
             New Task
             <div class="RightSlot">
               ⌘ T
             </div>
           </Menubar.Item>
           <Menubar.Separator class="MenubarSeparator" />
-          <Menubar.Item class="MenubarItem">
+          <Menubar.Item class="MenubarItem" disabled>
             Organize Task Categories
           </Menubar.Item>
-          <Menubar.Item class="MenubarItem">
+          <Menubar.Item class="MenubarItem" disabled>
             Standard Operating Procedures
           </Menubar.Item>
         </Menubar.Content>
