@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue';
 import { computed, inject, ref, unref } from 'vue';
-import { Popover } from 'radix-vue/namespaced';
+import { Dialog, Popover } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { computeBoardProperties } from '@/canvas/board';
 import type { ActionRecords, ActionType, LocationRecord } from '@/data/boardSampleData';
@@ -95,14 +95,33 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
               <span>{{ cell.date.toLocaleDateString(undefined, { dateStyle: 'medium' }) }}</span>
             </div>
             <div class="popover-content-action">
-              <button v-for="(action, j) in cell.actions"
-                type="button"
-                :key="j">
-                <svg viewBox="0 0 12 12" width="12" height="12" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="6" cy="6" r="6" :fill="action.color"/>
-                </svg>
-                {{ action.name }}
-              </button>
+              <Dialog.Root  v-for="(action, j) in cell.actions" :key="j">
+                <Dialog.Trigger as="button"
+                  type="button">
+                  <svg viewBox="0 0 12 12" width="12" height="12" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="6" cy="6" r="6" :fill="action.color"/>
+                  </svg>
+                  {{ action.name }}
+                </Dialog.Trigger>
+                <Dialog.Portal>
+                  <Dialog.Overlay class="edit-dialog-overlay" />
+                  <Dialog.Content class="edit-dialog-content" >
+                    <Dialog.Title class="edit-dialog-title" >
+                      Edit Task
+                    </Dialog.Title>
+                    <Dialog.Description class="edit-dialog-description" >
+                      Make changes to the task.
+                    </Dialog.Description>
+                    <div>
+                      <label for="type">// TODO </label>
+                      <input type="text" placeholder="Edit something">
+                    </div>
+                    <Dialog.Close class="popover-close" aria-label="Close">
+                      <IconCross2 />
+                    </Dialog.Close>
+                  </Dialog.Content>
+                </Dialog.Portal>
+              </Dialog.Root>
             </div>
             <Popover.Close class="popover-close" aria-label="Close">
               <IconCross2 />
@@ -180,7 +199,8 @@ button {
   stroke-width: 1px;
 }
 
-.popover-close {
+.popover-close,
+.edit-dialog-close {
   font-family: inherit;
   border-radius: 100%;
   height: 15px;
@@ -194,10 +214,54 @@ button {
   top: .5rem;
   right: .5rem;
 }
-.popover-close:hover {
+.popover-close:hover,
+.edit-dialog-close:hover {
   background-color: var(--ff-c-green-transparent);
 }
-.popover-close:focus {
+.popover-close:focus,
+.edit-dialog-close:focus {
   box-shadow: 0 0 0 2px var(--ff-c-green-transparent);
+}
+
+.edit-dialog-overlay {
+  background-color: var(--ff-c-black-transparent-1);
+  position: fixed;
+  inset: 0;
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.edit-dialog-content {
+  background-color: var(--color-background-soft);
+  border-radius: 6px;
+  box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 450px;
+  max-height: 85vh;
+  padding: 25px;
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes overlayShow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 </style>
