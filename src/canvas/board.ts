@@ -142,7 +142,7 @@ function lightDark<L, D>(light: L, dark: D): L|D {
 
 // Fallbacks for Style Options
 const applyStyleFallbacks = (style: StyleOptions): StyleProperties => mergeDeepRight({
-  fill: getCssVar('--color-background') || lightDark('#ffffff', '#181818'),
+  fill: getCssVar('--color-background') || lightDark('#fcfcfc', '#181818'),
   stroke: getCssVar('--ff-c-green-transparent') || 'rgba(0, 189, 126, 0.3)',
   font: {
     color: getCssVar('--color-text') || lightDark('#2c3e50', '#ffffff'),
@@ -159,16 +159,16 @@ const applyStyleFallbacks = (style: StyleOptions): StyleProperties => mergeDeepR
     yAxisWidth: 240,
     xAxisHeight: 60,
     lineWidth: 1.5,
-    fill: getCssVar('--color-background-soft') || lightDark('#f8f8f8', '#222222'),
+    fill: getCssVar('--color-background-soft') || lightDark('#f4f4f4', '#222222'),
     stroke: getCssVar('--ff-c-green-transparent') || 'rgba(0, 189, 126, 0.3)',
   },
   highlight: {
-    fill: getCssVar('--color-background-mute') || lightDark('#f2f2f2','#282828'),
+    fill: getCssVar('--color-background-mute') || lightDark('#eaeaea','#323232'),
     stroke: getCssVar('--ff-c-green-transparent') || 'rgba(0, 189, 126, 0.3)',
     lineWidth: 1.5,
   },
   markers: {
-    shadowColor: lightDark('rgba(84, 84, 84, 0.24)', 'rgba(60, 60, 60, 0.29)'),
+    shadowColor: getCssVar('--color-box-shadow-3') || lightDark('#48484877', '#28282855'),
     shadowBlur: 3,
     shadowOffsetY: 1.5,
     shadowOffsetX: -3,

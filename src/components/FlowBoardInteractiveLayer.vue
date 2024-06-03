@@ -137,7 +137,9 @@ button {
 }
 
 :deep(.popover-content) {
-  background-color: var(--color-background);
+  background-color: var(--color-background-mute);
+  border-radius: 4px;
+  box-shadow: 0 0 6px 3px var(--color-box-shadow-2);
   padding: .75rem;
 }
 :deep(.popover-content) ul {
@@ -149,8 +151,10 @@ button {
   margin-inline-end: .75rem;
 }
 
-.popover-arrow {
-  fill: var(--color-background);
+:deep(.popover-arrow) {
+  fill: var(--color-background-mute);
+  stroke: var(--color-box-shadow-2);
+  stroke-width: 1px;
 }
 
 .popover-close {
@@ -161,6 +165,7 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
   color: var(--ff-c-green);
   position: absolute;
   top: .5rem;

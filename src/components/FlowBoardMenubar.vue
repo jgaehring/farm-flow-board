@@ -209,7 +209,7 @@ button {
   background-color: var(--color-background-soft);
   padding: 3px;
   border-radius: 6px;
-  box-shadow: 0 2px 10px var(--ff-c-black-transparent-1);
+  box-shadow: 0 0px 6px -3px var(--color-box-shadow-2);
 }
 
 :deep(.MenubarTrigger) {
@@ -229,7 +229,7 @@ button {
 
 :deep(.MenubarTrigger)[data-highlighted],
 :deep(.MenubarTrigger)[data-state='open'] {
-  background-color: var(--ff-c-green-transparent);
+  background-color: var(--ff-c-green-transparent-2);
 }
 
 :deep(.MenubarContent),

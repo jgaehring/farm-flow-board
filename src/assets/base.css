@@ -22,18 +22,20 @@
 
   --ff-c-black: #181818;
   --ff-c-black-soft: #222222;
-  --ff-c-black-mute: #282828;
+  --ff-c-black-mute: #323232;
   --ff-c-black-transparent-1: #181818aa;
   --ff-c-black-transparent-2: #18181855;
 
-  --ff-c-white: #ffffff;
-  --ff-c-white-soft: #f8f8f8;
-  --ff-c-white-mute: #f2f2f2;
+  --ff-c-white: #fcfcfc;
+  --ff-c-white-soft: #f4f4f4;
+  --ff-c-white-mute: #eaeaea;
   --ff-c-white-transparent-1: #ffffffcc;
   --ff-c-white-transparent-2: #ffffff88;
 
   --ff-c-green: rgba(0, 189, 126, 1);
   --ff-c-green-transparent: rgba(0, 189, 126, 0.3);
+  --ff-c-green-transparent-1: rgba(0, 189, 126, 0.3);
+  --ff-c-green-transparent-2: rgba(0, 189, 126, 0.15);
 
   --ff-font-family:
     Inter,
@@ -52,12 +54,19 @@
 
 /* semantic color variables for this project */
 :root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
+  --color-background: var(--ff-c-white);
+  --color-background-soft: var(--ff-c-white-soft);
+  --color-background-mute: var(--ff-c-white-mute);
 
   --color-border: var(--vt-c-divider-light-2);
   --color-border-hover: var(--vt-c-divider-light-1);
+
+  --color-box-shadow-1: #484848b8;
+  --color-box-shadow-2: #48484878;
+  --color-box-shadow-3: #48484848;
+  --color-box-shadow-inverse-1: #282828d8;
+  --color-box-shadow-inverse-2: #282828a8;
+  --color-box-shadow-inverse-3: #28282858;
 
   --color-heading: var(--vt-c-text-light-1);
   --color-text: var(--vt-c-text-light-1);
@@ -67,13 +76,20 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
+    --color-background: var(--ff-c-black);
+    --color-background-soft: var(--ff-c-black-soft);
+    --color-background-mute: var(--ff-c-black-mute);
 
     --color-border: var(--vt-c-divider-dark-2);
     --color-border-hover: var(--vt-c-divider-dark-1);
 
+    --color-box-shadow-1: #282828d8;
+    --color-box-shadow-2: #282828a8;
+    --color-box-shadow-3: #28282858;
+    --color-box-shadow-inverse-1: #484848b8;
+    --color-box-shadow-inverse-2: #48484878;
+    --color-box-shadow-inverse-3: #48484848;
+  
     --color-heading: var(--vt-c-text-dark-1);
     --color-text: var(--vt-c-text-dark-2);
   }
