@@ -87,20 +87,21 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
         </Popover.Trigger>
         <Popover.Portal>
           <Popover.Content class="popover-content">
-            <ul>
-              <li>Location: {{ cell.location.name }}</li>
-              <li>Date: {{ cell.date.toLocaleDateString() }}</li>
-              <li>
-                Actions:
-                <ol>
-                  <li v-for="(action, j) in cell.actions"
-                    :style="`color: ${action.color}`"
-                    :key="j">
-                    {{ action.name }}
-                  </li>
-                </ol>
-              </li>
-            </ul>
+            <div class="popover-content-date-time">
+              <span>{{ cell.location.name }}</span>
+              <br>
+              <span>{{ cell.date.toLocaleDateString(undefined, { dateStyle: 'medium' }) }}</span>
+            </div>
+            <div class="popover-content-action">
+              <button v-for="(action, j) in cell.actions"
+                type="button"
+                :key="j">
+                <svg viewBox="0 0 12 12" width="12" height="12" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="6" cy="6" r="6" :fill="action.color"/>
+                </svg>
+                {{ action.name }}
+              </button>
+            </div>
             <Popover.Close class="popover-close" aria-label="Close">
               <IconCross2 />
             </Popover.Close>
@@ -137,18 +138,38 @@ button {
 }
 
 :deep(.popover-content) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 320px;
+  padding: .75rem .75rem;
   background-color: var(--color-background-mute);
   border-radius: 4px;
   box-shadow: 0 0 6px 3px var(--color-box-shadow-2);
-  padding: .75rem;
 }
-:deep(.popover-content) ul {
-  padding-inline-start: .75rem;
-  padding-inline-end: .75rem;
-  margin-block-start: .75rem;
-  margin-block-end: .75rem;
-  margin-inline-start: .75rem;
-  margin-inline-end: .75rem;
+:deep(.popover-content-action) {
+  display: flex;
+  flex-flow: row wrap;
+}
+:deep(.popover-content-action) button {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  text-wrap: nowrap;
+  background-color: var(--color-box-shadow-inverse-1);
+  color: var(--ff-c-green);
+  padding: .375rem .75rem;
+  margin-right: .375rem;
+  margin-bottom: .375rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+:deep(.popover-content-action) button:hover {
+  background-color: var(--ff-c-green-transparent-2);
+}
+:deep(.popover-content-date-time) {
+  text-align: center;
+  margin-bottom: .375rem;
 }
 
 :deep(.popover-arrow) {
