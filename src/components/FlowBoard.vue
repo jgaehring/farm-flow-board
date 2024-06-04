@@ -153,7 +153,7 @@ watch([mouse.elementX, mouse.elementY], (position, prevPosition) => {
     </button>
     <button
       type="button"
-      v-if="currentIndex.x < maxi.y"
+      v-if="currentIndex.y < maxi.y"
       class="board-scroll-btn scroll-down"
       @click="scrollTo(currentIndex.x, currentIndex.y + 3)">
       <IconChevronDown/>
@@ -192,6 +192,7 @@ canvas {
   position: absolute;
   background-color: var(--color-neutral-inverse-transparent-2);
   border: 1px solid var(--color-border);
+  text-align: center;
 }
 
 .board-scroll-btn:hover {
@@ -221,19 +222,19 @@ canvas {
 }
 
 .board-scroll-btn.scroll-up {
-  top: -3rem;
+  top: -6rem;
 }
 
 .board-scroll-btn.scroll-right {
-  right: -3rem;
+  right: -6rem;
 }
 
 .board-scroll-btn.scroll-down {
-  bottom: -3rem;
+  bottom: -6rem;
 }
 
 .board-scroll-btn.scroll-left {
-  left: -3rem;
+  left: -6rem;
 }
 
 figure:hover .board-scroll-btn.scroll-up {
