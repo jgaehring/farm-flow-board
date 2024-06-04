@@ -5,7 +5,7 @@ import { Popover } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { computeBoardProperties } from '@/canvas/board';
 import type { ActionRecords, ActionType, LocationRecord } from '@/data/boardSampleData';
-import { actionRecordsKey, dateRangeKey, indexPositionKey, locationRecordsKey } from '@/data/providerKeys';
+import { actionRecordsKey, dateRangeKey, indexPositionKey, isDarkKey, locationRecordsKey } from '@/data/providerKeys';
 import { sameDate } from '@/utils/date';
 import IconCross2 from '@/assets/radix-icons/cross-2.svg?component'
 
@@ -17,8 +17,15 @@ interface FlowBoardCursorGridProps {
 }
 const props = defineProps<FlowBoardCursorGridProps>();
 
+const actionRecords = inject<Ref<ActionRecords>>(actionRecordsKey, ref<ActionRecords>([]));
+const locationRecords = inject<LocationRecord[]>(locationRecordsKey, []);
+const dateRange = inject<Ref<Date[]>>(dateRangeKey, ref<Date[]>([]));
+const boardIndex = inject<Ref<{ x: number, y: number }>>(indexPositionKey, ref({ x: 0, y: 0 }));
+const isDark = inject(isDarkKey);
+
 // Parameters for laying out the grid.
-const style = {
+const style = computed(() => ({
+  isDark: isDark?.value,
   grid: {
     unit: 40,
     lineWidth: 1.5,
@@ -27,18 +34,13 @@ const style = {
     yAxisWidth: 240,
     xAxisHeight: 60,
   },
-};
-
-const actionRecords = inject<Ref<ActionRecords>>(actionRecordsKey, ref<ActionRecords>([]));
-const locationRecords = inject<LocationRecord[]>(locationRecordsKey, []);
-const dateRange = inject<Ref<Date[]>>(dateRangeKey, ref<Date[]>([]));
-const boardIndex = inject<Ref<{ x: number, y: number }>>(indexPositionKey, ref({ x: 0, y: 0 }));
+}));
 
 const board = computed(() => computeBoardProperties(
   { width: props.width.value, height: props.width.value },
   { x: unref(dateRange), y: locationRecords },
   boardIndex.value,
-  style,
+  style.value,
 ));
 
 interface GridCell {
@@ -156,7 +158,7 @@ button {
   font-weight: 500;
   line-height: 1.5;
   text-wrap: nowrap;
-  background-color: var(--color-box-shadow-inverse-1);
+  background-color: var(--color-background-soft);
   color: var(--ff-c-green);
   padding: .375rem .75rem;
   margin-right: .375rem;

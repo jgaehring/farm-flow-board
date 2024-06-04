@@ -1,7 +1,7 @@
 import { clone, mergeDeepRight, reduce } from 'ramda';
+import { useDark } from '@vueuse/core';
 import type { ActionRecords, ActionType, LocationRecord } from '@/data/boardSampleData';
 import { sameDate } from '@/utils/date';
-import getCssVar from '@/utils/getCssVar';
 
 type CanvasContext = CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D;
 
@@ -79,6 +79,7 @@ interface HighlightOptions {
 interface StyleOptions {
   fill?: string,
   stroke?: string,
+  isDark?: boolean,
   grid?: GridOptions,
   highlight?: HighlightOptions,
   labels?: LabelOptions,
@@ -93,6 +94,7 @@ interface StyleOptions {
 interface StyleProperties {
   fill: string,
   stroke: string,
+  isDark: boolean,
   font: {
     color: string,
     fontFamily: string,
@@ -136,17 +138,59 @@ function fitToGrid<T>(
 }
 
 function lightDark<L, D>(light: L, dark: D): L|D {
-  const mQuery = window.matchMedia('(prefers-color-scheme: dark)');
-  return mQuery.matches ? dark : light;
+  const isDark = useDark();
+  return isDark ? dark : light;
 }
+
+const colorVars = {
+  root: new Map([
+    ['--color-background', '#ffffff'],
+    ['--color-background-soft', '#f8f8f8'],
+    ['--color-background-mute', '#f2f2f2'],
+    ['--color-border', 'rgba(60, 60, 60, 0.12)'],
+    ['--color-border-hover', 'rgba(60, 60, 60, 0.29)'],
+    ['--color-box-shadow-1', '#484848b8'],
+    ['--color-box-shadow-2', '#48484878'],
+    ['--color-box-shadow-3', '#48484848'],
+    ['--color-box-shadow-inverse-1', '#282828d8'],
+    ['--color-box-shadow-inverse-2', '#282828a8'],
+    ['--color-box-shadow-inverse-3', '#28282858'],
+    ['--color-heading', '#2c3e50'],
+    ['--color-text', 'rgba(60, 60, 60, 0.66)'],
+    ['--section-gap', '160px'],
+  ]),
+  dark: new Map([
+    ['--color-background', '#181818'],
+    ['--color-background-soft', '#222222'],
+    ['--color-background-mute', '#323232'],
+    ['--color-border', 'rgba(84, 84, 84, 0.48)'],
+    ['--color-border-hover', 'rgba(84, 84, 84, 0.65)'],
+    ['--color-box-shadow-1', '#282828d8'],
+    ['--color-box-shadow-2', '#282828a8'],
+    ['--color-box-shadow-3', '#28282858'],
+    ['--color-box-shadow-inverse-1', '#484848b8'],
+    ['--color-box-shadow-inverse-2', '#48484878'],
+    ['--color-box-shadow-inverse-3', '#48484848'],
+    ['--color-heading', '#ffffff'],
+    ['--color-text', 'rgba(235, 235, 235, 0.64)'],
+  ]),
+};
+const getColorVar = (cssVar: string, isDark: boolean|undefined|null|'') =>
+  (isDark && colorVars.dark.has(cssVar)
+    ? colorVars.dark.get(cssVar)
+    : colorVars.root.get(cssVar));
 
 // Fallbacks for Style Options
 const applyStyleFallbacks = (style: StyleOptions): StyleProperties => mergeDeepRight({
-  fill: getCssVar('--color-background') || lightDark('#fcfcfc', '#181818'),
-  stroke: getCssVar('--ff-c-green-transparent') || 'rgba(0, 189, 126, 0.3)',
+  fill: getColorVar('--color-background', style.isDark)
+    || lightDark('#fcfcfc', '#181818'),
+  stroke: getColorVar('--ff-c-green-transparent', style.isDark)
+    || 'rgba(0, 189, 126, 0.3)',
+  isDark: false,
   font: {
-    color: getCssVar('--color-text') || lightDark('#2c3e50', '#ffffff'),
-    fontFamily: getCssVar('--ff-font-family')
+    color: getColorVar('--color-text', style.isDark)
+      || lightDark('#rgba(60, 60, 60, 0.66)', 'rgba(235, 235, 235, 0.64)'),
+    fontFamily: getColorVar('--ff-font-family', style.isDark)
       || `Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, `
       + `Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif`,
   },
@@ -159,16 +203,21 @@ const applyStyleFallbacks = (style: StyleOptions): StyleProperties => mergeDeepR
     yAxisWidth: 240,
     xAxisHeight: 60,
     lineWidth: 1.5,
-    fill: getCssVar('--color-background-soft') || lightDark('#f4f4f4', '#222222'),
-    stroke: getCssVar('--ff-c-green-transparent') || 'rgba(0, 189, 126, 0.3)',
+    fill: getColorVar('--color-background-soft', style.isDark)
+      || lightDark('#f4f4f4', '#222222'),
+    stroke: getColorVar('--ff-c-green-transparent', style.isDark)
+      || 'rgba(0, 189, 126, 0.3)',
   },
   highlight: {
-    fill: getCssVar('--color-background-mute') || lightDark('#eaeaea','#323232'),
-    stroke: getCssVar('--ff-c-green-transparent') || 'rgba(0, 189, 126, 0.3)',
+    fill: getColorVar('--color-background-mute', style.isDark)
+      || lightDark('#eaeaea','#323232'),
+    stroke: getColorVar('--ff-c-green-transparent', style.isDark)
+      || 'rgba(0, 189, 126, 0.3)',
     lineWidth: 1.5,
   },
   markers: {
-    shadowColor: getCssVar('--color-box-shadow-3') || lightDark('#48484877', '#28282855'),
+    shadowColor: getColorVar('--color-box-shadow-3', style.isDark)
+      || lightDark('#48484877', '#28282855'),
     shadowBlur: 3,
     shadowOffsetY: 1.5,
     shadowOffsetX: -3,

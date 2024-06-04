@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, inject, provide, ref, unref, watch } from 'vue';
 import type { Ref } from "vue";
-import { useMediaQuery, useMouseInElement } from '@vueuse/core';
+import { useMouseInElement } from '@vueuse/core';
 import useResizableCanvas from '@/composables/useResizableCanvas';
 import { addHighlighter, drawBoard, translateBoard } from '@/canvas/board';
 import type { HighlightGenerator } from '@/canvas/board';
 import type { ActionRecords, LocationRecord } from '@/data/boardSampleData';
-import { actionRecordsKey, dateRangeKey, indexPositionKey, locationRecordsKey } from '@/data/providerKeys';
+import { actionRecordsKey, dateRangeKey, indexPositionKey, isDarkKey, locationRecordsKey } from '@/data/providerKeys';
 import FlowBoardInteractiveLayer from '@/components/FlowBoardInteractiveLayer.vue'
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
 import IconChevronLeft from '@/assets/radix-icons/chevron-left.svg?component';
@@ -25,9 +25,11 @@ const locationRecords = inject<LocationRecord[]>(locationRecordsKey, []);
 
 // Array of Date objects for every calendar day within the specified range.
 const dateRange = inject<Ref<Date[]>>(dateRangeKey, ref<Date[]>([]));
+const isDark = inject(isDarkKey);
 
 // Constants for laying out the grid.
-const style = {
+const style = computed(() => ({
+  isDark: isDark?.value,
   grid: {
     unit: 40,
     lineWidth: 1.5,
@@ -36,7 +38,7 @@ const style = {
     yAxisWidth: 240,
     xAxisHeight: 60,
   },
-};
+}));
 
 // The position of the board along x and y axes. The x coordinate corresponds to
 // the index of the date in the dateRange array that will occupy the first
@@ -57,15 +59,14 @@ const drawToCanvas = () => {
     );
   } else {
     const range = { x: unref(dateRange), y: locationRecords };
-    drawBoard(ctx, range, unref(actionRecords), currentIndex.value, style);
+    drawBoard(ctx, range, unref(actionRecords), currentIndex.value, style.value);
     highlighter.value = addHighlighter(
-      ctx, range, unref(actionRecords), currentIndex.value, style,
+      ctx, range, unref(actionRecords), currentIndex.value, style.value,
     );
   }
 }
 
-const colorSchemePref = useMediaQuery('(prefers-color-scheme: dark)');
-watch([actionRecords, dateRange, colorSchemePref], drawToCanvas);
+watch([actionRecords, dateRange, isDark], drawToCanvas);
 
 // When scrolling, where `m` is the maximum width of the x- or y-axis that can
 // be displayed, `n` is the hypothetical length of the axis if all possible
@@ -74,10 +75,10 @@ watch([actionRecords, dateRange, colorSchemePref], drawToCanvas);
 const maxi = computed<{ x: number, y: number }>(() => {
   const totalValuesX = unref(dateRange).length;
   const totalValuesY = locationRecords.length;
-  const maxGridW = maxWidth.value - style.labels.yAxisWidth;
-  const maxGridH = maxHeight.value - style.labels.xAxisHeight;
-  const maxValuesX = Math.floor(maxGridW / style.grid.unit);
-  const maxValuesY = Math.floor(maxGridH / style.grid.unit);
+  const maxGridW = maxWidth.value - style.value.labels.yAxisWidth;
+  const maxGridH = maxHeight.value - style.value.labels.xAxisHeight;
+  const maxValuesX = Math.floor(maxGridW / style.value.grid.unit);
+  const maxValuesY = Math.floor(maxGridH / style.value.grid.unit);
   return {
     x: totalValuesX - maxValuesX,
     y: totalValuesY - maxValuesY,
@@ -103,11 +104,11 @@ const scrollTo = (x: number, y: number) => {
         currentIndex.value.x = nextX;
         currentIndex.value.y = nextY;
         highlighter.value = addHighlighter(
-          ctx, range, unref(actionRecords), currentIndex.value, style,
+          ctx, range, unref(actionRecords), currentIndex.value, style.value,
         );
       },
     };
-    translateBoard(ctx, range, unref(actionRecords), translation, style);
+    translateBoard(ctx, range, unref(actionRecords), translation, style.value);
   }
 };
 
@@ -189,34 +190,20 @@ canvas {
 
 .board-scroll-btn {
   position: absolute;
-  background-color: var(--ff-c-white-transparent-1);
+  background-color: var(--color-neutral-inverse-transparent-2);
   border: 1px solid var(--color-border);
 }
 
 .board-scroll-btn:hover {
-  background-color: var(--ff-c-white);
+  background-color: var(--color-neutral-inverse-transparent-1);
   border-color: var(--color-border-hover);
   cursor: pointer;
 }
 
 .board-scroll-btn:disabled {
   border-color: var(--color-border);
-  background-color: var(--ff-c-white-transparent-2);
+  background-color: var(--color-neutral-inverse-transparent-3);
   cursor: auto;
-}
-
-@media (prefers-color-scheme: dark) {
-  .board-scroll-btn {
-    background-color: var(--ff-c-black-transparent-1);
-  }
-  
-  .board-scroll-btn:hover {
-    background-color: var(--ff-c-black);
-  }
-  
-  .board-scroll-btn:disabled {
-    background-color: var(--ff-c-black-transparent-2);
-  }
 }
 
 .board-scroll-btn.board-scroll-btn.scroll-up,

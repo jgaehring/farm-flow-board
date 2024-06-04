@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { computed, provide, ref } from 'vue';
-import { actionRecordsKey, locationRecordsKey, dateRangeKey, actionTypesKey, boardIdKey } from '@/data/providerKeys';
+import { useDark, useToggle } from '@vueuse/core'
+import { Switch } from 'radix-vue/namespaced';
+import { actionRecordsKey, actionTypesKey, boardIdKey, dateRangeKey,
+  isDarkKey, locationRecordsKey,
+} from '@/data/providerKeys';
 import { actionTypes, crop2023, locationRecords, randomActions } from '@/data/boardSampleData';
 import type { ActionRecords, LocationRecord } from '@/data/boardSampleData';
 import FlowBoard from '@/components/FlowBoard.vue';
@@ -8,6 +12,8 @@ import FlowBoardActions from '@/components/FlowBoardActions.vue';
 import FlowBoardMenubar from '@/components/FlowBoardMenubar.vue';
 import { createDateRange, sameDate } from '@/utils/date';
 import LogoType from '@/assets/logotype_color.svg?component';
+import IconSun from '@/assets/radix-icons/sun.svg?component'
+import IconMoon from '@/assets/radix-icons/moon.svg?component'
 
 const boardId = ref<'2023'|'random'>('2023');
 
@@ -73,11 +79,20 @@ function loadBoard(name: '2023'|'random') {
 }
 loadBoard(boardId.value);
 
+const isDark = useDark({
+  selector: 'body',
+  attribute: 'color-scheme',
+  valueDark: 'dark',
+  valueLight: 'light',
+});
+const toggleDark = useToggle(isDark);
+
 provide(actionRecordsKey, actionRecords);
 provide(locationRecordsKey, locationRecords);
 provide(dateRangeKey, dateRange);
 provide(actionTypesKey, actionTypes);
 provide(boardIdKey, boardId);
+provide(isDarkKey, isDark);
 
 </script>
 
@@ -90,6 +105,17 @@ provide(boardIdKey, boardId);
       <h1>{{ boardId === '2023' ? 'Crop 2023' : 'Random' }}</h1>
       <div class="menubar">
         <FlowBoardMenubar @select-board="loadBoard"/>
+      </div>
+      <div class="dark-mode-toggle">
+        <Switch.Root
+          :checked="isDark"
+          @update:checked="toggleDark"
+          class="switch-root">
+          <Switch.Thumb class="switch-thumb">
+            <IconMoon v-if="isDark"/>
+            <IconSun v-else />
+          </Switch.Thumb>
+        </Switch.Root>
       </div>
     </header>
     <main>
@@ -129,6 +155,52 @@ header {
 
 h1 {
   margin-right: 1.5rem;
+}
+
+.dark-mode-toggle {
+  margin-left: auto;
+  margin-right: 4rem;
+  vertical-align: middle;
+}
+:deep(.dark-mode-toggle svg) {
+  stroke: var(--color-text);
+  fill: var(--color-text);
+  width: 10px;
+  height: 10px;
+}
+:deep(button) {
+  all: unset;
+}
+:deep(.switch-root) {
+  width: 42px;
+  height: 25px;
+  text-align: center;
+  background-color: var(--color-background-soft);
+  border: 2px solid var(--color-background-mute);
+  border-radius: 9999px;
+  position: relative;
+  transition: background-color 250ms;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+:deep(.switch-root):focus {
+  box-shadow: 0 0 0 2px var(--color-box-shadow-3);
+}
+:deep(.switch-root)[data-state='checked'] {
+  background-color: var(--color-background);
+}
+
+:deep(.switch-thumb) {
+  display: block;
+  width: 21px;
+  height: 21px;
+  background-color: var(--color-background-mute);
+  border-radius: 9999px;
+  box-shadow: 0 2px 2px var(--color-box-shadow-1);
+  transition: transform 250ms;
+  transform: translateX(2px);
+}
+:deep(.switch-thumb)[data-state='checked'] {
+  transform: translateX(19px);
 }
 
 main {
