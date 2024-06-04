@@ -37,7 +37,7 @@ export const actionTypes: ActionTypes = [
   { id: 5, name: 'Rock Picking', color: 'gold' },
   { id: 6, name: 'Mow', color: 'orangered' },
   { id: 7, name: 'Plant', color: 'blueviolet' },
-  { id: 8, name: 'ZAP', color: 'rosybrown' },
+  { id: 8, name: 'Zap', color: 'rosybrown' },
 ];
 
 export type CropType = { id: number, name: string, color: string };
@@ -55,14 +55,27 @@ type RawCropRecord = {
   location: string,
   actions: RawCropAction[]
 }
-const cultivType = actionTypes[2]; // default for unknown actions in sample data
+
+// Subtypes and alternative names.
+const taskMap = new Map([
+  ['FC1', actionTypes[0]],
+  ['FC2', actionTypes[0]],
+  ['Kovar', actionTypes[1]],
+  ['Einbock', actionTypes[1]],
+  ['Hatzenbichler', actionTypes[1]],
+  ['Treffler', actionTypes[1]],
+  ['Hoe', actionTypes[4]],
+]);
 const cropToActionRecords = reduce((actions: ActionsByLocation[], crop: RawCropRecord) => {
   const { location: name } = crop;
   const location = locationRecords.find(loc => loc.name === name);
   if (!location) return actions;
   const { id } = location;
   const dates = crop.actions.reduce((byDate: ActionsByDate[], raw: RawCropAction) => {
-    const action = actionTypes.find(a => a.name === raw.name) || cultivType;
+    let action = actionTypes.find(a => a.name.toLowerCase() === raw.name.toLowerCase());
+    if (!action) action = taskMap.has(raw.name)
+      ? taskMap.get(raw.name) as ActionType
+      : actionTypes[2]; // 'Cultivation': default for unknown actions in sample data
     const date = new Date(raw.date);
     const i = byDate.findIndex(a => sameDate(a.date, date));
     if (i < 0) return [...byDate, { date, actions: [action] }];
