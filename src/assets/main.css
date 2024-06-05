@@ -13,3 +13,8 @@ a,
     background-color: hsla(160, 100%, 37%, 0.2);
   }
 }
+
+::selection {
+  background-color: var(--ff-c-green-transparent-1);
+  color: var(--color-heading);
+}

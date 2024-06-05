@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import type { Ref } from 'vue';
 import { computed, inject, ref, unref } from 'vue';
-import { Dialog, Popover } from 'radix-vue/namespaced';
+import { Combobox, Dialog, Label, Popover } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { computeBoardProperties } from '@/canvas/board';
-import type { ActionRecords, ActionType, LocationRecord } from '@/data/boardSampleData';
+import { actionTypes, type ActionRecords, type ActionType, type LocationRecord } from '@/data/boardSampleData';
 import { actionRecordsKey, dateRangeKey, indexPositionKey, isDarkKey, locationRecordsKey } from '@/data/providerKeys';
 import { sameDate } from '@/utils/date';
 import IconCross2 from '@/assets/radix-icons/cross-2.svg?component'
+import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component'
+import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
 
 interface FlowBoardCursorGridProps {
   x: Ref<number>,
@@ -109,13 +111,63 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
                     <Dialog.Title class="edit-dialog-title" >
                       Edit Task
                     </Dialog.Title>
-                    <Dialog.Description class="edit-dialog-description" >
-                      Make changes to the task.
-                    </Dialog.Description>
-                    <div>
-                      <label for="type">// TODO </label>
-                      <input type="text" placeholder="Edit something">
-                    </div>
+                    <VisuallyHidden>
+                      <Dialog.Description class="edit-dialog-description" >
+                        Make changes to the task.
+                      </Dialog.Description>
+                    </VisuallyHidden>
+                    <Label class="label-task-type" for="edit-task-type">Task</Label>
+                    <Combobox.Root :model-value="action.id">
+                      <Combobox.Anchor class="combobox-anchor">
+                        <Combobox.Input
+                          id="edit-task-type"
+                          class="combobox-input"
+                          :value="action.name" />
+                        <Combobox.Trigger >
+                          <IconChevronDown/>
+                        </Combobox.Trigger>
+                      </Combobox.Anchor>
+                      <Combobox.Content class="combobox-content">
+                        <Combobox.Viewport class="combobox-viewport" >
+                          <Combobox.Empty class="combobox-empty"/>
+                          <Combobox.Item v-for="(type, i) in actionTypes"
+                            class="combobox-item"
+                            :value="type.id"
+                            :key="i">
+                            <Combobox.ItemIndicator class="combobox-item-indicator" >
+                              <IconDotFilled/>
+                            </Combobox.ItemIndicator>
+                            {{ type.name }}
+                          </Combobox.Item>
+                        </Combobox.Viewport>
+                      </Combobox.Content>
+                    </Combobox.Root>
+                    <Label class="label-task-type" for="edit-task-location">Location</Label>
+                    <Combobox.Root :model-value="cell.location.id">
+                      <Combobox.Anchor class="combobox-anchor">
+                        <Combobox.Input
+                          id="edit-task-location"
+                          class="combobox-input"
+                          :value="cell.location.name" />
+                        <Combobox.Trigger >
+                          <IconChevronDown/>
+                        </Combobox.Trigger>
+                      </Combobox.Anchor>
+                      <Combobox.Content class="combobox-content">
+                        <Combobox.Viewport class="combobox-viewport" >
+                          <Combobox.Empty class="combobox-empty"/>
+                          <Combobox.Item v-for="(location, i) in locationRecords"
+                            class="combobox-item"
+                            :value="location.id"
+                            :key="i">
+                            <Combobox.ItemIndicator class="combobox-item-indicator" >
+                              <IconDotFilled/>
+                            </Combobox.ItemIndicator>
+                            {{ location.name }}
+                          </Combobox.Item>
+                        </Combobox.Viewport>
+                      </Combobox.Content>
+                    </Combobox.Root>
                     <Dialog.Close class="popover-close" aria-label="Close">
                       <IconCross2 />
                     </Dialog.Close>
@@ -243,6 +295,112 @@ button {
   max-height: 85vh;
   padding: 25px;
   animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.combobox-root {
+  position: relative;
+}
+
+.combobox-anchor {
+  display: inline-flex;
+  align-items: center;
+  justify-content: between; 
+  font-size: 13px;
+  line-height: 1;
+  height: 35px;
+  padding: 0 15px;
+  gap: 5px;
+  background-color: var(--color-background);
+  color: var(--grass-11);
+  border-radius: 4px;
+  box-shadow: 0 2px 10px var(--color-box-shadow-2);
+}
+.combobox-anchor:hover {
+  background-color: var(--color-neutral-inverse-transparent-3);
+}
+
+.combobox-input {
+  height: 100%;
+  background-color: transparent;
+  color: var(--ff-c-green);
+}
+.combobox-input[data-placeholder] {
+  color: var(--ff-c-green-transparent);
+}
+
+.combobox-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--ff-c-green);
+}
+
+.combobox-content {
+  z-index: 10;
+  width: 100%;
+  position: absolute;
+  overflow: hidden;
+  background-color: var(--color-background);
+  border-radius: 6px;
+  margin-top: 8px;
+  box-shadow: 0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2);
+}
+
+.combobox-viewport {
+  padding: 5px;
+}
+
+.combobox-empty {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500; 
+  color: var(--color-text)
+}
+
+.combobox-item {
+  font-size: 13px;
+  line-height: 1;
+  color: var(--grass-11);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  height: 25px;
+  padding: 0 35px 0 25px;
+  position: relative;
+  user-select: none;
+}
+.combobox-item[data-disabled] {
+  color: var(--color-border);
+  pointer-events: none;
+}
+.combobox-item[data-highlighted] {
+  outline: none;
+  background-color: var(--ff-c-green-transparent);
+  color: var(--color-heading);
+}
+
+.combobox-label {
+  padding: 0 25px;
+  font-size: 12px;
+  line-height: 25px;
+  color: var(--color-text);
+}
+
+.combobox-separator {
+  height: 1px;
+  background-color: var(--ff-c-green-transparent-2);
+  margin: 5px;
+}
+
+.combobox-item-indicator {
+  position: absolute;
+  left: 0;
+  width: 25px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @keyframes overlayShow {
