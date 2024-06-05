@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import type { Ref } from 'vue';
 import { computed, inject, ref, unref } from 'vue';
-import { Combobox, Dialog, Label, Popover } from 'radix-vue/namespaced';
+import { Combobox, DatePicker, Dialog, Label, Popover } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
+import type { DateValue } from '@internationalized/date';
 import { computeBoardProperties } from '@/canvas/board';
 import { actionTypes, type ActionRecords, type ActionType, type LocationRecord } from '@/data/boardSampleData';
 import { actionRecordsKey, dateRangeKey, indexPositionKey, isDarkKey, locationRecordsKey } from '@/data/providerKeys';
 import { sameDate } from '@/utils/date';
-import IconCross2 from '@/assets/radix-icons/cross-2.svg?component'
-import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component'
+import IconCalendar from '@/assets/radix-icons/calendar.svg?component';
+import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
+import IconChevronLeft from '@/assets/radix-icons/chevron-left.svg?component';
+import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
+import IconCross2 from '@/assets/radix-icons/cross-2.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
 
 interface FlowBoardCursorGridProps {
@@ -168,6 +172,91 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
                         </Combobox.Viewport>
                       </Combobox.Content>
                     </Combobox.Root>
+                    <div class="date-field-wrapper">
+                      <Label class="date-field-label" for="edit-task-date">Date</Label>
+
+                      <DatePicker.Root
+                        id="edit-task-date"
+                        :is-date-unavailable="(date: DateValue) => date.day === 19"
+                        granularity="second">
+
+                        <DatePicker.Field
+                          v-slot="{ segments }"
+                          class="date-field">
+                          <template v-for="item in segments" :key="item.part">
+                            <DatePicker.Input v-if="item.part === 'literal'"
+                              :part="item.part"
+                              class="date-field-literal">
+                              {{ item.value }}
+                            </DatePicker.Input>
+                            <DatePicker.Input v-else
+                              :part="item.part"
+                              class="date-field-segment">
+                              {{ item.value }}
+                            </DatePicker.Input>
+                          </template>
+
+                          <DatePicker.Trigger class="PopoverTrigger">
+                            <IconCalendar />
+                          </DatePicker.Trigger>
+                        </DatePicker.Field>
+  
+                        <DatePicker.Content
+                          :align="'end'"
+                          :side-offset="16"
+                          class="PopoverContent date-picker-container">
+                          <DatePicker.Arrow class="PopoverArrow" />
+                          <DatePicker.Calendar
+                            v-slot="{ weekDays, grid }"
+                            class="Calendar">
+                            <DatePicker.Header class="CalendarHeader">
+                              <DatePicker.Prev class="CalendarNavButton">
+                                <IconChevronLeft />
+                              </DatePicker.Prev>
+
+                              <DatePicker.Heading class="CalendarHeading" />
+                              <DatePicker.Next
+                                class="CalendarNavButton">
+                                <IconChevronRight />
+                              </DatePicker.Next>
+                            </DatePicker.Header>
+                            <div class="CalendarWrapper" >
+                              <DatePicker.Grid
+                                v-for="month in grid"
+                                class="CalendarGrid"
+                                :key="month.value.toString()">
+                                <DatePicker.GridHead>
+                                  <DatePicker.GridRow class="CalendarGridRow">
+                                    <DatePicker.HeadCell
+                                      v-for="day in weekDays" :key="day"
+                                      class="CalendarHead-cell">
+                                      {{ day }}
+                                    </DatePicker.HeadCell>
+                                  </DatePicker.GridRow>
+                                </DatePicker.GridHead>
+                                <DatePicker.GridBody>
+                                  <DatePicker.GridRow
+                                    v-for="(weekDates, index) in month.rows"
+                                    :key="`weekDate-${index}`"
+                                    class="CalendarGridRow">
+                                    <DatePicker.Cell
+                                      v-for="weekDate in weekDates"
+                                      :key="weekDate.toString()"
+                                      :date="weekDate"
+                                      class="CalendarCell">
+                                      <DatePicker.CellTrigger
+                                        :day="weekDate"
+                                        :month="month.value"
+                                        class="CalendarCellTrigger"/>
+                                    </DatePicker.Cell>
+                                  </DatePicker.GridRow>
+                                </DatePicker.GridBody>
+                              </DatePicker.Grid>
+                            </div>
+                          </DatePicker.Calendar>
+                        </DatePicker.Content>
+                      </DatePicker.Root>
+                    </div>
                     <Dialog.Close class="popover-close" aria-label="Close">
                       <IconCross2 />
                     </Dialog.Close>
@@ -188,7 +277,7 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
 
 <style scoped>
 /* reset */
-button {
+button, input {
   all: unset;
 }
 
@@ -275,6 +364,9 @@ button {
   box-shadow: 0 0 0 2px var(--ff-c-green-transparent);
 }
 
+.edit-dialog-title {
+  color: var(--color-heading);
+}
 .edit-dialog-overlay {
   background-color: var(--ff-c-black-transparent-1);
   position: fixed;
@@ -311,12 +403,12 @@ button {
   padding: 0 15px;
   gap: 5px;
   background-color: var(--color-background);
-  color: var(--grass-11);
+  color: var(--ff-c-green);
   border-radius: 4px;
   box-shadow: 0 2px 10px var(--color-box-shadow-2);
 }
 .combobox-anchor:hover {
-  background-color: var(--color-neutral-inverse-transparent-3);
+  background-color: var(--ff-c-green-transparent-2);
 }
 
 .combobox-input {
@@ -362,7 +454,7 @@ button {
 .combobox-item {
   font-size: 13px;
   line-height: 1;
-  color: var(--grass-11);
+  color: var(--ff-c-green);
   border-radius: 3px;
   display: flex;
   align-items: center;
@@ -403,6 +495,251 @@ button {
   justify-content: center;
 }
 
+.date-field-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.date-field-label {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: var(--color-text);
+}
+
+:deep(.date-field) {
+  display: flex;
+  flex-direction: row;
+  padding: 0.5rem;
+  align-items: center;
+  border-radius: 0.25rem;
+  border-width: 1px;
+  text-align: center;
+  background-color: var(--color-background);
+  user-select: none;
+  color: var(--ff-c-green);
+  border: 1px solid var(--color-border);
+}
+
+.date-field::placeholder {
+  color: var(--color-heading);
+}
+
+.date-field[data-invalid] {
+  border: 1px solid red;
+}
+
+.date-field-literal {
+  padding: 0.25rem;
+}
+
+.date-field-segment {
+  padding: 0.25rem;
+}
+
+.date-field-segment:hover{
+  background-color: var(--ff-c-green-transparent-2);
+}
+
+.date-field-segment:focus {
+  background-color: var(--ff-c-green-transparent-2);
+}
+
+.date-field-segment[aria-valuetext='Empty'] {
+  color: var(--ff-c-green-transparent-1);
+}
+
+.date-field svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+
+
+.Calendar {
+  padding: 22px;
+  background-color: var(--color-background);
+  box-shadow: 0 0 2px var(--color-box-shadow-inverse-1)
+}
+
+.CalendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.CalendarNavButton {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--color-text);
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.CalendarNavButton:hover {
+  color: var(--color-heading);
+  background-color: var(--color-background-soft);
+}
+
+.CalendarHeading {
+  font-weight: 500;
+  color: var(--color-heading);
+  font-size: 15px;
+}
+
+.CalendarWrapper {
+  display: flex;
+  padding-top: 1rem;
+  margin-top: 1rem;
+  flex-direction: column;
+  background-color: var(--color-background);
+}
+
+@media (min-width: 640px) {
+  .CalendarWrapper {
+    margin-left: 1rem;
+    margin-top: 0;
+    flex-direction: row;
+  }
+}
+
+.CalendarGrid {
+  margin-top: 0.25rem;
+  width: 100%;
+  user-select: none;
+  border-collapse: collapse;
+}
+
+.CalendarGridRow {
+  display: grid;
+  margin-bottom: 0.25rem;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  width: 100%;
+}
+
+.CalendarGridRow[data-radix-vue-calendar-month-view] {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.CalendarHeadCell {
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: var(--color-text);
+  font-weight: 400;
+}
+
+.CalendarCell {
+  position: relative;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  text-align: center;
+}
+
+.CalendarCellTrigger {
+  display: flex;
+  position: relative;
+  padding: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  border-width: 1px;
+  border-color: transparent;
+  border-radius: 9px;
+  outline-style: none;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 400;
+  color: var(--color-text);
+  white-space: nowrap;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.CalendarCellTrigger:hover {
+  box-shadow: 0 0 0 2px var(--color-border);
+}
+
+.CalendarCellTrigger:focus {
+  box-shadow: 0 0 0 2px var(--color-text);
+}
+
+.CalendarCellTrigger[data-disabled] {
+  cursor: default;
+  box-shadow: none;
+  color: var(--color-background-mute);
+}
+
+.CalendarCellTrigger[data-selected] {
+  background-color: var(--ff-c-green);
+  color: var(--color-neutral-inverse);
+  font-weight: 500;
+}
+
+.CalendarCellTrigger[data-selected]::before {
+  background-color: transparent;
+}
+
+.CalendarCellTrigger[data-unavailable] {
+  cursor: default;
+  box-shadow: none;
+  color: var(--color-background-mute);
+  text-decoration: line-through;
+}
+
+.CalendarCellTrigger::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: calc(50% - 2px);
+  width: 0.25rem;
+  height: 0.25rem;
+  border-radius: 9999px;
+  background-color: var(--color-background);
+}
+
+.CalendarCellTrigger[data-today]::before {
+  display: block;
+  background-color: var(--ff-c-green-transparent-1);
+}
+
+.PopoverTrigger:focus {
+  box-shadow: 0 0 0 2px var(--color-text);
+}
+
+.PopoverContent {
+  border-radius: 4px;
+  padding: 20px;
+  width: 260px;
+  background-color: var(--color-background);
+  box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+  animation-duration: 400ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+.PopoverContent:focus {
+  box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px,
+    0 0 0 2px var(--ff-c-green-transparent);
+}
+.PopoverContent[data-state='open'][data-side='top'] {
+  animation-name: slideDownAndFade;
+}
+.PopoverContent[data-state='open'][data-side='right'] {
+  animation-name: slideLeftAndFade;
+}
+.PopoverContent[data-state='open'][data-side='bottom'] {
+  animation-name: slideUpAndFade;
+}
+.PopoverContent[data-state='open'][data-side='left'] {
+  animation-name: slideRightAndFade;
+}
+
+:deep(.PopoverArrow) {
+  fill: var(--color-background);
+}
+
 @keyframes overlayShow {
   from {
     opacity: 0;
@@ -420,6 +757,50 @@ button {
   to {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes slideUpAndFade {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideRightAndFade {
+  from {
+    opacity: 0;
+    transform: translateX(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideDownAndFade {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideLeftAndFade {
+  from {
+    opacity: 0;
+    transform: translateX(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 </style>
