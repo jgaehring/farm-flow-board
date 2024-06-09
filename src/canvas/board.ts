@@ -1,6 +1,6 @@
 import { clone, mergeDeepRight, reduce } from 'ramda';
 import { useDark } from '@vueuse/core';
-import type { ActionRecords, ActionType, LocationRecord } from '@/data/boardSampleData';
+import type { TaskMatrix, ActionType, LocationRecord } from '@/data/boardSampleData';
 import { sameDate } from '@/utils/date';
 
 type CanvasContext = CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D;
@@ -306,7 +306,7 @@ export function computeBoardProperties(
 export function drawBoard(
   ctx: CanvasContext,
   range: RangeConfig<Date, LocationRecord>,
-  actionRecords: ActionRecords,
+  actionRecords: TaskMatrix,
   index: { x: number, y: number },
   style: StyleOptions,
 ): BoardProperties {
@@ -368,7 +368,7 @@ interface TranslationParameters {
 export function translateBoard(
   ctx: CanvasContext,
   range: RangeConfig<Date, LocationRecord>,
-  actionRecords: ActionRecords,
+  actionRecords: TaskMatrix,
   translation: TranslationParameters,
   style: StyleOptions,
 ) {
@@ -675,7 +675,7 @@ function labelAxisY(
 function plotActions (
   ctx: CanvasContext,
   board: BoardProperties,
-  actionRecords: ActionRecords,
+  actionRecords: TaskMatrix,
 ) {
   const { grid, labels: { x, y } } = board;
   y.values.forEach((location, indexY) => {
@@ -687,7 +687,7 @@ function plotActionsByLocation(
   ctx: CanvasContext,
   grid: GridProperties,
   dateSeq: Date[],
-  actionRecords: ActionRecords,
+  actionRecords: TaskMatrix,
   location: LocationRecord,
   indexY: number,
 ) {
@@ -702,7 +702,7 @@ export type HighlightGenerator = Generator<void, void, [number, number, number?,
 export function* addHighlighter(
   ctx: CanvasContext,
   range: RangeConfig<Date, LocationRecord>,
-  actionRecords: ActionRecords,
+  actionRecords: TaskMatrix,
   origin: { x: number, y: number },
   style?: StyleOptions,
 ): Generator<void, void, [number, number, number?, number?]> {

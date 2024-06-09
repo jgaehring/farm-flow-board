@@ -1,7 +1,7 @@
 import type { InjectionKey, Ref, WritableComputedRef } from "vue";
-import type { ActionRecords, ActionType, LocationRecord } from "@/data/boardSampleData";
+import type { TaskMatrix, ActionType, LocationRecord } from "@/data/boardSampleData";
 
-export const actionRecordsKey = Symbol() as InjectionKey<Ref<ActionRecords>>;
+export const actionRecordsKey = Symbol() as InjectionKey<Ref<TaskMatrix>>;
 export const locationRecordsKey = Symbol() as InjectionKey<LocationRecord[]>;
 export const dateRangeKey = Symbol() as InjectionKey<Ref<Date[]>>;
 export const actionTypesKey = Symbol() as InjectionKey<ActionType[]>;

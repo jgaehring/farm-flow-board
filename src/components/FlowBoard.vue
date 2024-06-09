@@ -5,7 +5,7 @@ import { useMouseInElement } from '@vueuse/core';
 import useResizableCanvas from '@/composables/useResizableCanvas';
 import { addHighlighter, drawBoard, translateBoard } from '@/canvas/board';
 import type { HighlightGenerator } from '@/canvas/board';
-import type { ActionRecords, LocationRecord } from '@/data/boardSampleData';
+import type { TaskMatrix, LocationRecord } from '@/data/boardSampleData';
 import { actionRecordsKey, dateRangeKey, indexPositionKey, isDarkKey, locationRecordsKey } from '@/data/providerKeys';
 import FlowBoardInteractiveLayer from '@/components/FlowBoardInteractiveLayer.vue'
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
@@ -20,7 +20,7 @@ const maxHeight = ref<number>(150); // <-- default height for any <canvas> eleme
 
 // The collection of all field actions, first sorted by location, then within
 // each location sorted by date.
-const actionRecords = inject<Ref<ActionRecords>>(actionRecordsKey, ref<ActionRecords>([]));
+const actionRecords = inject<Ref<TaskMatrix>>(actionRecordsKey, ref<TaskMatrix>([]));
 const locationRecords = inject<LocationRecord[]>(locationRecordsKey, []);
 
 // Array of Date objects for every calendar day within the specified range.

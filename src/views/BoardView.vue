@@ -6,7 +6,7 @@ import { actionRecordsKey, actionTypesKey, boardIdKey, dateRangeKey,
   isDarkKey, locationRecordsKey,
 } from '@/data/providerKeys';
 import { actionTypes, crop2023, locationRecords, randomActions } from '@/data/boardSampleData';
-import type { ActionRecords, LocationRecord } from '@/data/boardSampleData';
+import type { TaskMatrix, LocationRecord } from '@/data/boardSampleData';
 import FlowBoard from '@/components/FlowBoard.vue';
 import FlowBoardActions from '@/components/FlowBoardActions.vue';
 import FlowBoardMenubar from '@/components/FlowBoardMenubar.vue';
@@ -21,7 +21,7 @@ const boardId = ref<'2023'|'random'>('2023');
 // each location sorted by date. The locations will be created first, with empty
 // dates arrays, and generateActions will populate the actions by date after
 // randomly generating them according to the possible locations and dates.
-const actionRecords = ref<ActionRecords>([]);
+const actionRecords = ref<TaskMatrix>([]);
 locationRecords.forEach(({ id, name }) => {
   actionRecords.value[id] = { id, name, dates: [] };
 });

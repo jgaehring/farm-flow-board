@@ -4,7 +4,8 @@ import { computed, inject, ref, unref } from 'vue';
 import { Combobox, Dialog, Label, Popover } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { computeBoardProperties } from '@/canvas/board';
-import { actionTypes, type ActionRecords, type ActionType, type LocationRecord } from '@/data/boardSampleData';
+import { actionTypes } from '@/data/boardSampleData';
+import type { TaskMatrix, ActionType, LocationRecord } from '@/data/boardSampleData';
 import { actionRecordsKey, dateRangeKey, indexPositionKey, isDarkKey, locationRecordsKey } from '@/data/providerKeys';
 import { sameDate } from '@/utils/date';
 import FFDatePicker from '@/components/FFDatePicker.vue';
@@ -20,7 +21,7 @@ interface FlowBoardCursorGridProps {
 }
 const props = defineProps<FlowBoardCursorGridProps>();
 
-const actionRecords = inject<Ref<ActionRecords>>(actionRecordsKey, ref<ActionRecords>([]));
+const actionRecords = inject<Ref<TaskMatrix>>(actionRecordsKey, ref<TaskMatrix>([]));
 const locationRecords = inject<LocationRecord[]>(locationRecordsKey, []);
 const dateRange = inject<Ref<Date[]>>(dateRangeKey, ref<Date[]>([]));
 const boardIndex = inject<Ref<{ x: number, y: number }>>(indexPositionKey, ref({ x: 0, y: 0 }));

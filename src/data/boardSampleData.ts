@@ -48,7 +48,7 @@ export const cropTypes: CropType[] = [
 
 type ActionsByDate = { date: Date, actions: ActionType[] };
 type ActionsByLocation = { id: number, name: string, dates: ActionsByDate[] };
-export type ActionRecords = ActionsByLocation[];
+export type TaskMatrix = ActionsByLocation[];
 
 type RawCropAction = { date: string, name: string, notes: string };
 type RawCropRecord = {
@@ -66,7 +66,7 @@ const taskMap = new Map([
   ['Treffler', actionTypes[1]],
   ['Hoe', actionTypes[4]],
 ]);
-const cropToActionRecords = reduce((actions: ActionsByLocation[], crop: RawCropRecord) => {
+const cropToActionRecords = reduce((actions: TaskMatrix, crop: RawCropRecord) => {
   const { location: name } = crop;
   const location = locationRecords.find(loc => loc.name === name);
   if (!location) return actions;
