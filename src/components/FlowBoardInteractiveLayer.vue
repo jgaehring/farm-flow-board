@@ -5,7 +5,7 @@ import { Combobox, Dialog, Label, Popover } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { computeBoardProperties } from '@/canvas/board';
 import { operations } from '@/data/boardSampleData';
-import type { LocationResource, OperationResource, TaskMatrix } from '@/data/boardSampleData';
+import type { LocationResource, OperationTerm, TaskMatrix } from '@/data/resources';
 import { tasksKey, dateRangeKey, indexPositionKey, isDarkKey, locationsKey } from '@/data/providerKeys';
 import { sameDate } from '@/utils/date';
 import FFDatePicker from '@/components/FFDatePicker.vue';
@@ -50,7 +50,7 @@ const board = computed(() => computeBoardProperties(
 interface GridCell {
   location: { id: string, name: string },
   date: Date,
-  operations: OperationResource[],
+  operations: OperationTerm[],
   x: number, y: number,
   style: string,
   ref: Ref<HTMLDivElement|null>

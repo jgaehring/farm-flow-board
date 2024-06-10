@@ -1,54 +1,52 @@
 import { reduce } from 'ramda';
 import { v4 as uuid } from 'uuid';
+import { Asset, Term } from '@/data/resources';
+import type {
+  CropTerm, DatesByLocation, LocationResource,
+  OperationsByDate, OperationTerm, TaskMatrix,
+} from '@/data/resources';
 import corn2023 from './corn2023';
 import soy2023 from './soy2023';
 import { sameDate } from '@/utils/date';
 
-export type LocationResource = { id: string, name: string };
 export const locations: LocationResource[] = [
-  { id: uuid(), name: 'Home' },
-  { id: uuid(), name: 'Johnson' },
-  { id: uuid(), name: 'Cotter' },
-  { id: uuid(), name: 'Lake' },
-  { id: uuid(), name: 'Wendorff 220' },
-  { id: uuid(), name: 'Wendorff 60' },
-  { id: uuid(), name: 'Yak' },
-  { id: uuid(), name: 'Boonie' },
-  { id: uuid(), name: 'Heatwole' },
-  { id: uuid(), name: 'Stockholm Home' },
-  { id: uuid(), name: 'Stockholm East' },
-  { id: uuid(), name: 'Carlson' },
-  { id: uuid(), name: 'Hlwd 1' },
-  { id: uuid(), name: 'Hlwd 2' },
-  { id: uuid(), name: 'Hlwd 3' },
-  { id: uuid(), name: 'Lilly 1' },
-  { id: uuid(), name: 'Lilly 2' },
-  { id: uuid(), name: 'Lilly 3' },
-  { id: uuid(), name: 'Lilly 4' },
+  { id: uuid(), type: Asset.Land, name: 'Home' },
+  { id: uuid(), type: Asset.Land, name: 'Johnson' },
+  { id: uuid(), type: Asset.Land, name: 'Cotter' },
+  { id: uuid(), type: Asset.Land, name: 'Lake' },
+  { id: uuid(), type: Asset.Land, name: 'Wendorff 220' },
+  { id: uuid(), type: Asset.Land, name: 'Wendorff 60' },
+  { id: uuid(), type: Asset.Land, name: 'Yak' },
+  { id: uuid(), type: Asset.Land, name: 'Boonie' },
+  { id: uuid(), type: Asset.Land, name: 'Heatwole' },
+  { id: uuid(), type: Asset.Land, name: 'Stockholm Home' },
+  { id: uuid(), type: Asset.Land, name: 'Stockholm East' },
+  { id: uuid(), type: Asset.Land, name: 'Carlson' },
+  { id: uuid(), type: Asset.Land, name: 'Hlwd 1' },
+  { id: uuid(), type: Asset.Land, name: 'Hlwd 2' },
+  { id: uuid(), type: Asset.Land, name: 'Hlwd 3' },
+  { id: uuid(), type: Asset.Land, name: 'Lilly 1' },
+  { id: uuid(), type: Asset.Land, name: 'Lilly 2' },
+  { id: uuid(), type: Asset.Land, name: 'Lilly 3' },
+  { id: uuid(), type: Asset.Land, name: 'Lilly 4' },
 ];
 
-export type OperationResource = { id: string, name: string, color: string };
-export const operations: OperationResource[] = [
-  { id: uuid(), name: 'Tillage', color: 'royalblue' },
-  { id: uuid(), name: 'Tine Weed', color: 'lightgreen' },
-  { id: uuid(), name: 'Cultivation', color: 'teal' },
-  { id: uuid(), name: 'Flame Weed', color: 'crimson' },
-  { id: uuid(), name: 'Rotary Hoe', color: 'orchid' },
-  { id: uuid(), name: 'Rock Picking', color: 'gold' },
-  { id: uuid(), name: 'Mow', color: 'orangered' },
-  { id: uuid(), name: 'Plant', color: 'blueviolet' },
-  { id: uuid(), name: 'Zap', color: 'rosybrown' },
+export const operations: OperationTerm[] = [
+  { id: uuid(), type: Term.StandardOperatingProcedure, name: 'Tillage', color: 'royalblue' },
+  { id: uuid(), type: Term.StandardOperatingProcedure, name: 'Tine Weed', color: 'lightgreen' },
+  { id: uuid(), type: Term.StandardOperatingProcedure, name: 'Cultivation', color: 'teal' },
+  { id: uuid(), type: Term.StandardOperatingProcedure, name: 'Flame Weed', color: 'crimson' },
+  { id: uuid(), type: Term.StandardOperatingProcedure, name: 'Rotary Hoe', color: 'orchid' },
+  { id: uuid(), type: Term.StandardOperatingProcedure, name: 'Rock Picking', color: 'gold' },
+  { id: uuid(), type: Term.StandardOperatingProcedure, name: 'Mow', color: 'orangered' },
+  { id: uuid(), type: Term.StandardOperatingProcedure, name: 'Plant', color: 'blueviolet' },
+  { id: uuid(), type: Term.StandardOperatingProcedure, name: 'Zap', color: 'rosybrown' },
 ];
 
-export type CropResource = { id: string, name: string, color: string };
-export const cropTypes: CropResource[] = [
-  { id: uuid(), name: 'Corn', color: 'royalblue' },
-  { id: uuid(), name: 'Soy', color: 'orangered' },
+export const cropTypes: CropTerm[] = [
+  { id: uuid(), type: Term.Plant, name: 'Corn', color: 'royalblue' },
+  { id: uuid(), type: Term.Plant, name: 'Soy', color: 'orangered' },
 ];
-
-type OperationsByDate = { date: Date, operations: OperationResource[] };
-type DatesByLocation = { id: string, name: string, dates: OperationsByDate[] };
-export type TaskMatrix = DatesByLocation[];
 
 type RawTaskRecord = { date: string, name: string, notes: string };
 type RawCropRecord = {
@@ -74,7 +72,7 @@ const cropToTaskMatrix = reduce((matrix: TaskMatrix, crop: RawCropRecord) => {
   const dates = crop.tasks.reduce((byDate: OperationsByDate[], raw: RawTaskRecord) => {
     let op = operations.find(a => a.name.toLowerCase() === raw.name.toLowerCase());
     if (!op) op = taskMap.has(raw.name)
-      ? taskMap.get(raw.name) as OperationResource
+      ? taskMap.get(raw.name) as OperationTerm
       : operations[2]; // 'Cultivation': default for unknown ops in sample data
     const date = new Date(raw.date);
     const i = byDate.findIndex(a => sameDate(a.date, date));
@@ -94,7 +92,7 @@ export const crop2023 = [
   ...cropToTaskMatrix(soy2023),
 ];
 
-export type RandomTask = { color?: string, date: Date, location: number, type: number };
+type RandomTask = { color?: string, date: Date, location: number, type: number };
 type TaskGenerator = Generator<RandomTask, void, unknown>
 export function* randomTasks(dateRange: [Date, Date], locations: string[]): TaskGenerator {
   const [start, end] = dateRange;

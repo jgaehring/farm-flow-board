@@ -1,7 +1,9 @@
 import { clone, mergeDeepRight, reduce } from 'ramda';
 import { useDark } from '@vueuse/core';
-import type { LocationResource, OperationResource, TaskMatrix } from '@/data/boardSampleData';
 import { sameDate } from '@/utils/date';
+import type {
+  DatesByLocation, LocationResource, OperationsByDate, OperationTerm, TaskMatrix
+} from '@/data/resources';
 
 type CanvasContext = CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D;
 
@@ -691,9 +693,9 @@ function plotTasksByLocation(
   location: LocationResource,
   indexY: number,
 ) {
-  const records = matrix.find(loc => loc.id === location.id)?.dates || [];
+  const records = matrix.find((loc: DatesByLocation) => loc.id === location.id)?.dates || [];
   dateSeq.forEach((date, indexX) => {
-    const rec = records.find(r => sameDate(r.date, date));
+    const rec = records.find((ops: OperationsByDate) => sameDate(ops.date, date));
     if (rec) plotTasksByDate(ctx, grid, rec.operations, indexX, indexY);
   });
 }
@@ -772,17 +774,21 @@ export function* addHighlighter(
         if (typeof x === 'number') {
           const columnDate = dateLabels[x];
           locLabels.forEach((eachLoc, iOfY) => {
-            const records = matrix.find(l => l.id === eachLoc.id)?.dates || [];
-            const rec = records.find(r => sameDate(r.date, columnDate));
+            const records = matrix.find((loc: DatesByLocation) =>
+              loc.id === eachLoc.id)?.dates || [];
+            const rec = records.find((ops: OperationsByDate) =>
+              sameDate(ops.date, columnDate));
             if (rec) plotTasksByDate(ctx, g, rec.operations, x, iOfY);
           })
         }
         // ROWS.
         if (typeof y === 'number') {
           const rowLocation = locLabels[y];
-          const records = matrix.find(l => l.id === rowLocation?.id)?.dates || [];
+          const records = matrix.find((loc: DatesByLocation) =>
+            loc.id === rowLocation?.id)?.dates || [];
           dateLabels.forEach((eachDate, iOfX) => {
-            const rec = records.find(r => sameDate(r.date, eachDate));
+            const rec = records.find((ops: OperationsByDate) =>
+              sameDate(ops.date, eachDate));
             if (rec) plotTasksByDate(ctx, g, rec.operations, iOfX, y);
           });
         }
@@ -808,7 +814,7 @@ export function* addHighlighter(
 function plotTasksByDate(
   ctx: CanvasContext,
   grid: GridProperties,
-  operations: OperationResource[],
+  operations: OperationTerm[],
   indexX: number,
   indexY: number,
 ) {

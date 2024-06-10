@@ -6,7 +6,7 @@ import {
   tasksKey, operationsKey, boardIdKey, dateRangeKey, isDarkKey, locationsKey,
 } from '@/data/providerKeys';
 import { operations, crop2023, locations, randomTasks } from '@/data/boardSampleData';
-import type { TaskMatrix, LocationResource } from '@/data/boardSampleData';
+import type { LocationResource, TaskMatrix } from '@/data/resources';
 import FlowBoard from '@/components/FlowBoard.vue';
 import FlowBoardOperations from '@/components/FlowBoardOperations.vue';
 import FlowBoardMenubar from '@/components/FlowBoardMenubar.vue';
@@ -46,11 +46,9 @@ function generateTasks(
       const location = tasks.value[task.location];
       const matchingDate = location?.dates.find(a => sameDate(date, a.date));
       if (matchingDate && op) {
-        const { id, name, color } = op;
-        matchingDate.operations.push({ id, name, color });
+        matchingDate.operations.push(op);
       } else if (location && op){
-        const { id, name, color } = op;
-        location.dates.push({ date, operations: [{ id, name, color }]});
+        location.dates.push({ date, operations: [op]});
       }
     }
   }
