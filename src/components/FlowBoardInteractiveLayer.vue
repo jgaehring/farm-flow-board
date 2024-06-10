@@ -48,7 +48,7 @@ const board = computed(() => computeBoardProperties(
 ));
 
 interface GridCell {
-  location: { id: number, name: string },
+  location: { id: string, name: string },
   date: Date,
   operations: OperationResource[],
   x: number, y: number,

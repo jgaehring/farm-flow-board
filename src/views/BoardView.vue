@@ -22,8 +22,8 @@ const boardId = ref<'2023'|'random'>('2023');
 // dates arrays, and generateTasks will populate the tasks by date after
 // randomly generating them according to the possible locations and dates.
 const tasks = ref<TaskMatrix>([]);
-locations.forEach(({ id, name }) => {
-  tasks.value[id] = { id, name, dates: [] };
+locations.forEach(({ id, name }, i) => {
+  tasks.value[i] = { id, name, dates: [] };
 });
 
 // Start and end dates used to populate the x-axis.
@@ -61,8 +61,8 @@ function loadBoard(name: '2023'|'random') {
     tasks.value = [];
     startDate.value = new Date(2024, 2, 28);
     endDate.value = new Date(2024, 9);
-    locations.forEach(({ id, name }) => {
-      tasks.value[id] = { id, name, dates: [] };
+    locations.forEach(({ id, name }, i) => {
+      tasks.value[i] = { id, name, dates: [] };
     });
     // Generate a random scatter of tasks for the grid.
     const frequency = 6; // coefficient to adjust total tasks below

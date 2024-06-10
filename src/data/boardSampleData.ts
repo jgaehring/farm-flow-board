@@ -1,52 +1,53 @@
 import { reduce } from 'ramda';
+import { v4 as uuid } from 'uuid';
 import corn2023 from './corn2023';
 import soy2023 from './soy2023';
 import { sameDate } from '@/utils/date';
 
-export type LocationResource = { id: number, name: string };
+export type LocationResource = { id: string, name: string };
 export const locations: LocationResource[] = [
-  { id: 0, name: 'Home' },
-  { id: 1, name: 'Johnson' },
-  { id: 2, name: 'Cotter' },
-  { id: 3, name: 'Lake' },
-  { id: 4, name: 'Wendorff 220' },
-  { id: 5, name: 'Wendorff 60' },
-  { id: 6, name: 'Yak' },
-  { id: 7, name: 'Boonie' },
-  { id: 8, name: 'Heatwole' },
-  { id: 9, name: 'Stockholm Home' },
-  { id: 10, name: 'Stockholm East' },
-  { id: 11, name: 'Carlson' },
-  { id: 12, name: 'Hlwd 1' },
-  { id: 13, name: 'Hlwd 2' },
-  { id: 14, name: 'Hlwd 3' },
-  { id: 15, name: 'Lilly 1' },
-  { id: 16, name: 'Lilly 2' },
-  { id: 17, name: 'Lilly 3' },
-  { id: 18, name: 'Lilly 4' },
+  { id: uuid(), name: 'Home' },
+  { id: uuid(), name: 'Johnson' },
+  { id: uuid(), name: 'Cotter' },
+  { id: uuid(), name: 'Lake' },
+  { id: uuid(), name: 'Wendorff 220' },
+  { id: uuid(), name: 'Wendorff 60' },
+  { id: uuid(), name: 'Yak' },
+  { id: uuid(), name: 'Boonie' },
+  { id: uuid(), name: 'Heatwole' },
+  { id: uuid(), name: 'Stockholm Home' },
+  { id: uuid(), name: 'Stockholm East' },
+  { id: uuid(), name: 'Carlson' },
+  { id: uuid(), name: 'Hlwd 1' },
+  { id: uuid(), name: 'Hlwd 2' },
+  { id: uuid(), name: 'Hlwd 3' },
+  { id: uuid(), name: 'Lilly 1' },
+  { id: uuid(), name: 'Lilly 2' },
+  { id: uuid(), name: 'Lilly 3' },
+  { id: uuid(), name: 'Lilly 4' },
 ];
 
-export type OperationResource = { id: number, name: string, color: string };
+export type OperationResource = { id: string, name: string, color: string };
 export const operations: OperationResource[] = [
-  { id: 0, name: 'Tillage', color: 'royalblue' },
-  { id: 1, name: 'Tine Weed', color: 'lightgreen' },
-  { id: 2, name: 'Cultivation', color: 'teal' },
-  { id: 3, name: 'Flame Weed', color: 'crimson' },
-  { id: 4, name: 'Rotary Hoe', color: 'orchid' },
-  { id: 5, name: 'Rock Picking', color: 'gold' },
-  { id: 6, name: 'Mow', color: 'orangered' },
-  { id: 7, name: 'Plant', color: 'blueviolet' },
-  { id: 8, name: 'Zap', color: 'rosybrown' },
+  { id: uuid(), name: 'Tillage', color: 'royalblue' },
+  { id: uuid(), name: 'Tine Weed', color: 'lightgreen' },
+  { id: uuid(), name: 'Cultivation', color: 'teal' },
+  { id: uuid(), name: 'Flame Weed', color: 'crimson' },
+  { id: uuid(), name: 'Rotary Hoe', color: 'orchid' },
+  { id: uuid(), name: 'Rock Picking', color: 'gold' },
+  { id: uuid(), name: 'Mow', color: 'orangered' },
+  { id: uuid(), name: 'Plant', color: 'blueviolet' },
+  { id: uuid(), name: 'Zap', color: 'rosybrown' },
 ];
 
-export type CropResource = { id: number, name: string, color: string };
+export type CropResource = { id: string, name: string, color: string };
 export const cropTypes: CropResource[] = [
-  { id: 0, name: 'Corn', color: 'royalblue' },
-  { id: 1, name: 'Soy', color: 'orangered' },
+  { id: uuid(), name: 'Corn', color: 'royalblue' },
+  { id: uuid(), name: 'Soy', color: 'orangered' },
 ];
 
 type OperationsByDate = { date: Date, operations: OperationResource[] };
-type DatesByLocation = { id: number, name: string, dates: OperationsByDate[] };
+type DatesByLocation = { id: string, name: string, dates: OperationsByDate[] };
 export type TaskMatrix = DatesByLocation[];
 
 type RawTaskRecord = { date: string, name: string, notes: string };
