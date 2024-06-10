@@ -1,24 +1,24 @@
 <script setup lang="ts">
 import { inject } from 'vue';
-import type { ActionType } from '@/data/boardSampleData';
-import { actionTypesKey } from '@/data/providerKeys';
+import type { OperationResource } from '@/data/boardSampleData';
+import { operationsKey } from '@/data/providerKeys';
 
-const actionTypes = inject<ActionType[]>(actionTypesKey, []);
+const operations = inject<OperationResource[]>(operationsKey, []);
 </script>
 
 <template>
-  <div class="action-types">
-    <span v-for="(action, i) in actionTypes" :key="i">
+  <div class="op-types">
+    <span v-for="(op, i) in operations" :key="i">
       <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="12" r="12" :fill="action.color"/>
+        <circle cx="12" cy="12" r="12" :fill="op.color"/>
       </svg>
-      &nbsp;{{action.name}}
+      &nbsp;{{op.name}}
     </span>
   </div>
 </template>
 
 <style scoped>
-.action-types {
+.op-types {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
@@ -28,13 +28,13 @@ const actionTypes = inject<ActionType[]>(actionTypesKey, []);
   padding: 0 60px 0 240px;
 }
 
-.action-types span {
+.op-types span {
   flex: 2 1 20%;
   font-size: 1.5rem;
   text-align: center;
 }
 
-.action-types svg {
+.op-types svg {
   width: 24px;
   height: 24px;
   vertical-align: middle;

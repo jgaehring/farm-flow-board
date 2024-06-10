@@ -2,11 +2,11 @@
 import { computed, provide, ref } from 'vue';
 import { useDark, useToggle } from '@vueuse/core'
 import { Switch } from 'radix-vue/namespaced';
-import { actionRecordsKey, actionTypesKey, boardIdKey, dateRangeKey,
-  isDarkKey, locationRecordsKey,
+import {
+  tasksKey, operationsKey, boardIdKey, dateRangeKey, isDarkKey, locationsKey,
 } from '@/data/providerKeys';
-import { actionTypes, crop2023, locationRecords, randomActions } from '@/data/boardSampleData';
-import type { TaskMatrix, LocationRecord } from '@/data/boardSampleData';
+import { operations, crop2023, locations, randomTasks } from '@/data/boardSampleData';
+import type { TaskMatrix, LocationResource } from '@/data/boardSampleData';
 import FlowBoard from '@/components/FlowBoard.vue';
 import FlowBoardActions from '@/components/FlowBoardActions.vue';
 import FlowBoardMenubar from '@/components/FlowBoardMenubar.vue';
@@ -17,13 +17,13 @@ import IconMoon from '@/assets/radix-icons/moon.svg?component'
 
 const boardId = ref<'2023'|'random'>('2023');
 
-// The collection of all field actions, first sorted by location, then within
+// The collection of all field operations, first sorted by location, then within
 // each location sorted by date. The locations will be created first, with empty
-// dates arrays, and generateActions will populate the actions by date after
+// dates arrays, and generateTasks will populate the tasks by date after
 // randomly generating them according to the possible locations and dates.
-const actionRecords = ref<TaskMatrix>([]);
-locationRecords.forEach(({ id, name }) => {
-  actionRecords.value[id] = { id, name, dates: [] };
+const tasks = ref<TaskMatrix>([]);
+locations.forEach(({ id, name }) => {
+  tasks.value[id] = { id, name, dates: [] };
 });
 
 // Start and end dates used to populate the x-axis.
@@ -32,25 +32,25 @@ const endDate = ref<Date>(new Date(2024, 9));
 // Array of Date objects for every date within the specified range.
 const dateRange = computed(() => createDateRange(startDate.value, endDate.value));
 
-function generateActions(
+function generateTasks(
   count: number,
   dateRange: [Date, Date],
-  locations: LocationRecord[],
+  locations: LocationResource[],
 ): void {
-  const actionGenerator = randomActions(dateRange, locations.map(l => l.name));
+  const taskGenerator = randomTasks(dateRange, locations.map(l => l.name));
   for (let i  = 0; i < count; i += 1) {
-    const action = actionGenerator.next().value;
-    if (action) {
-      const { date, type } = action;
-      const actionType = actionTypes[type];
-      const location = actionRecords.value[action.location];
+    const task = taskGenerator.next().value;
+    if (task) {
+      const { date, type } = task;
+      const op = operations[type];
+      const location = tasks.value[task.location];
       const matchingDate = location?.dates.find(a => sameDate(date, a.date));
-      if (matchingDate && actionType) {
-        const { id, name, color } = actionType;
-        matchingDate.actions.push({ id, name, color });
-      } else if (location && actionType){
-        const { id, name, color } = actionType;
-        location.dates.push({ date, actions: [{ id, name, color }]});
+      if (matchingDate && op) {
+        const { id, name, color } = op;
+        matchingDate.operations.push({ id, name, color });
+      } else if (location && op){
+        const { id, name, color } = op;
+        location.dates.push({ date, operations: [{ id, name, color }]});
       }
     }
   }
@@ -58,23 +58,23 @@ function generateActions(
 
 function loadBoard(name: '2023'|'random') {
   if (name === 'random') {
-    actionRecords.value = [];
+    tasks.value = [];
     startDate.value = new Date(2024, 2, 28);
     endDate.value = new Date(2024, 9);
-    locationRecords.forEach(({ id, name }) => {
-      actionRecords.value[id] = { id, name, dates: [] };
+    locations.forEach(({ id, name }) => {
+      tasks.value[id] = { id, name, dates: [] };
     });
-    // Generate a random scatter of actions for the grid.
-    const actionFrequency = 6; // coefficient to adjust total actions below
-    const actionCount = actionFrequency * Math.floor(
-      // Correlate total # of actions to the 2 main parameters, fields & dates.
-      Math.sqrt(locationRecords.length * dateRange.value.length)
+    // Generate a random scatter of tasks for the grid.
+    const frequency = 6; // coefficient to adjust total tasks below
+    const count = frequency * Math.floor(
+      // Correlate total # of tasks to the 2 main parameters, fields & dates.
+      Math.sqrt(locations.length * dateRange.value.length)
     );
-    generateActions(actionCount, [startDate.value, endDate.value], locationRecords);
+    generateTasks(count, [startDate.value, endDate.value], locations);
   } else {
     startDate.value = new Date(2023, 4, 6);
     endDate.value = new Date(2023, 10, 15);
-    actionRecords.value = name === '2023' ? crop2023 : [];
+    tasks.value = name === '2023' ? crop2023 : [];
   }
 }
 loadBoard(boardId.value);
@@ -87,10 +87,10 @@ const isDark = useDark({
 });
 const toggleDark = useToggle(isDark);
 
-provide(actionRecordsKey, actionRecords);
-provide(locationRecordsKey, locationRecords);
+provide(tasksKey, tasks);
+provide(locationsKey, locations);
 provide(dateRangeKey, dateRange);
-provide(actionTypesKey, actionTypes);
+provide(operationsKey, operations);
 provide(boardIdKey, boardId);
 provide(isDarkKey, isDark);
 

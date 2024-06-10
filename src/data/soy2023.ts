@@ -1,7 +1,7 @@
 export default [
   {
     location: 'Lilly 1',
-    actions: [
+    tasks: [
       { date: '5/10/2023', name: 'FC1', notes: 'FC1' },
       { date: '5/25/2023', name: 'FC2', notes: 'FC2' },
       { date: '5/25/2023', name: 'Plant', notes: 'Plant' },
@@ -18,7 +18,7 @@ export default [
   },
   {
     location: 'Lilly 2',
-    actions: [
+    tasks: [
       { date: '5/10/2023', name: 'FC1', notes: 'FC1' },
       { date: '5/25/2023', name: 'FC2', notes: 'FC2' },
       { date: '5/26/2023', name: 'Plant', notes: 'Plant' },
@@ -35,7 +35,7 @@ export default [
   },
   {
     location: 'Lilly 3',
-    actions: [
+    tasks: [
       { date: '5/17/2023', name: 'FC1', notes: 'FC1' },
       { date: '5/26/2023', name: 'FC2', notes: 'FC2' },
       { date: '5/27/2023', name: 'Plant', notes: 'Plant' },
@@ -53,7 +53,7 @@ export default [
   },
   {
     location: 'Stockholm Home',
-    actions: [
+    tasks: [
       { date: '5/17/2023', name: 'FC1', notes: 'FC1' },
       { date: '5/29/2023', name: 'FC2', notes: 'FC2' },
       { date: '5/29/2023', name: 'Plant', notes: 'Plant' },
@@ -68,7 +68,7 @@ export default [
   },
   {
     location: 'Stockholm East',
-    actions: [
+    tasks: [
       { date: '5/21/2023', name: 'FC1', notes: 'FC1' },
       { date: '5/30/2023', name: 'FC2', notes: 'FC2' },
       { date: '5/30/2023', name: 'Plant', notes: 'Plant' },
@@ -84,7 +84,7 @@ export default [
   },
   {
     location: 'Carlson',
-    actions: [
+    tasks: [
       { date: '5/22/2023', name: 'FC1', notes: 'FC1' },
       { date: '5/31/2023', name: 'FC2', notes: 'FC2' },
       { date: '5/31/2023', name: 'Plant', notes: 'Plant' },
@@ -101,7 +101,7 @@ export default [
   },
   {
     location: 'Hollywood 1',
-    actions: [
+    tasks: [
       { date: '5/17/2023', name: 'FC1', notes: 'FC1' },
       { date: '6/2/2023', name: 'FC2', notes: 'FC2' },
       { date: '6/2/2023', name: 'Plant', notes: 'Plant' },
@@ -117,7 +117,7 @@ export default [
   },
   {
     location: 'Hollywood 2',
-    actions: [
+    tasks: [
       { date: '5/17/2023', name: 'FC1', notes: 'FC1' },
       { date: '6/2/2023', name: 'FC2', notes: 'FC2' },
       { date: '6/2/2023', name: 'Plant', notes: 'Plant' },
@@ -134,7 +134,7 @@ export default [
   },
   {
     location: 'Hollywood 3',
-    actions: [
+    tasks: [
       { date: '5/17/2023', name: 'FC1', notes: 'FC1' },
       { date: '6/2/2023', name: 'FC2', notes: 'FC2' },
       { date: '6/3/2023', name: 'Plant', notes: 'Plant' },

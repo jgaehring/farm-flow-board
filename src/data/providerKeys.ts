@@ -1,10 +1,10 @@
 import type { InjectionKey, Ref, WritableComputedRef } from "vue";
-import type { TaskMatrix, ActionType, LocationRecord } from "@/data/boardSampleData";
+import type { LocationResource, OperationResource, TaskMatrix } from '@/data/boardSampleData';
 
-export const actionRecordsKey = Symbol() as InjectionKey<Ref<TaskMatrix>>;
-export const locationRecordsKey = Symbol() as InjectionKey<LocationRecord[]>;
+export const tasksKey = Symbol() as InjectionKey<Ref<TaskMatrix>>;
+export const locationsKey = Symbol() as InjectionKey<LocationResource[]>;
 export const dateRangeKey = Symbol() as InjectionKey<Ref<Date[]>>;
-export const actionTypesKey = Symbol() as InjectionKey<ActionType[]>;
+export const operationsKey = Symbol() as InjectionKey<OperationResource[]>;
 export const boardIdKey = Symbol() as InjectionKey<Ref<string>>;
 export const indexPositionKey = Symbol() as InjectionKey<Ref<{ x: number, y: number}>>;
 export const isDarkKey = Symbol() as InjectionKey<WritableComputedRef<boolean>>;

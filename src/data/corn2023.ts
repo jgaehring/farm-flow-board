@@ -1,7 +1,7 @@
 export default [
   {
     location: 'Home',
-    actions: [
+    tasks: [
       { date: '5/6/2023', name: 'FC1', notes: 'FC1' },
       { date: '5/18/2023', name: 'FC2', notes: 'FC2' },
       { date: '5/20/2023', name: 'Flexi', notes: 'Flexi' },
@@ -18,7 +18,7 @@ export default [
   },
   {
     location: 'Johnson',
-    actions: [
+    tasks: [
       { date: '5/6/2023', name: 'FC1', notes: 'FC1' },
       { date: '5/19/2023', name: 'FC2', notes: 'FC2' },
       { date: '5/20/2023', name: 'Plant', notes: 'Plant' },
@@ -33,7 +33,7 @@ export default [
   },
   {
     location: 'Wendorff (200)',
-    actions: [
+    tasks: [
       { date: '5/8/2023', name: 'FC1', notes: 'FC1' },
       { date: '5/22/2023', name: 'FC2', notes: 'FC2' },
       { date: '5/23/2023', name: 'Flexi', notes: 'Flexi' },
@@ -51,7 +51,7 @@ export default [
   },
   {
     location: 'Wendorff (60)',
-    actions: [
+    tasks: [
       { date: '5/7/2023', name: 'FC1', notes: 'FC1' },
       { date: '5/21/2023', name: 'FC2', notes: 'FC2' },
       { date: '5/21/2023', name: 'Flexi', notes: 'Flexi' },
@@ -65,7 +65,7 @@ export default [
   },
   {
     location: 'Lake',
-    actions: [
+    tasks: [
       { date: '5/7/2023', name: 'FC1', notes: 'FC1' },
       { date: '5/21/2023', name: 'FC2', notes: 'FC2' },
       { date: '5/22/2023', name: 'Plant', notes: 'Plant' },
@@ -79,7 +79,7 @@ export default [
   },
   {
     location: 'Cotter',
-    actions: [
+    tasks: [
       { date: '5/7/2023', name: 'FC1', notes: 'FC1' },
       { date: '5/21/2023', name: 'FC2', notes: 'FC2' },
       { date: '5/22/2023', name: 'Plant', notes: 'Plant' },
@@ -93,7 +93,7 @@ export default [
   },
   {
     location: 'Yak',
-    actions: [
+    tasks: [
       { date: '5/8/2023', name: 'FC1', notes: 'FC1' },
       { date: '5/20/2023', name: 'FC2', notes: 'FC2' },
       { date: '5/21/2023', name: 'Plant', notes: 'Plant' },
@@ -109,7 +109,7 @@ export default [
   },
   {
     location: 'Boonie',
-    actions: [
+    tasks: [
       { date: '5/9/2023', name: 'FC1', notes: 'FC1' },
       { date: '5/23/2023', name: 'FC2', notes: 'FC2' },
       { date: '5/23/2023', name: 'Roll Peat', notes: 'Roll Peat' },

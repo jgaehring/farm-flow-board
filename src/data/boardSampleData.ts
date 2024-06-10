@@ -3,8 +3,8 @@ import corn2023 from './corn2023';
 import soy2023 from './soy2023';
 import { sameDate } from '@/utils/date';
 
-export type LocationRecord = { id: number, name: string };
-export const locationRecords: LocationRecord[] = [
+export type LocationResource = { id: number, name: string };
+export const locations: LocationResource[] = [
   { id: 0, name: 'Home' },
   { id: 1, name: 'Johnson' },
   { id: 2, name: 'Cotter' },
@@ -26,9 +26,8 @@ export const locationRecords: LocationRecord[] = [
   { id: 18, name: 'Lilly 4' },
 ];
 
-export type ActionType = { id: number, name: string, color: string };
-type ActionTypes = ActionType[];
-export const actionTypes: ActionTypes = [
+export type OperationResource = { id: number, name: string, color: string };
+export const operations: OperationResource[] = [
   { id: 0, name: 'Tillage', color: 'royalblue' },
   { id: 1, name: 'Tine Weed', color: 'lightgreen' },
   { id: 2, name: 'Cultivation', color: 'teal' },
@@ -40,71 +39,71 @@ export const actionTypes: ActionTypes = [
   { id: 8, name: 'Zap', color: 'rosybrown' },
 ];
 
-export type CropType = { id: number, name: string, color: string };
-export const cropTypes: CropType[] = [
+export type CropResource = { id: number, name: string, color: string };
+export const cropTypes: CropResource[] = [
   { id: 0, name: 'Corn', color: 'royalblue' },
   { id: 1, name: 'Soy', color: 'orangered' },
 ];
 
-type ActionsByDate = { date: Date, actions: ActionType[] };
-type ActionsByLocation = { id: number, name: string, dates: ActionsByDate[] };
-export type TaskMatrix = ActionsByLocation[];
+type OperationsByDate = { date: Date, operations: OperationResource[] };
+type DatesByLocation = { id: number, name: string, dates: OperationsByDate[] };
+export type TaskMatrix = DatesByLocation[];
 
-type RawCropAction = { date: string, name: string, notes: string };
+type RawTaskRecord = { date: string, name: string, notes: string };
 type RawCropRecord = {
   location: string,
-  actions: RawCropAction[]
+  tasks: RawTaskRecord[]
 }
 
 // Subtypes and alternative names.
 const taskMap = new Map([
-  ['FC1', actionTypes[0]],
-  ['FC2', actionTypes[0]],
-  ['Kovar', actionTypes[1]],
-  ['Einbock', actionTypes[1]],
-  ['Hatzenbichler', actionTypes[1]],
-  ['Treffler', actionTypes[1]],
-  ['Hoe', actionTypes[4]],
+  ['FC1', operations[0]],
+  ['FC2', operations[0]],
+  ['Kovar', operations[1]],
+  ['Einbock', operations[1]],
+  ['Hatzenbichler', operations[1]],
+  ['Treffler', operations[1]],
+  ['Hoe', operations[4]],
 ]);
-const cropToActionRecords = reduce((actions: TaskMatrix, crop: RawCropRecord) => {
+const cropToTaskMatrix = reduce((matrix: TaskMatrix, crop: RawCropRecord) => {
   const { location: name } = crop;
-  const location = locationRecords.find(loc => loc.name === name);
-  if (!location) return actions;
+  const location = locations.find(loc => loc.name === name);
+  if (!location) return matrix;
   const { id } = location;
-  const dates = crop.actions.reduce((byDate: ActionsByDate[], raw: RawCropAction) => {
-    let action = actionTypes.find(a => a.name.toLowerCase() === raw.name.toLowerCase());
-    if (!action) action = taskMap.has(raw.name)
-      ? taskMap.get(raw.name) as ActionType
-      : actionTypes[2]; // 'Cultivation': default for unknown actions in sample data
+  const dates = crop.tasks.reduce((byDate: OperationsByDate[], raw: RawTaskRecord) => {
+    let op = operations.find(a => a.name.toLowerCase() === raw.name.toLowerCase());
+    if (!op) op = taskMap.has(raw.name)
+      ? taskMap.get(raw.name) as OperationResource
+      : operations[2]; // 'Cultivation': default for unknown ops in sample data
     const date = new Date(raw.date);
     const i = byDate.findIndex(a => sameDate(a.date, date));
-    if (i < 0) return [...byDate, { date, actions: [action] }];
+    if (i < 0) return [...byDate, { date, operations: [op] }];
     return [
       ...byDate.slice(0, i),
-      { date, actions: byDate[i].actions.concat(action) },
+      { date, operations: byDate[i].operations.concat(op) },
       ...byDate.slice(i + 1),
     ];
-  }, [] as ActionsByDate[]);
-  const byLocation: ActionsByLocation = { id, name, dates };
-  return [...actions, byLocation];
+  }, [] as OperationsByDate[]);
+  const byLocation: DatesByLocation = { id, name, dates };
+  return [...matrix, byLocation];
 }, []);
 
 export const crop2023 = [
-  ...cropToActionRecords(corn2023),
-  ...cropToActionRecords(soy2023),
+  ...cropToTaskMatrix(corn2023),
+  ...cropToTaskMatrix(soy2023),
 ];
 
-export type RandomAction = { color?: string, date: Date, location: number, type: number };
-type ActionGenerator = Generator<RandomAction, void, unknown>
-export function* randomActions(dateRange: [Date, Date], locations: string[]): ActionGenerator {
+export type RandomTask = { color?: string, date: Date, location: number, type: number };
+type TaskGenerator = Generator<RandomTask, void, unknown>
+export function* randomTasks(dateRange: [Date, Date], locations: string[]): TaskGenerator {
   const [start, end] = dateRange;
   const interval = Math.floor((end.valueOf() - start.valueOf()) / 24 / 60 / 60 / 1000);
   while (true) {
     const day = Math.floor(Math.random() * interval);
     const date = new Date(start.valueOf() + day * 24 * 60 * 60 * 1000);
-    const type = Math.floor(Math.random() * actionTypes.length);
+    const type = Math.floor(Math.random() * operations.length);
     const location = Math.floor(Math.random() * locations.length);
-    const color = actionTypes[type]?.color;
+    const color = operations[type]?.color;
     yield { color, date, location, type };
   }
 }

@@ -4,9 +4,9 @@ import { computed, inject, ref, unref } from 'vue';
 import { Combobox, Dialog, Label, Popover } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { computeBoardProperties } from '@/canvas/board';
-import { actionTypes } from '@/data/boardSampleData';
-import type { TaskMatrix, ActionType, LocationRecord } from '@/data/boardSampleData';
-import { actionRecordsKey, dateRangeKey, indexPositionKey, isDarkKey, locationRecordsKey } from '@/data/providerKeys';
+import { operations } from '@/data/boardSampleData';
+import type { LocationResource, OperationResource, TaskMatrix } from '@/data/boardSampleData';
+import { tasksKey, dateRangeKey, indexPositionKey, isDarkKey, locationsKey } from '@/data/providerKeys';
 import { sameDate } from '@/utils/date';
 import FFDatePicker from '@/components/FFDatePicker.vue';
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
@@ -21,8 +21,8 @@ interface FlowBoardCursorGridProps {
 }
 const props = defineProps<FlowBoardCursorGridProps>();
 
-const actionRecords = inject<Ref<TaskMatrix>>(actionRecordsKey, ref<TaskMatrix>([]));
-const locationRecords = inject<LocationRecord[]>(locationRecordsKey, []);
+const tasks = inject<Ref<TaskMatrix>>(tasksKey, ref<TaskMatrix>([]));
+const locations = inject<LocationResource[]>(locationsKey, []);
 const dateRange = inject<Ref<Date[]>>(dateRangeKey, ref<Date[]>([]));
 const boardIndex = inject<Ref<{ x: number, y: number }>>(indexPositionKey, ref({ x: 0, y: 0 }));
 const isDark = inject(isDarkKey);
@@ -42,7 +42,7 @@ const style = computed(() => ({
 
 const board = computed(() => computeBoardProperties(
   { width: props.width.value, height: props.width.value },
-  { x: unref(dateRange), y: locationRecords },
+  { x: unref(dateRange), y: locations },
   boardIndex.value,
   style.value,
 ));
@@ -50,7 +50,7 @@ const board = computed(() => computeBoardProperties(
 interface GridCell {
   location: { id: number, name: string },
   date: Date,
-  actions: ActionType[],
+  operations: OperationResource[],
   x: number, y: number,
   style: string,
   ref: Ref<HTMLDivElement|null>
@@ -59,16 +59,16 @@ interface GridCell {
 const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => {
   const location = { id: loc.id, name: loc.name };
   const { grid } = board.value;
-  const records = actionRecords.value.find(l => l.id === loc.id)?.dates || [];
+  const records = tasks.value.find(l => l.id === loc.id)?.dates || [];
   return board.value.labels.x.values.reduce((cells, date, x) => {
-    const actions = records.find(r => sameDate(r.date, date))?.actions || [];
-    if (actions.length <= 0) return cells;
+    const ops = records.find(r => sameDate(r.date, date))?.operations || [];
+    if (ops.length <= 0) return cells;
     const top = grid.origin.y + y * grid.unit;
     const left = grid.origin.x + x * grid.unit;
     const size = `width: ${grid.unit}px; height: ${grid.unit}px`;
     const style = `top: ${top}px; left: ${left}px; ${size}`;
     const gridCell = {
-      location, date, actions,
+      location, date, operations: ops,
       x, y, style,
       ref: ref(null),
     };
@@ -88,7 +88,7 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
       <Popover.Root>
         <Popover.Trigger class="popover-trigger">
           <VisuallyHidden>
-            Click to view actions on this date.
+            Click to view tasks on this date.
           </VisuallyHidden>
         </Popover.Trigger>
         <Popover.Portal>
@@ -98,14 +98,14 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
               <br>
               <span>{{ cell.date.toLocaleDateString(undefined, { dateStyle: 'medium' }) }}</span>
             </div>
-            <div class="popover-content-action">
-              <Dialog.Root  v-for="(action, j) in cell.actions" :key="j">
+            <div class="popover-content-operation">
+              <Dialog.Root  v-for="(op, j) in cell.operations" :key="j">
                 <Dialog.Trigger as="button"
                   type="button">
                   <svg viewBox="0 0 12 12" width="12" height="12" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="6" cy="6" r="6" :fill="action.color"/>
+                    <circle cx="6" cy="6" r="6" :fill="op.color"/>
                   </svg>
-                  {{ action.name }}
+                  {{ op.name }}
                 </Dialog.Trigger>
                 <Dialog.Portal>
                   <Dialog.Overlay class="edit-dialog-overlay" />
@@ -118,13 +118,13 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
                         Make changes to the task.
                       </Dialog.Description>
                     </VisuallyHidden>
-                    <Label class="label-task-type" for="edit-task-type">Task</Label>
-                    <Combobox.Root :model-value="action.id">
+                    <Label class="label-combobox" for="edit-task-op">Task</Label>
+                    <Combobox.Root :model-value="op.id">
                       <Combobox.Anchor class="combobox-anchor">
                         <Combobox.Input
-                          id="edit-task-type"
+                          id="edit-task-op"
                           class="combobox-input"
-                          :value="action.name" />
+                          :value="op.name" />
                         <Combobox.Trigger >
                           <IconChevronDown/>
                         </Combobox.Trigger>
@@ -132,19 +132,19 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
                       <Combobox.Content class="combobox-content">
                         <Combobox.Viewport class="combobox-viewport" >
                           <Combobox.Empty class="combobox-empty"/>
-                          <Combobox.Item v-for="(type, i) in actionTypes"
+                          <Combobox.Item v-for="(op, i) in operations"
                             class="combobox-item"
-                            :value="type.id"
+                            :value="op.id"
                             :key="i">
                             <Combobox.ItemIndicator class="combobox-item-indicator" >
                               <IconDotFilled/>
                             </Combobox.ItemIndicator>
-                            {{ type.name }}
+                            {{ op.name }}
                           </Combobox.Item>
                         </Combobox.Viewport>
                       </Combobox.Content>
                     </Combobox.Root>
-                    <Label class="label-task-type" for="edit-task-location">Location</Label>
+                    <Label class="label-combobox" for="edit-task-location">Location</Label>
                     <Combobox.Root :model-value="cell.location.id">
                       <Combobox.Anchor class="combobox-anchor">
                         <Combobox.Input
@@ -158,7 +158,7 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
                       <Combobox.Content class="combobox-content">
                         <Combobox.Viewport class="combobox-viewport" >
                           <Combobox.Empty class="combobox-empty"/>
-                          <Combobox.Item v-for="(location, i) in locationRecords"
+                          <Combobox.Item v-for="(location, i) in locations"
                             class="combobox-item"
                             :value="location.id"
                             :key="i">
@@ -225,11 +225,11 @@ button, input {
   border-radius: 4px;
   box-shadow: 0 0 6px 3px var(--color-box-shadow-2);
 }
-:deep(.popover-content-action) {
+:deep(.popover-content-operation) {
   display: flex;
   flex-flow: row wrap;
 }
-:deep(.popover-content-action) button {
+:deep(.popover-content-operation) button {
   font-size: 16px;
   font-weight: 500;
   line-height: 1.5;
@@ -242,7 +242,7 @@ button, input {
   border-radius: 4px;
   cursor: pointer;
 }
-:deep(.popover-content-action) button:hover {
+:deep(.popover-content-operation) button:hover {
   background-color: var(--ff-c-green-transparent-2);
 }
 :deep(.popover-content-date-time) {

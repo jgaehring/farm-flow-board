@@ -5,8 +5,8 @@ import { useMouseInElement } from '@vueuse/core';
 import useResizableCanvas from '@/composables/useResizableCanvas';
 import { addHighlighter, drawBoard, translateBoard } from '@/canvas/board';
 import type { HighlightGenerator } from '@/canvas/board';
-import type { TaskMatrix, LocationRecord } from '@/data/boardSampleData';
-import { actionRecordsKey, dateRangeKey, indexPositionKey, isDarkKey, locationRecordsKey } from '@/data/providerKeys';
+import type { TaskMatrix, LocationResource } from '@/data/boardSampleData';
+import { tasksKey, dateRangeKey, indexPositionKey, isDarkKey, locationsKey } from '@/data/providerKeys';
 import FlowBoardInteractiveLayer from '@/components/FlowBoardInteractiveLayer.vue'
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
 import IconChevronLeft from '@/assets/radix-icons/chevron-left.svg?component';
@@ -18,10 +18,10 @@ const canvas = ref<HTMLCanvasElement | null>(null);
 const maxWidth = ref<number>(300); // <-- default width for any <canvas> element.
 const maxHeight = ref<number>(150); // <-- default height for any <canvas> element.
 
-// The collection of all field actions, first sorted by location, then within
+// The collection of all field operations, first sorted by location, then within
 // each location sorted by date.
-const actionRecords = inject<Ref<TaskMatrix>>(actionRecordsKey, ref<TaskMatrix>([]));
-const locationRecords = inject<LocationRecord[]>(locationRecordsKey, []);
+const tasks = inject<Ref<TaskMatrix>>(tasksKey, ref<TaskMatrix>([]));
+const locations = inject<LocationResource[]>(locationsKey, []);
 
 // Array of Date objects for every calendar day within the specified range.
 const dateRange = inject<Ref<Date[]>>(dateRangeKey, ref<Date[]>([]));
@@ -43,7 +43,7 @@ const style = computed(() => ({
 // The position of the board along x and y axes. The x coordinate corresponds to
 // the index of the date in the dateRange array that will occupy the first
 // column space. The y coordinate corresponds to the index of the location in
-// locationRecords array that will occupy the first row space.
+// locations array that will occupy the first row space.
 const currentIndex = ref<{ x: number, y: number}>({ x: 0, y: 0 });
 provide(indexPositionKey, currentIndex);
 
@@ -58,15 +58,15 @@ const drawToCanvas = () => {
       + 'context could not be found.',
     );
   } else {
-    const range = { x: unref(dateRange), y: locationRecords };
-    drawBoard(ctx, range, unref(actionRecords), currentIndex.value, style.value);
+    const range = { x: unref(dateRange), y: locations };
+    drawBoard(ctx, range, unref(tasks), currentIndex.value, style.value);
     highlighter.value = addHighlighter(
-      ctx, range, unref(actionRecords), currentIndex.value, style.value,
+      ctx, range, unref(tasks), currentIndex.value, style.value,
     );
   }
 }
 
-watch([actionRecords, dateRange, isDark], drawToCanvas);
+watch([tasks, dateRange, isDark], drawToCanvas);
 
 // When scrolling, where `m` is the maximum width of the x- or y-axis that can
 // be displayed, `n` is the hypothetical length of the axis if all possible
@@ -74,7 +74,7 @@ watch([actionRecords, dateRange, isDark], drawToCanvas);
 // highest value for the grid index, `i`, will be `(n - m) / u`, rounded down.
 const maxi = computed<{ x: number, y: number }>(() => {
   const totalValuesX = unref(dateRange).length;
-  const totalValuesY = locationRecords.length;
+  const totalValuesY = locations.length;
   const maxGridW = maxWidth.value - style.value.labels.yAxisWidth;
   const maxGridH = maxHeight.value - style.value.labels.xAxisHeight;
   const maxValuesX = Math.floor(maxGridW / style.value.grid.unit);
@@ -96,7 +96,7 @@ const scrollTo = (x: number, y: number) => {
   const positionChanged = xChanged || yChanged;
   const ctx = canvas.value?.getContext('2d');
   if (positionChanged && ctx) {
-    const range = { x: unref(dateRange), y: locationRecords };
+    const range = { x: unref(dateRange), y: locations };
     const translation = {
       from: { x: currentIndex.value.x, y: currentIndex.value.y },
       to: { x: nextX, y: nextY },
@@ -104,11 +104,11 @@ const scrollTo = (x: number, y: number) => {
         currentIndex.value.x = nextX;
         currentIndex.value.y = nextY;
         highlighter.value = addHighlighter(
-          ctx, range, unref(actionRecords), currentIndex.value, style.value,
+          ctx, range, unref(tasks), currentIndex.value, style.value,
         );
       },
     };
-    translateBoard(ctx, range, unref(actionRecords), translation, style.value);
+    translateBoard(ctx, range, unref(tasks), translation, style.value);
   }
 };
 

@@ -1,6 +1,6 @@
 import { clone, mergeDeepRight, reduce } from 'ramda';
 import { useDark } from '@vueuse/core';
-import type { TaskMatrix, ActionType, LocationRecord } from '@/data/boardSampleData';
+import type { LocationResource, OperationResource, TaskMatrix } from '@/data/boardSampleData';
 import { sameDate } from '@/utils/date';
 
 type CanvasContext = CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D;
@@ -41,7 +41,7 @@ interface BoardLabels<XData, YData> {
 interface BoardProperties {
   width: number,
   height: number,
-  labels: BoardLabels<Date, LocationRecord>,
+  labels: BoardLabels<Date, LocationResource>,
   grid: GridProperties,
   highlight: GridStyles,
   index: { x: number, y: number },
@@ -230,7 +230,7 @@ const applyStyleFallbacks = (style: StyleOptions): StyleProperties => mergeDeepR
 // off any columns or rows; the last column/row should be fully displayed.
 export function computeBoardProperties(
   canvas: { width: number, height: number },
-  range: RangeConfig<Date, LocationRecord>,
+  range: RangeConfig<Date, LocationResource>,
   index: { x: number, y: number },
   style?: StyleOptions,
 ): BoardProperties {
@@ -256,7 +256,7 @@ export function computeBoardProperties(
   const gridHeight = rows * grid.unit;
   const boardWidth = yAxisWidth + gridWidth;
   const boardHeight = xAxisHeight + gridHeight;
-  const labels: BoardLabels<Date, LocationRecord> = {
+  const labels: BoardLabels<Date, LocationResource> = {
     x: {
       origin: { x: yAxisWidth, y: 0 },
       terminus: { x: boardWidth, y: xAxisHeight },
@@ -305,8 +305,8 @@ export function computeBoardProperties(
 // Draw Farm Flow's main board.
 export function drawBoard(
   ctx: CanvasContext,
-  range: RangeConfig<Date, LocationRecord>,
-  actionRecords: TaskMatrix,
+  range: RangeConfig<Date, LocationResource>,
+  matrix: TaskMatrix,
   index: { x: number, y: number },
   style: StyleOptions,
 ): BoardProperties {
@@ -319,7 +319,7 @@ export function drawBoard(
   drawGrid(ctx, grid);
   labelAxisX(ctx, grid, labels.x);
   labelAxisY(ctx, grid, labels.y);
-  plotActions(ctx, board, actionRecords);
+  plotTasks(ctx, board, matrix);
   return board;
 }
 
@@ -367,8 +367,8 @@ interface TranslationParameters {
 
 export function translateBoard(
   ctx: CanvasContext,
-  range: RangeConfig<Date, LocationRecord>,
-  actionRecords: TaskMatrix,
+  range: RangeConfig<Date, LocationResource>,
+  matrix: TaskMatrix,
   translation: TranslationParameters,
   style: StyleOptions,
 ) {
@@ -484,7 +484,7 @@ export function translateBoard(
     if (dX !== 0) labelAxisX(ctx, transBoard.grid, transBoard.labels.x);
     if (dY !== 0) labelAxisY(ctx, transBoard.grid, transBoard.labels.y);
     drawGrid(ctx, transBoard.grid);
-    plotActions(ctx, transBoard, actionRecords);
+    plotTasks(ctx, transBoard, matrix);
 
     // Restore the context to its prior state prior before the clipping and
     // translating operations, then just to be safe, transform the context back
@@ -504,7 +504,7 @@ export function translateBoard(
     // coordinates, and invoke the afterAll() translation callback.
       window.cancelAnimationFrame(frame);
       ctx.restore();
-      drawBoard(ctx, range, actionRecords, translation.to, style);
+      drawBoard(ctx, range, matrix, translation.to, style);
       if (typeof translation.afterAll === 'function') {
         translation.afterAll(ctx, transBoard, deltas);
       }
@@ -655,7 +655,7 @@ function labelAxisX(
 function labelAxisY(
   ctx: CanvasContext,
   grid: GridProperties,
-  label: LabelProperties<LocationRecord>,
+  label: LabelProperties<LocationResource>,
 ) {
   // Before drawing, always save the context's state.
   ctx.save();
@@ -672,37 +672,37 @@ function labelAxisY(
   ctx.restore();
 }
 
-function plotActions (
+function plotTasks (
   ctx: CanvasContext,
   board: BoardProperties,
-  actionRecords: TaskMatrix,
+  matrix: TaskMatrix,
 ) {
   const { grid, labels: { x, y } } = board;
   y.values.forEach((location, indexY) => {
-    plotActionsByLocation(ctx, grid, x.values, actionRecords, location, indexY);
+    plotTasksByLocation(ctx, grid, x.values, matrix, location, indexY);
   });
 }
 
-function plotActionsByLocation(
+function plotTasksByLocation(
   ctx: CanvasContext,
   grid: GridProperties,
   dateSeq: Date[],
-  actionRecords: TaskMatrix,
-  location: LocationRecord,
+  matrix: TaskMatrix,
+  location: LocationResource,
   indexY: number,
 ) {
-  const records = actionRecords.find(loc => loc.id === location.id)?.dates || [];
+  const records = matrix.find(loc => loc.id === location.id)?.dates || [];
   dateSeq.forEach((date, indexX) => {
     const rec = records.find(r => sameDate(r.date, date));
-    if (rec) plotActionsByDate(ctx, grid, rec.actions, indexX, indexY);
+    if (rec) plotTasksByDate(ctx, grid, rec.operations, indexX, indexY);
   });
 }
 
 export type HighlightGenerator = Generator<void, void, [number, number, number?, number?]>;
 export function* addHighlighter(
   ctx: CanvasContext,
-  range: RangeConfig<Date, LocationRecord>,
-  actionRecords: TaskMatrix,
+  range: RangeConfig<Date, LocationResource>,
+  matrix: TaskMatrix,
   origin: { x: number, y: number },
   style?: StyleOptions,
 ): Generator<void, void, [number, number, number?, number?]> {
@@ -733,7 +733,7 @@ export function* addHighlighter(
       ];
       // Redraw the grid backgrounds for the previous column & row first,
       // restoring the default colors, before the currently highlighted col/row.
-      // Doing both before plotting any actions requires looping through the
+      // Doing both before plotting any operations requires looping through the
       // dates and locations many more times, but prevents the previous cells
       // from painting over any newly highlighted cells.
       rowsAndCols.forEach(([x, y, g]) => {
@@ -747,7 +747,7 @@ export function* addHighlighter(
       const lookaheadX = curX + directionX
       const lookbehindX = prevX - directionX
 
-      // Don't use shadows to repaint the actions in the lookahead/lookbehind
+      // Don't use shadows to repaint the operations in the lookahead/lookbehind
       // columns, because their grid cell's background is not being repainted,
       // and the shadows are transparent and will darken cumulatively.
       const markerStyles = {
@@ -759,31 +759,31 @@ export function* addHighlighter(
       const gridLALB: GridProperties = { ...grid, markers: markerStyles };
 
       // Add lookahead and lookbehind to the start of the list before plotting
-      // the actions again. This will prevent any overflowing markers for dates
-      // with multiple actionsfrom being painted over.
+      // the operations again. This will prevent any overflowing markers for dates
+      // with multiple operations from being painted over.
       const rowsAndColsPlusLookaheads: RowsAndColumns = [
         [lookaheadX, null, gridLALB],
         [lookbehindX, null, gridLALB],
         ...rowsAndCols,
       ];
-      // Re-plot the actions in the effected rows/cols.
+      // Re-plot the operations in the effected rows/cols.
       rowsAndColsPlusLookaheads.forEach(([x, y, g]) => {
         // COLUMNS.
         if (typeof x === 'number') {
           const columnDate = dateLabels[x];
           locLabels.forEach((eachLoc, iOfY) => {
-            const records = actionRecords.find(l => l.id === eachLoc.id)?.dates || [];
+            const records = matrix.find(l => l.id === eachLoc.id)?.dates || [];
             const rec = records.find(r => sameDate(r.date, columnDate));
-            if (rec) plotActionsByDate(ctx, g, rec.actions, x, iOfY);
+            if (rec) plotTasksByDate(ctx, g, rec.operations, x, iOfY);
           })
         }
         // ROWS.
         if (typeof y === 'number') {
           const rowLocation = locLabels[y];
-          const records = actionRecords.find(l => l.id === rowLocation?.id)?.dates || [];
+          const records = matrix.find(l => l.id === rowLocation?.id)?.dates || [];
           dateLabels.forEach((eachDate, iOfX) => {
             const rec = records.find(r => sameDate(r.date, eachDate));
-            if (rec) plotActionsByDate(ctx, g, rec.actions, iOfX, y);
+            if (rec) plotTasksByDate(ctx, g, rec.operations, iOfX, y);
           });
         }
       });
@@ -805,10 +805,10 @@ export function* addHighlighter(
 
 }
 
-function plotActionsByDate(
+function plotTasksByDate(
   ctx: CanvasContext,
   grid: GridProperties,
-  actions: ActionType[],
+  operations: OperationResource[],
   indexX: number,
   indexY: number,
 ) {
@@ -821,19 +821,19 @@ function plotActionsByDate(
   const startAngle = 0;
   const endAngle = 2 * Math.PI;
 
-  // Multiple actions on the same date must be staggered horizontally, so use
+  // Multiple operations on the same date must be staggered horizontally, so use
   // two tenths of the grid unit as the gap between each marker. Then calculate
   // the length from the left edge of the leftmost marker to the right edge of
   // the rightmost marker. It should be the diameter of just one marker, plus
   // the combined lenth of all gaps, w/ one less gap than there are markers.
-  const gapCount = actions.length - 1;
+  const gapCount = operations.length - 1;
   const gapSize = grid.unit * .2;
   const totalLength = 2 * radius + gapCount * gapSize;
 
-  actions.forEach((a, i) => {
-    // If the marker's index, i, is less than half the number of total actions,
+  operations.forEach((a, i) => {
+    // If the marker's index, i, is less than half the number of total operations,
     // it will be offset by a negative distance from center of the grid, if more
-    // than half of actions.length it will be a positive value, and if exactly
+    // than half of operations.length it will be a positive value, and if exactly
     // half it will be zero.
     const offsetX = radius + i * gapSize - totalLength / 2;
 
