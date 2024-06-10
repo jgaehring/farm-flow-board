@@ -8,7 +8,7 @@ import {
 import { operations, crop2023, locations, randomTasks } from '@/data/boardSampleData';
 import type { TaskMatrix, LocationResource } from '@/data/boardSampleData';
 import FlowBoard from '@/components/FlowBoard.vue';
-import FlowBoardActions from '@/components/FlowBoardActions.vue';
+import FlowBoardOperations from '@/components/FlowBoardOperations.vue';
 import FlowBoardMenubar from '@/components/FlowBoardMenubar.vue';
 import { createDateRange, sameDate } from '@/utils/date';
 import LogoType from '@/assets/logotype_color.svg?component';
@@ -122,7 +122,7 @@ provide(isDarkKey, isDark);
       <FlowBoard/>
     </main>
     <footer>
-      <FlowBoardActions/>
+      <FlowBoardOperations/>
     </footer>
   </div>
 </template>
