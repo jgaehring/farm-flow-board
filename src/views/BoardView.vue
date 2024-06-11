@@ -5,7 +5,7 @@ import { Switch } from 'radix-vue/namespaced';
 import {
   tasksKey, operationsKey, boardIdKey, dateRangeKey, isDarkKey, locationsKey,
 } from '@/data/providerKeys';
-import { operations, crop2023, locations, randomTasks } from '@/data/boardSampleData';
+import { operations, locations, randomTasks, taskMatrix2023 } from '@/data/boardSampleData';
 import type { LocationResource, TaskMatrix } from '@/data/resources';
 import FlowBoard from '@/components/FlowBoard.vue';
 import FlowBoardOperations from '@/components/FlowBoardOperations.vue';
@@ -72,7 +72,7 @@ function loadBoard(name: '2023'|'random') {
   } else {
     startDate.value = new Date(2023, 4, 6);
     endDate.value = new Date(2023, 10, 15);
-    tasks.value = name === '2023' ? crop2023 : [];
+    tasks.value = name === '2023' ? taskMatrix2023 : [];
   }
 }
 loadBoard(boardId.value);

@@ -1,5 +1,6 @@
 export default [
   {
+    plant: 'Corn',
     location: 'Home',
     tasks: [
       { date: '5/6/2023', name: 'FC1', notes: 'FC1' },
@@ -17,6 +18,7 @@ export default [
     ],
   },
   {
+    plant: 'Corn',
     location: 'Johnson',
     tasks: [
       { date: '5/6/2023', name: 'FC1', notes: 'FC1' },
@@ -32,6 +34,7 @@ export default [
     ],
   },
   {
+    plant: 'Corn',
     location: 'Wendorff (200)',
     tasks: [
       { date: '5/8/2023', name: 'FC1', notes: 'FC1' },
@@ -50,6 +53,7 @@ export default [
     ],
   },
   {
+    plant: 'Corn',
     location: 'Wendorff (60)',
     tasks: [
       { date: '5/7/2023', name: 'FC1', notes: 'FC1' },
@@ -64,6 +68,7 @@ export default [
     ],
   },
   {
+    plant: 'Corn',
     location: 'Lake',
     tasks: [
       { date: '5/7/2023', name: 'FC1', notes: 'FC1' },
@@ -78,6 +83,7 @@ export default [
     ],
   },
   {
+    plant: 'Corn',
     location: 'Cotter',
     tasks: [
       { date: '5/7/2023', name: 'FC1', notes: 'FC1' },
@@ -92,6 +98,7 @@ export default [
     ],
   },
   {
+    plant: 'Corn',
     location: 'Yak',
     tasks: [
       { date: '5/8/2023', name: 'FC1', notes: 'FC1' },
@@ -108,6 +115,7 @@ export default [
     ],
   },
   {
+    plant: 'Corn',
     location: 'Boonie',
     tasks: [
       { date: '5/9/2023', name: 'FC1', notes: 'FC1' },

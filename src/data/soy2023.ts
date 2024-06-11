@@ -1,5 +1,6 @@
 export default [
   {
+    plant: 'Soy',
     location: 'Lilly 1',
     tasks: [
       { date: '5/10/2023', name: 'FC1', notes: 'FC1' },
@@ -17,6 +18,7 @@ export default [
     ],
   },
   {
+    plant: 'Soy',
     location: 'Lilly 2',
     tasks: [
       { date: '5/10/2023', name: 'FC1', notes: 'FC1' },
@@ -34,6 +36,7 @@ export default [
     ],
   },
   {
+    plant: 'Soy',
     location: 'Lilly 3',
     tasks: [
       { date: '5/17/2023', name: 'FC1', notes: 'FC1' },
@@ -52,6 +55,7 @@ export default [
     ],
   },
   {
+    plant: 'Soy',
     location: 'Stockholm Home',
     tasks: [
       { date: '5/17/2023', name: 'FC1', notes: 'FC1' },
@@ -67,6 +71,7 @@ export default [
     ],
   },
   {
+    plant: 'Soy',
     location: 'Stockholm East',
     tasks: [
       { date: '5/21/2023', name: 'FC1', notes: 'FC1' },
@@ -83,6 +88,7 @@ export default [
     ],
   },
   {
+    plant: 'Soy',
     location: 'Carlson',
     tasks: [
       { date: '5/22/2023', name: 'FC1', notes: 'FC1' },
@@ -100,6 +106,7 @@ export default [
     ],
   },
   {
+    plant: 'Soy',
     location: 'Hollywood 1',
     tasks: [
       { date: '5/17/2023', name: 'FC1', notes: 'FC1' },
@@ -116,6 +123,7 @@ export default [
     ],
   },
   {
+    plant: 'Soy',
     location: 'Hollywood 2',
     tasks: [
       { date: '5/17/2023', name: 'FC1', notes: 'FC1' },
@@ -133,6 +141,7 @@ export default [
     ],
   },
   {
+    plant: 'Soy',
     location: 'Hollywood 3',
     tasks: [
       { date: '5/17/2023', name: 'FC1', notes: 'FC1' },

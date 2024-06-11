@@ -1,9 +1,10 @@
-import { reduce } from 'ramda';
+import { pick, reduce } from 'ramda';
 import { v4 as uuid } from 'uuid';
-import { Asset, Term } from '@/data/resources';
+import { Asset, Log, Term } from '@/data/resources';
 import type {
-  CropTerm, DatesByLocation, LocationResource,
-  OperationsByDate, OperationTerm, TaskMatrix,
+  CropIdentifier, CropTerm, DatesByLocation,
+  LocationIdentifier, LocationResource, LogResource,
+  OperationsByDate, OperationTerm, PlantResource, TaskMatrix,
 } from '@/data/resources';
 import corn2023 from './corn2023';
 import soy2023 from './soy2023';
@@ -32,24 +33,79 @@ export const locations: LocationResource[] = [
 ];
 
 export const operations: OperationTerm[] = [
-  { id: uuid(), type: Term.StandardOperatingProcedure, name: 'Tillage', color: 'royalblue' },
-  { id: uuid(), type: Term.StandardOperatingProcedure, name: 'Tine Weed', color: 'lightgreen' },
-  { id: uuid(), type: Term.StandardOperatingProcedure, name: 'Cultivation', color: 'teal' },
-  { id: uuid(), type: Term.StandardOperatingProcedure, name: 'Flame Weed', color: 'crimson' },
-  { id: uuid(), type: Term.StandardOperatingProcedure, name: 'Rotary Hoe', color: 'orchid' },
-  { id: uuid(), type: Term.StandardOperatingProcedure, name: 'Rock Picking', color: 'gold' },
-  { id: uuid(), type: Term.StandardOperatingProcedure, name: 'Mow', color: 'orangered' },
-  { id: uuid(), type: Term.StandardOperatingProcedure, name: 'Plant', color: 'blueviolet' },
-  { id: uuid(), type: Term.StandardOperatingProcedure, name: 'Zap', color: 'rosybrown' },
+  {
+    id: uuid(),
+    type: Term.StandardOperatingProcedure,
+    name: 'Tillage',
+    color: 'royalblue',
+    log_type: Log.Activity,
+  },
+  {
+    id: uuid(),
+    type: Term.StandardOperatingProcedure,
+    name: 'Tine Weed',
+    color: 'lightgreen',
+    log_type: Log.Activity,
+  },
+  {
+    id: uuid(),
+    type: Term.StandardOperatingProcedure,
+    name: 'Cultivation',
+    color: 'teal',
+    log_type: Log.Activity,
+  },
+  {
+    id: uuid(),
+    type: Term.StandardOperatingProcedure,
+    name: 'Flame Weed',
+    color: 'crimson',
+    log_type: Log.Activity,
+  },
+  {
+    id: uuid(),
+    type: Term.StandardOperatingProcedure,
+    name: 'Rotary Hoe',
+    color: 'orchid',
+    log_type: Log.Activity,
+  },
+  {
+    id: uuid(),
+    type: Term.StandardOperatingProcedure,
+    name: 'Rock Picking',
+    color: 'gold',
+    log_type: Log.Activity,
+  },
+  {
+    id: uuid(),
+    type: Term.StandardOperatingProcedure,
+    name: 'Mow',
+    color: 'orangered',
+    log_type: Log.Activity,
+  },
+  {
+    id: uuid(),
+    type: Term.StandardOperatingProcedure,
+    name: 'Plant',
+    color: 'blueviolet',
+    log_type: Log.Seeding,
+  },
+  {
+    id: uuid(),
+    type: Term.StandardOperatingProcedure,
+    name: 'Zap',
+    color: 'rosybrown',
+    log_type: Log.Activity,
+  },
 ];
 
-export const cropTypes: CropTerm[] = [
+export const cropTerms: CropTerm[] = [
   { id: uuid(), type: Term.Plant, name: 'Corn', color: 'royalblue' },
   { id: uuid(), type: Term.Plant, name: 'Soy', color: 'orangered' },
 ];
 
 type RawTaskRecord = { date: string, name: string, notes: string };
 type RawCropRecord = {
+  plant: string,
   location: string,
   tasks: RawTaskRecord[]
 }
@@ -64,33 +120,69 @@ const taskMap = new Map([
   ['Treffler', operations[1]],
   ['Hoe', operations[4]],
 ]);
-const cropToTaskMatrix = reduce((matrix: TaskMatrix, crop: RawCropRecord) => {
-  const { location: name } = crop;
-  const location = locations.find(loc => loc.name === name);
-  if (!location) return matrix;
-  const { id } = location;
-  const dates = crop.tasks.reduce((byDate: OperationsByDate[], raw: RawTaskRecord) => {
-    let op = operations.find(a => a.name.toLowerCase() === raw.name.toLowerCase());
-    if (!op) op = taskMap.has(raw.name)
-      ? taskMap.get(raw.name) as OperationTerm
-      : operations[2]; // 'Cultivation': default for unknown ops in sample data
-    const date = new Date(raw.date);
-    const i = byDate.findIndex(a => sameDate(a.date, date));
-    if (i < 0) return [...byDate, { date, operations: [op] }];
-    return [
-      ...byDate.slice(0, i),
-      { date, operations: byDate[i].operations.concat(op) },
-      ...byDate.slice(i + 1),
-    ];
-  }, [] as OperationsByDate[]);
-  const byLocation: DatesByLocation = { id, name, dates };
-  return [...matrix, byLocation];
-}, []);
 
-export const crop2023 = [
-  ...cropToTaskMatrix(corn2023),
-  ...cropToTaskMatrix(soy2023),
-];
+const toIdfier = pick(['id', 'type']);
+interface CropReduction { tasks: LogResource[], plants: PlantResource[] }
+export const rawCropsToEntities = reduce((prev: CropReduction, raw: RawCropRecord) => {
+  const land = locations.find(loc => loc.name === raw.location);
+  const term = cropTerms.find(c => c.name === raw.plant);
+  if (!land || !term) return prev;
+  const location: LocationIdentifier = toIdfier(land);
+  const crop: CropIdentifier = toIdfier(term);
+  const plantName = `${term.name}, ${land.name}`;
+  const plantResource: PlantResource = {
+    id: uuid(), type: Asset.Plant, name: plantName, crop, location,
+  };
+  const plants = prev.plants.concat(plantResource);
+  const plant = toIdfier(plantResource);
+  const logs: LogResource[] = raw.tasks.map((task) => {
+    let op = operations.find(o => o.name.toLowerCase() === task.name.toLowerCase());
+    // Default for unknown ops in sample data: 'Cultivation'
+    if (!op) op = taskMap.get(task.name) || operations[2];
+    const operation = toIdfier(op);
+    const date = new Date(task.date);
+    const name = `${op.name}: ${land.name} ${term.name}`;
+    const id = uuid();
+    const type = op.log_type || Log.Activity;
+    return {
+      id, type, name, date, location, operation, plant, notes: task.notes,
+    };
+  });
+  const tasks = prev.tasks.concat(logs);
+  return { tasks, plants };
+}, { tasks: [], plants: [] });
+const cornEntities2023 = rawCropsToEntities(corn2023);
+const soyEntities2023 = rawCropsToEntities(soy2023);
+export const tasks = cornEntities2023.tasks.concat(soyEntities2023.tasks);
+export const plants = cornEntities2023.plants.concat(soyEntities2023.plants);
+
+export function toTaskMatrix(
+  tasks: LogResource[],
+  plants: PlantResource[],
+  locations: LocationResource[],
+  operations: OperationTerm[],
+): TaskMatrix {
+  return locations.map(({ id, name }) => ({
+    id: id,
+    name: name,
+    dates: tasks.reduce((byDate: OperationsByDate[], task) => {
+      if (task.location.id !== id) return byDate;
+      const opId = task.operation?.id;
+      // Default for unknown ops in sample data: 'Cultivation'
+      const op = opId && operations.find(o => o.id === opId) || operations[2];
+      const { date } = task;
+      const i = byDate.findIndex(byD => sameDate(byD.date, date));
+      if (i < 0) return [...byDate, { date, operations: [op] }];
+      return [
+        ...byDate.slice(0, i),
+        { date, operations: byDate[i].operations.concat(op) },
+        ...byDate.slice(i + 1),
+      ];
+    }, []),
+  } as DatesByLocation));
+}
+
+export const taskMatrix2023 = toTaskMatrix(tasks, plants, locations, operations);
 
 type RandomTask = { color?: string, date: Date, location: number, type: number };
 type TaskGenerator = Generator<RandomTask, void, unknown>

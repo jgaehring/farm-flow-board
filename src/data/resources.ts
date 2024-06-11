@@ -10,12 +10,16 @@ export enum Log {
   Seeding = 'log--seeding',
 }
 
+export enum Plan {
+  FarmFlow = 'plan--farm_flow',
+}
+
 export enum Term {
   Plant = 'taxonomy_term--plant',
   StandardOperatingProcedure = 'taxonomy_term--standard_operating_procedure',
 }
 
-type Entity = Asset|Log|Term;
+type Entity = Asset|Log|Plan|Term;
 
 interface ResourceIdentifier {
   id: string,
@@ -43,6 +47,7 @@ export interface OperationIdentifier extends ResourceIdentifier {
 }
 export interface OperationTerm extends TaxonomyTerm {
   type: Term.StandardOperatingProcedure,
+  log_type: Log|null,
   color: string,
 }
 
@@ -70,11 +75,27 @@ export interface LogIdentifier extends ResourceIdentifier {
 }
 export interface LogResource extends Resource {
   type: Log,
+  date: Date,
+  location: LocationIdentifier,
   operation: OperationIdentifier,
-  plant: CropIdentifier,
+  plant: PlantIdentifier,
   notes: string,
 }
 
-export type OperationsByDate = { date: Date, operations: OperationTerm[] };
-export type DatesByLocation = { id: string, name: string, dates: OperationsByDate[] };
+export interface BoardInfo extends Resource {
+  type: Plan.FarmFlow,
+  dateRange: [Date, Date],
+  operations: OperationIdentifier[],
+  crops: CropIdentifier
+}
+
+export type OperationsByDate = {
+  date: Date,
+  operations: OperationTerm[],
+};
+export type DatesByLocation = {
+  id: string,
+  name: string,
+  dates: OperationsByDate[]
+};
 export type TaskMatrix = DatesByLocation[];
