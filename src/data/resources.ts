@@ -96,6 +96,7 @@ export type OperationsByDate = {
 export type DatesByLocation = {
   id: string,
   name: string,
+  crop: CropTerm|null,
   dates: OperationsByDate[]
 };
 export type TaskMatrix = DatesByLocation[];

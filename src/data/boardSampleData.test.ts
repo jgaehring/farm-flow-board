@@ -1,7 +1,7 @@
 import { writeFileSync } from 'fs';
 import { describe, expect, it } from 'vitest';
 import {
-  tasks, plants, locations, operations,
+  tasks, plants, locations, cropTerms, operations,
   rawCropsToEntities, toTaskMatrix,
 } from './boardSampleData';
 import corn2023 from './corn2023';
@@ -18,6 +18,7 @@ describe('toTaskMatrix', () => {
     tasks: [] as LogResource[],
     plants: [] as PlantResource[],
     locations,
+    crops: cropTerms,
     operations,
   };
   it('Converts raw sample data to logs and assets', () => {
@@ -38,6 +39,7 @@ describe('toTaskMatrix', () => {
       resources2023.tasks,
       resources2023.plants,
       resources2023.locations,
+      resources2023.crops,
       resources2023.operations,
     );
     const json = JSON.stringify(matrix, null, 2);

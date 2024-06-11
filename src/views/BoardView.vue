@@ -5,8 +5,8 @@ import { Switch } from 'radix-vue/namespaced';
 import {
   tasksKey, operationsKey, boardIdKey, dateRangeKey, isDarkKey, locationsKey,
 } from '@/data/providerKeys';
-import { operations, locations, randomTasks, taskMatrix2023 } from '@/data/boardSampleData';
-import type { LocationResource, TaskMatrix } from '@/data/resources';
+import { cropTerms, operations, locations, randomTasks, taskMatrix2023 } from '@/data/boardSampleData';
+import type { TaskMatrix } from '@/data/resources';
 import FlowBoard from '@/components/FlowBoard.vue';
 import FlowBoardOperations from '@/components/FlowBoardOperations.vue';
 import FlowBoardMenubar from '@/components/FlowBoardMenubar.vue';
@@ -21,10 +21,7 @@ const boardId = ref<'2023'|'random'>('2023');
 // each location sorted by date. The locations will be created first, with empty
 // dates arrays, and generateTasks will populate the tasks by date after
 // randomly generating them according to the possible locations and dates.
-const tasks = ref<TaskMatrix>([]);
-locations.forEach(({ id, name }, i) => {
-  tasks.value[i] = { id, name, dates: [] };
-});
+const tasks = ref<TaskMatrix>(taskMatrix2023);
 
 // Start and end dates used to populate the x-axis.
 const startDate = ref<Date>(new Date(2024, 2, 28));
@@ -32,18 +29,20 @@ const endDate = ref<Date>(new Date(2024, 9));
 // Array of Date objects for every date within the specified range.
 const dateRange = computed(() => createDateRange(startDate.value, endDate.value));
 
-function generateTasks(
-  count: number,
-  dateRange: [Date, Date],
-  locations: LocationResource[],
-): void {
-  const taskGenerator = randomTasks(dateRange, locations.map(l => l.name));
+function generateTasks(count: number): TaskMatrix {
+  const range: [Date, Date] = [startDate.value, endDate.value];
+  const taskGenerator = randomTasks(range, locations, operations, cropTerms);
+  const random: TaskMatrix = [];
   for (let i  = 0; i < count; i += 1) {
     const task = taskGenerator.next().value;
     if (task) {
       const { date, type } = task;
       const op = operations[type];
-      const location = tasks.value[task.location];
+      if (!random[task.location]) {
+        const { id, name } = locations[task.location];
+        random[task.location] = { id, name, crop: null, dates: [] };
+      }
+      const location = random[task.location];
       const matchingDate = location?.dates.find(a => sameDate(date, a.date));
       if (matchingDate && op) {
         matchingDate.operations.push(op);
@@ -52,6 +51,7 @@ function generateTasks(
       }
     }
   }
+  return random;
 }
 
 function loadBoard(name: '2023'|'random') {
@@ -59,16 +59,13 @@ function loadBoard(name: '2023'|'random') {
     tasks.value = [];
     startDate.value = new Date(2024, 2, 28);
     endDate.value = new Date(2024, 9);
-    locations.forEach(({ id, name }, i) => {
-      tasks.value[i] = { id, name, dates: [] };
-    });
     // Generate a random scatter of tasks for the grid.
     const frequency = 6; // coefficient to adjust total tasks below
     const count = frequency * Math.floor(
       // Correlate total # of tasks to the 2 main parameters, fields & dates.
       Math.sqrt(locations.length * dateRange.value.length)
     );
-    generateTasks(count, [startDate.value, endDate.value], locations);
+    tasks.value = generateTasks(count);
   } else {
     startDate.value = new Date(2023, 4, 6);
     endDate.value = new Date(2023, 10, 15);

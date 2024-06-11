@@ -160,12 +160,13 @@ export function toTaskMatrix(
   tasks: LogResource[],
   plants: PlantResource[],
   locations: LocationResource[],
+  crops: CropTerm[],
   operations: OperationTerm[],
 ): TaskMatrix {
-  return locations.map(({ id, name }) => ({
-    id: id,
-    name: name,
-    dates: tasks.reduce((byDate: OperationsByDate[], task) => {
+  return locations.map(({ id, name }) => {
+    const crop = crops.find(crop => plants.some(plant =>
+      crop.id === plant.crop.id && plant.location.id === id));
+    const dates = tasks.reduce((byDate: OperationsByDate[], task) => {
       if (task.location.id !== id) return byDate;
       const opId = task.operation?.id;
       // Default for unknown ops in sample data: 'Cultivation'
@@ -178,15 +179,21 @@ export function toTaskMatrix(
         { date, operations: byDate[i].operations.concat(op) },
         ...byDate.slice(i + 1),
       ];
-    }, []),
-  } as DatesByLocation));
+    }, []);
+    return { id, name, crop, dates } as DatesByLocation;
+  });
 }
 
-export const taskMatrix2023 = toTaskMatrix(tasks, plants, locations, operations);
+export const taskMatrix2023 = toTaskMatrix(tasks, plants, locations, cropTerms, operations);
 
-type RandomTask = { color?: string, date: Date, location: number, type: number };
+type RandomTask = { color?: string, date: Date, location: number, type: number, crop: number };
 type TaskGenerator = Generator<RandomTask, void, unknown>
-export function* randomTasks(dateRange: [Date, Date], locations: string[]): TaskGenerator {
+export function* randomTasks(
+  dateRange: [Date, Date],
+  locations: LocationResource[],
+  operations: OperationTerm[],
+  crops: CropTerm[],
+): TaskGenerator {
   const [start, end] = dateRange;
   const interval = Math.floor((end.valueOf() - start.valueOf()) / 24 / 60 / 60 / 1000);
   while (true) {
@@ -195,6 +202,7 @@ export function* randomTasks(dateRange: [Date, Date], locations: string[]): Task
     const type = Math.floor(Math.random() * operations.length);
     const location = Math.floor(Math.random() * locations.length);
     const color = operations[type]?.color;
-    yield { color, date, location, type };
+    const crop = (location + 1) % crops.length; // to ensure the same crop per location
+    yield { color, date, location, type, crop };
   }
 }
