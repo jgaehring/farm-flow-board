@@ -88,15 +88,3 @@ export interface BoardInfo extends Resource {
   operations: OperationIdentifier[],
   crops: CropIdentifier
 }
-
-export type OperationsByDate = {
-  date: Date,
-  operations: OperationTerm[],
-};
-export type DatesByLocation = {
-  id: string,
-  name: string,
-  crop: CropTerm|null,
-  dates: OperationsByDate[]
-};
-export type TaskMatrix = DatesByLocation[];

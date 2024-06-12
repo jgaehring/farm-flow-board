@@ -4,9 +4,10 @@ import { computed, inject, ref, unref } from 'vue';
 import { Combobox, Dialog, Label, Popover } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { computeBoardProperties } from '@/canvas/board';
-import { operations } from '@/data/boardSampleData';
-import type { LocationResource, OperationTerm, TaskMatrix } from '@/data/resources';
-import { tasksKey, dateRangeKey, indexPositionKey, isDarkKey, locationsKey } from '@/data/providerKeys';
+import type { TaskMatrix } from '@/canvas/board';
+import { operations2023 } from '@/data/boardSampleData';
+import type { LocationResource, OperationTerm } from '@/data/resources';
+import { dateRangeKey, indexPositionKey, isDarkKey, locationsKey, matrixKey } from '@/data/providerKeys';
 import { sameDate } from '@/utils/date';
 import FFDatePicker from '@/components/FFDatePicker.vue';
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
@@ -21,8 +22,8 @@ interface FlowBoardCursorGridProps {
 }
 const props = defineProps<FlowBoardCursorGridProps>();
 
-const tasks = inject<Ref<TaskMatrix>>(tasksKey, ref<TaskMatrix>([]));
-const locations = inject<LocationResource[]>(locationsKey, []);
+const matrix = inject<Ref<TaskMatrix>>(matrixKey, ref<TaskMatrix>([]));
+const locations = inject<Ref<LocationResource[]>>(locationsKey, ref<LocationResource[]>([]));
 const dateRange = inject<Ref<Date[]>>(dateRangeKey, ref<Date[]>([]));
 const boardIndex = inject<Ref<{ x: number, y: number }>>(indexPositionKey, ref({ x: 0, y: 0 }));
 const isDark = inject(isDarkKey);
@@ -42,7 +43,7 @@ const style = computed(() => ({
 
 const board = computed(() => computeBoardProperties(
   { width: props.width.value, height: props.width.value },
-  { x: unref(dateRange), y: locations },
+  { x: unref(dateRange), y: locations.value },
   boardIndex.value,
   style.value,
 ));
@@ -59,7 +60,7 @@ interface GridCell {
 const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => {
   const location = { id: loc.id, name: loc.name };
   const { grid } = board.value;
-  const records = tasks.value.find(l => l.id === loc.id)?.dates || [];
+  const records = matrix.value.find(l => l.id === loc.id)?.dates || [];
   return board.value.labels.x.values.reduce((cells, date, x) => {
     const ops = records.find(r => sameDate(r.date, date))?.operations || [];
     if (ops.length <= 0) return cells;
@@ -132,7 +133,7 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
                       <Combobox.Content class="combobox-content">
                         <Combobox.Viewport class="combobox-viewport" >
                           <Combobox.Empty class="combobox-empty"/>
-                          <Combobox.Item v-for="(op, i) in operations"
+                          <Combobox.Item v-for="(op, i) in operations2023"
                             class="combobox-item"
                             :value="op.id"
                             :key="i">

@@ -3,25 +3,31 @@ import { computed, provide, ref } from 'vue';
 import { useDark, useToggle } from '@vueuse/core'
 import { Switch } from 'radix-vue/namespaced';
 import {
-  tasksKey, operationsKey, boardIdKey, dateRangeKey, isDarkKey, locationsKey,
+  boardIdKey, cropsKey, dateRangeKey, isDarkKey, locationsKey,
+  operationsKey, plantsKey, tasksKey,
 } from '@/data/providerKeys';
-import { cropTerms, operations, locations, randomTasks, taskMatrix2023 } from '@/data/boardSampleData';
-import type { TaskMatrix } from '@/data/resources';
+import {
+  crops2023, generateEntities, locations2023, operations2023, plants2023, tasks2023,
+} from '@/data/boardSampleData';
+import type {
+  CropTerm, LocationResource, LogResource, OperationTerm, PlantResource,
+} from '@/data/resources';
 import FlowBoard from '@/components/FlowBoard.vue';
 import FlowBoardOperations from '@/components/FlowBoardOperations.vue';
 import FlowBoardMenubar from '@/components/FlowBoardMenubar.vue';
-import { createDateRange, sameDate } from '@/utils/date';
+import { createDateRange } from '@/utils/date';
 import LogoType from '@/assets/logotype_color.svg?component';
 import IconSun from '@/assets/radix-icons/sun.svg?component'
 import IconMoon from '@/assets/radix-icons/moon.svg?component'
 
 const boardId = ref<'2023'|'random'>('2023');
 
-// The collection of all field operations, first sorted by location, then within
-// each location sorted by date. The locations will be created first, with empty
-// dates arrays, and generateTasks will populate the tasks by date after
-// randomly generating them according to the possible locations and dates.
-const tasks = ref<TaskMatrix>(taskMatrix2023);
+// All of the core data entities.
+const tasks = ref<LogResource[]>(tasks2023);
+const locations = ref<LocationResource[]>(locations2023);
+const plants = ref<PlantResource[]>(plants2023);
+const operations = ref<OperationTerm[]>(operations2023);
+const crops = ref<CropTerm[]>(crops2023);
 
 // Start and end dates used to populate the x-axis.
 const startDate = ref<Date>(new Date(2024, 2, 28));
@@ -29,47 +35,32 @@ const endDate = ref<Date>(new Date(2024, 9));
 // Array of Date objects for every date within the specified range.
 const dateRange = computed(() => createDateRange(startDate.value, endDate.value));
 
-function generateTasks(count: number): TaskMatrix {
-  const range: [Date, Date] = [startDate.value, endDate.value];
-  const taskGenerator = randomTasks(range, locations, operations, cropTerms);
-  const random: TaskMatrix = [];
-  for (let i  = 0; i < count; i += 1) {
-    const task = taskGenerator.next().value;
-    if (task) {
-      const { date, type } = task;
-      const op = operations[type];
-      if (!random[task.location]) {
-        const { id, name } = locations[task.location];
-        random[task.location] = { id, name, crop: null, dates: [] };
-      }
-      const location = random[task.location];
-      const matchingDate = location?.dates.find(a => sameDate(date, a.date));
-      if (matchingDate && op) {
-        matchingDate.operations.push(op);
-      } else if (location && op){
-        location.dates.push({ date, operations: [op]});
-      }
-    }
-  }
-  return random;
-}
-
 function loadBoard(name: '2023'|'random') {
+  tasks.value = [];
+  plants.value = [];
   if (name === 'random') {
-    tasks.value = [];
     startDate.value = new Date(2024, 2, 28);
     endDate.value = new Date(2024, 9);
     // Generate a random scatter of tasks for the grid.
     const frequency = 6; // coefficient to adjust total tasks below
     const count = frequency * Math.floor(
       // Correlate total # of tasks to the 2 main parameters, fields & dates.
-      Math.sqrt(locations.length * dateRange.value.length)
+      Math.sqrt(locations.value.length * dateRange.value.length)
     );
-    tasks.value = generateTasks(count);
-  } else {
+    const entities = generateEntities(
+      count,
+      locations.value,
+      operations.value,
+      crops.value,
+      [startDate.value, endDate.value],
+    );
+    tasks.value = entities[0];
+    plants.value = entities[1];
+  } else if (name === '2023') {
     startDate.value = new Date(2023, 4, 6);
     endDate.value = new Date(2023, 10, 15);
-    tasks.value = name === '2023' ? taskMatrix2023 : [];
+    tasks.value = tasks2023;
+    plants.value = plants2023;
   }
 }
 loadBoard(boardId.value);
@@ -84,8 +75,10 @@ const toggleDark = useToggle(isDark);
 
 provide(tasksKey, tasks);
 provide(locationsKey, locations);
+provide(plantsKey, plants);
 provide(dateRangeKey, dateRange);
 provide(operationsKey, operations);
+provide(cropsKey, crops);
 provide(boardIdKey, boardId);
 provide(isDarkKey, isDark);
 

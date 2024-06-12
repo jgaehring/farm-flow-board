@@ -1,9 +1,7 @@
 import { clone, mergeDeepRight, reduce } from 'ramda';
 import { useDark } from '@vueuse/core';
 import { sameDate } from '@/utils/date';
-import type {
-  DatesByLocation, LocationResource, OperationsByDate, OperationTerm, TaskMatrix
-} from '@/data/resources';
+import type { CropTerm, LocationResource, OperationTerm } from '@/data/resources';
 
 type CanvasContext = CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D;
 
@@ -303,6 +301,18 @@ export function computeBoardProperties(
     },
   };
 }
+
+export type OperationsByDate = {
+  date: Date,
+  operations: OperationTerm[],
+};
+export type DatesByLocation = {
+  id: string,
+  name: string,
+  crop: CropTerm|null,
+  dates: OperationsByDate[]
+};
+export type TaskMatrix = DatesByLocation[];
 
 // Draw Farm Flow's main board.
 export function drawBoard(

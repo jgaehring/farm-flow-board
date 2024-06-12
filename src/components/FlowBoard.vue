@@ -4,9 +4,17 @@ import type { Ref } from "vue";
 import { useMouseInElement } from '@vueuse/core';
 import useResizableCanvas from '@/composables/useResizableCanvas';
 import { addHighlighter, drawBoard, translateBoard } from '@/canvas/board';
-import type { HighlightGenerator } from '@/canvas/board';
-import type { LocationResource, TaskMatrix } from '@/data/resources';
-import { tasksKey, dateRangeKey, indexPositionKey, isDarkKey, locationsKey } from '@/data/providerKeys';
+import type {
+  DatesByLocation, HighlightGenerator, OperationsByDate, TaskMatrix,
+} from '@/canvas/board';
+import type {
+  CropTerm, LocationResource, LogResource, OperationTerm, PlantResource,
+} from '@/data/resources';
+import {
+  cropsKey, dateRangeKey, indexPositionKey, isDarkKey,
+  locationsKey, matrixKey, operationsKey, plantsKey, tasksKey,
+} from '@/data/providerKeys';
+import { sameDate } from '@/utils/date';
 import FlowBoardInteractiveLayer from '@/components/FlowBoardInteractiveLayer.vue'
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
 import IconChevronLeft from '@/assets/radix-icons/chevron-left.svg?component';
@@ -18,10 +26,39 @@ const canvas = ref<HTMLCanvasElement | null>(null);
 const maxWidth = ref<number>(300); // <-- default width for any <canvas> element.
 const maxHeight = ref<number>(150); // <-- default height for any <canvas> element.
 
+// All of the core data entities.
+const tasks = inject<Ref<LogResource[]>>(tasksKey, ref<LogResource[]>([]));
+const plants = inject<Ref<PlantResource[]>>(plantsKey, ref([]));
+const locations = inject<Ref<LocationResource[]>>(locationsKey, ref([]));
+const operations = inject<Ref<OperationTerm[]>>(operationsKey, ref([]));
+const crops = inject<Ref<CropTerm[]>>(cropsKey, ref([]));
+
 // The collection of all field operations, first sorted by location, then within
-// each location sorted by date.
-const tasks = inject<Ref<TaskMatrix>>(tasksKey, ref<TaskMatrix>([]));
-const locations = inject<LocationResource[]>(locationsKey, []);
+// each location sorted by date. The locations will be created first, with empty
+// dates arrays, and generateTasks will populate the tasks by date after
+// randomly generating them according to the possible locations and dates.
+const matrix = computed((): TaskMatrix => {
+  return locations.value.map(({ id, name }) => {
+    const crop = crops.value.find(crop => plants.value.some(plant =>
+      crop.id === plant.crop.id && plant.location.id === id));
+    const dates = tasks.value.reduce((byDate: OperationsByDate[], task) => {
+      if (task.location.id !== id) return byDate;
+      const opId = task.operation?.id;
+      // Default for unknown ops in sample data: 'Cultivation'
+      const op = opId && operations.value.find(o => o.id === opId) || operations.value[2];
+      const { date } = task;
+      const i = byDate.findIndex(byD => sameDate(byD.date, date));
+      if (i < 0) return [...byDate, { date, operations: [op] }];
+      return [
+        ...byDate.slice(0, i),
+        { date, operations: byDate[i].operations.concat(op) },
+        ...byDate.slice(i + 1),
+      ];
+    }, []);
+    return { id, name, crop, dates } as DatesByLocation;
+  });
+});
+provide(matrixKey, matrix);
 
 // Array of Date objects for every calendar day within the specified range.
 const dateRange = inject<Ref<Date[]>>(dateRangeKey, ref<Date[]>([]));
@@ -58,15 +95,15 @@ const drawToCanvas = () => {
       + 'context could not be found.',
     );
   } else {
-    const range = { x: unref(dateRange), y: locations };
-    drawBoard(ctx, range, unref(tasks), currentIndex.value, style.value);
+    const range = { x: unref(dateRange), y: locations.value };
+    drawBoard(ctx, range, unref(matrix), currentIndex.value, style.value);
     highlighter.value = addHighlighter(
-      ctx, range, unref(tasks), currentIndex.value, style.value,
+      ctx, range, unref(matrix), currentIndex.value, style.value,
     );
   }
 }
 
-watch([tasks, dateRange, isDark], drawToCanvas);
+watch([matrix, dateRange, isDark], drawToCanvas);
 
 // When scrolling, where `m` is the maximum width of the x- or y-axis that can
 // be displayed, `n` is the hypothetical length of the axis if all possible
@@ -74,7 +111,7 @@ watch([tasks, dateRange, isDark], drawToCanvas);
 // highest value for the grid index, `i`, will be `(n - m) / u`, rounded down.
 const maxi = computed<{ x: number, y: number }>(() => {
   const totalValuesX = unref(dateRange).length;
-  const totalValuesY = locations.length;
+  const totalValuesY = locations.value.length;
   const maxGridW = maxWidth.value - style.value.labels.yAxisWidth;
   const maxGridH = maxHeight.value - style.value.labels.xAxisHeight;
   const maxValuesX = Math.floor(maxGridW / style.value.grid.unit);
@@ -96,7 +133,7 @@ const scrollTo = (x: number, y: number) => {
   const positionChanged = xChanged || yChanged;
   const ctx = canvas.value?.getContext('2d');
   if (positionChanged && ctx) {
-    const range = { x: unref(dateRange), y: locations };
+    const range = { x: unref(dateRange), y: locations.value };
     const translation = {
       from: { x: currentIndex.value.x, y: currentIndex.value.y },
       to: { x: nextX, y: nextY },
@@ -104,11 +141,11 @@ const scrollTo = (x: number, y: number) => {
         currentIndex.value.x = nextX;
         currentIndex.value.y = nextY;
         highlighter.value = addHighlighter(
-          ctx, range, unref(tasks), currentIndex.value, style.value,
+          ctx, range, unref(matrix), currentIndex.value, style.value,
         );
       },
     };
-    translateBoard(ctx, range, unref(tasks), translation, style.value);
+    translateBoard(ctx, range, unref(matrix), translation, style.value);
   }
 };
 
