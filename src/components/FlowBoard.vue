@@ -7,9 +7,6 @@ import { addHighlighter, drawBoard, translateBoard } from '@/canvas/board';
 import type {
   DatesByLocation, HighlightGenerator, OperationsByDate, TaskMatrix,
 } from '@/canvas/board';
-import type {
-  CropTerm, LocationResource, LogResource, OperationTerm, PlantResource,
-} from '@/data/resources';
 import {
   cropsKey, dateRangeKey, indexPositionKey, isDarkKey,
   locationsKey, matrixKey, operationsKey, plantsKey, tasksKey,
@@ -27,11 +24,11 @@ const maxWidth = ref<number>(300); // <-- default width for any <canvas> element
 const maxHeight = ref<number>(150); // <-- default height for any <canvas> element.
 
 // All of the core data entities.
-const tasks = inject<Ref<LogResource[]>>(tasksKey, ref<LogResource[]>([]));
-const plants = inject<Ref<PlantResource[]>>(plantsKey, ref([]));
-const locations = inject<Ref<LocationResource[]>>(locationsKey, ref([]));
-const operations = inject<Ref<OperationTerm[]>>(operationsKey, ref([]));
-const crops = inject<Ref<CropTerm[]>>(cropsKey, ref([]));
+const tasks = inject(tasksKey, ref([]));
+const plants = inject(plantsKey, ref([]));
+const locations = inject(locationsKey, ref([]));
+const operations = inject(operationsKey, ref([]));
+const crops = inject(cropsKey, ref([]));
 
 // The collection of all field operations, first sorted by location, then within
 // each location sorted by date. The locations will be created first, with empty

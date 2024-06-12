@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { inject } from 'vue';
-import type { OperationTerm } from '@/data/resources';
+import { inject, ref } from 'vue';
 import { operationsKey } from '@/data/providerKeys';
 
-const operations = inject<OperationTerm[]>(operationsKey, []);
+const operations = inject(operationsKey, ref([]));
 </script>
 
 <template>

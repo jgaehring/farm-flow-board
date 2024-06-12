@@ -4,9 +4,8 @@ import { computed, inject, ref, unref } from 'vue';
 import { Combobox, Dialog, Label, Popover } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { computeBoardProperties } from '@/canvas/board';
-import type { TaskMatrix } from '@/canvas/board';
 import { operations2023 } from '@/data/boardSampleData';
-import type { LocationResource, OperationTerm } from '@/data/resources';
+import type { OperationTerm } from '@/data/resources';
 import { dateRangeKey, indexPositionKey, isDarkKey, locationsKey, matrixKey } from '@/data/providerKeys';
 import { sameDate } from '@/utils/date';
 import FFDatePicker from '@/components/FFDatePicker.vue';
@@ -22,10 +21,10 @@ interface FlowBoardCursorGridProps {
 }
 const props = defineProps<FlowBoardCursorGridProps>();
 
-const matrix = inject<Ref<TaskMatrix>>(matrixKey, ref<TaskMatrix>([]));
-const locations = inject<Ref<LocationResource[]>>(locationsKey, ref<LocationResource[]>([]));
-const dateRange = inject<Ref<Date[]>>(dateRangeKey, ref<Date[]>([]));
-const boardIndex = inject<Ref<{ x: number, y: number }>>(indexPositionKey, ref({ x: 0, y: 0 }));
+const matrix = inject(matrixKey, ref([]));
+const locations = inject(locationsKey, ref([]));
+const dateRange = inject(dateRangeKey, ref([]));
+const boardIndex = inject(indexPositionKey, ref({ x: 0, y: 0 }));
 const isDark = inject(isDarkKey);
 
 // Parameters for laying out the grid.
