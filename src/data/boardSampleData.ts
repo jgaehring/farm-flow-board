@@ -95,6 +95,13 @@ export const operations2023: OperationTerm[] = [
     color: 'rosybrown',
     log_type: Log.Activity,
   },
+  {
+    id: uuid(),
+    type: Term.StandardOperatingProcedure,
+    name: 'Harvest',
+    color: 'tomato',
+    log_type: Log.Harvest,
+  },
 ];
 
 export const crops2023: CropTerm[] = [
