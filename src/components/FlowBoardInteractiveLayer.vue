@@ -4,9 +4,10 @@ import { computed, inject, ref, unref } from 'vue';
 import { Combobox, Dialog, Label, Popover } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { computeBoardProperties } from '@/canvas/board';
-import { operations2023 } from '@/data/boardSampleData';
 import type { OperationTerm } from '@/data/resources';
-import { dateRangeKey, indexPositionKey, isDarkKey, locationsKey, matrixKey } from '@/data/providerKeys';
+import {
+  dateRangeKey, indexPositionKey, isDarkKey, locationsKey, matrixKey, operationsKey,
+} from '@/data/providerKeys';
 import { sameDate } from '@/utils/date';
 import FFDatePicker from '@/components/FFDatePicker.vue';
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
@@ -23,6 +24,7 @@ const props = defineProps<FlowBoardCursorGridProps>();
 
 const matrix = inject(matrixKey, ref([]));
 const locations = inject(locationsKey, ref([]));
+const operations = inject(operationsKey, ref([]));
 const dateRange = inject(dateRangeKey, ref([]));
 const boardIndex = inject(indexPositionKey, ref({ x: 0, y: 0 }));
 const isDark = inject(isDarkKey);
@@ -132,7 +134,7 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
                       <Combobox.Content class="combobox-content">
                         <Combobox.Viewport class="combobox-viewport" >
                           <Combobox.Empty class="combobox-empty"/>
-                          <Combobox.Item v-for="(op, i) in operations2023"
+                          <Combobox.Item v-for="(op, i) in operations"
                             class="combobox-item"
                             :value="op.id"
                             :key="i">

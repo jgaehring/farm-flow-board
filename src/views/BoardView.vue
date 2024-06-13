@@ -6,9 +6,10 @@ import {
   boardIdKey, cropsKey, dateRangeKey, isDarkKey, locationsKey,
   operationsKey, plantsKey, tasksKey,
 } from '@/data/providerKeys';
+import { generateEntities } from '@/data/boardSampleData';
 import {
-  crops2023, generateEntities, locations2023, operations2023, plants2023, tasks2023,
-} from '@/data/boardSampleData';
+  crops2023, locations2023, operations2023, plants2023, tasks2023,
+} from '@/data/deserialize';
 import type {
   CropTerm, LocationResource, LogResource, OperationTerm, PlantResource,
 } from '@/data/resources';
@@ -200,4 +201,4 @@ main {
 footer {
   flex: 1 1 6rem;
 }
-</style>
+</style>@/data/deserialize
