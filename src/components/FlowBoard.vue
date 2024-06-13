@@ -10,7 +10,7 @@ import type {
 import {
   cropsKey, dateRangeKey, indexPositionKey, isDarkKey,
   locationsKey, matrixKey, operationsKey, plantsKey, tasksKey,
-} from '@/data/providerKeys';
+} from '@/components/providerKeys';
 import { sameDate } from '@/utils/date';
 import FlowBoardInteractiveLayer from '@/components/FlowBoardInteractiveLayer.vue'
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';

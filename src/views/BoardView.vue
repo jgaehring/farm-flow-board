@@ -5,7 +5,7 @@ import { Switch } from 'radix-vue/namespaced';
 import {
   boardIdKey, cropsKey, dateRangeKey, isDarkKey, locationsKey,
   operationsKey, plantsKey, tasksKey,
-} from '@/data/providerKeys';
+} from '@/components/providerKeys';
 import { generateEntities } from '@/data/random';
 import {
   crops2023, locations2023, operations2023, plants2023, tasks2023,

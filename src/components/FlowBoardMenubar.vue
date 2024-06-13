@@ -4,7 +4,7 @@ import { Menubar } from 'radix-vue/namespaced'
 import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
 import IconCheck from '@/assets/radix-icons/check.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
-import { boardIdKey } from '@/data/providerKeys';
+import { boardIdKey } from '@/components/providerKeys';
 
 const currentMenu = ref('')
 const checkboxOne = ref(false)

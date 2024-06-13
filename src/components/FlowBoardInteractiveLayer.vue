@@ -7,7 +7,7 @@ import { computeBoardProperties } from '@/canvas/board';
 import type { OperationTerm } from '@/data/resources';
 import {
   dateRangeKey, indexPositionKey, isDarkKey, locationsKey, matrixKey, operationsKey,
-} from '@/data/providerKeys';
+} from '@/components/providerKeys';
 import { sameDate } from '@/utils/date';
 import FFDatePicker from '@/components/FFDatePicker.vue';
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';

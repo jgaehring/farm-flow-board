@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue';
-import { operationsKey } from '@/data/providerKeys';
+import { operationsKey } from '@/components/providerKeys';
 
 const operations = inject(operationsKey, ref([]));
 </script>
