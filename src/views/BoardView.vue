@@ -6,7 +6,7 @@ import {
   boardIdKey, cropsKey, dateRangeKey, isDarkKey, locationsKey,
   operationsKey, plantsKey, tasksKey,
 } from '@/data/providerKeys';
-import { generateEntities } from '@/data/boardSampleData';
+import { generateEntities } from '@/data/random';
 import {
   crops2023, locations2023, operations2023, plants2023, tasks2023,
 } from '@/data/deserialize';
@@ -201,4 +201,4 @@ main {
 footer {
   flex: 1 1 6rem;
 }
-</style>@/data/deserialize
+</style>
