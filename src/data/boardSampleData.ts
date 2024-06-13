@@ -1,12 +1,10 @@
-import { pick } from 'ramda';
 import { v4 as uuid } from 'uuid';
 import { Asset, Log } from '@/data/resources';
 import type {
   CropTerm, LocationResource, LogResource,
   OperationTerm, PlantIdentifier, PlantResource,
 } from '@/data/resources';
-
-const toIdfier = pick(['id', 'type']);
+import { toIdfier } from '@/utils/idfier';
 
 type TaskGenerator = Generator<LogResource, void, unknown>
 export function* randomTasks(
