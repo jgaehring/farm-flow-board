@@ -85,13 +85,16 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
   }, [] as GridCell[]);
 }));
 
-const dialogIsOpen = ref(false);
-
 enum IndexOf { Cell, Task, Operation, Location }
 const selected = ref<{ [I in IndexOf]: number }>([-1, -1, -1, -1]);
-function selectTask(i: number, j: number) {
-  selected.value[IndexOf.Cell] = i;
-  selected.value[IndexOf.Task] = j;
+function selectCell(i: number, open?: boolean) {
+  if (open === false) selected.value[IndexOf.Cell] = -1;
+  else selected.value[IndexOf.Cell] = i;
+}
+function selectTask(j: number, open?: boolean) {
+  if (open === false) selected.value[IndexOf.Task] = -1;
+  else selected.value[IndexOf.Task] = j;
+  const i = selected.value[IndexOf.Cell];
   if (i < 0 || j < 0) return;
   const task = gridRefs.value[i].tasks[j];
   selected.value[IndexOf.Operation] = operations.value
@@ -120,11 +123,12 @@ function confirmChanges() {
   const location = toIdfier(selectedLoc.value);
   const operation = toIdfier(selectedOp.value);
   update({ id, type, location, operation });
-  dialogIsOpen.value = false
+  selectTask(-1);
+  selectCell(-1);
 }
 function cancelChanges() {
-  selectTask(-1, -1);
-  dialogIsOpen.value = false;
+  selectTask(-1);
+  selectCell(-1);
 }
 
 </script>
@@ -135,8 +139,10 @@ function cancelChanges() {
       class="cursor-grid-cell"
       :style="cell.style"
       :ref="cell.ref"
-      :key="i">
-      <Popover.Root>
+      :key="`cursor-grid-cell-${i}`">
+      <Popover.Root
+        :open="i === selected[IndexOf.Cell]"
+        @update:open="selectCell(i, $event)">
         <Popover.Trigger class="popover-trigger">
           <VisuallyHidden>
             Click to view tasks on this date.
@@ -152,10 +158,11 @@ function cancelChanges() {
             <div class="popover-content-operation">
               <Dialog.Root
                 v-for="(op, j) in cell.operations"
-                v-model:open="dialogIsOpen"
-                :key="j">
+                :open="j === selected[IndexOf.Task]"
+                @update:open="selectTask(j, $event)"
+                :key="`popover-content-operation-${j}`">
                 <Dialog.Trigger as="button"
-                  @click="selectTask(i, j)"
+                  @click="selectTask(j)"
                   type="button">
                   <svg viewBox="0 0 12 12" width="12" height="12" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="6" cy="6" r="6" :fill="op.color"/>
@@ -191,7 +198,7 @@ function cancelChanges() {
                             class="combobox-item"
                             @select="selected[IndexOf.Operation] = k"
                             :value="k"
-                            :key="k">
+                            :key="`edit-task-op-combobox-item-${k}`">
                             <Combobox.ItemIndicator class="combobox-item-indicator" >
                               <IconDotFilled/>
                             </Combobox.ItemIndicator>
@@ -218,7 +225,7 @@ function cancelChanges() {
                             class="combobox-item"
                             :value="l"
                             @select="selected[3] = l"
-                            :key="l">
+                            :key="`edit-task-location-combobox-item-${l}`">
                             <Combobox.ItemIndicator class="combobox-item-indicator" >
                               <IconDotFilled/>
                             </Combobox.ItemIndicator>
@@ -234,20 +241,19 @@ function cancelChanges() {
                       <button
                         type="button"
                         @click="cancelChanges"
+                        aria-label="Close"
                         class="edit-dialog-btn btn-cancel">
                         Cancel
                       </button>
                       <button
                         type="button"
                         @click="confirmChanges"
+                        aria-label="Save"
                         class="edit-dialog-btn btn-save">
                         Save
                       </button>
                     </div>
 
-                    <Dialog.Close class="popover-close" aria-label="Close">
-                      <IconCross2 />
-                    </Dialog.Close>
                   </Dialog.Content>
                 </Dialog.Portal>
               </Dialog.Root>
