@@ -1,7 +1,7 @@
 import { clone, mergeDeepRight, reduce } from 'ramda';
 import { useDark } from '@vueuse/core';
 import { sameDate } from '@/utils/date';
-import type { CropTerm, LocationResource, OperationTerm } from '@/data/resources';
+import type { CropTerm, LocationResource, LogResource, OperationTerm } from '@/data/resources';
 
 type CanvasContext = CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D;
 
@@ -305,6 +305,7 @@ export function computeBoardProperties(
 export type OperationsByDate = {
   date: Date,
   operations: OperationTerm[],
+  tasks: LogResource[],
 };
 export type DatesByLocation = {
   id: string,

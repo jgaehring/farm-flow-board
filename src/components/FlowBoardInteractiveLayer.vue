@@ -4,15 +4,17 @@ import { computed, inject, ref, unref } from 'vue';
 import { Combobox, Dialog, Label, Popover } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { computeBoardProperties } from '@/canvas/board';
-import type { OperationTerm } from '@/data/resources';
+import type { LogResource, OperationTerm } from '@/data/resources';
 import {
-  dateRangeKey, indexPositionKey, isDarkKey, locationsKey, matrixKey, operationsKey,
+  dateRangeKey, emitBoardUpdateKey, indexPositionKey, isDarkKey,
+  locationsKey, matrixKey, operationsKey,
 } from '@/components/providerKeys';
 import { sameDate } from '@/utils/date';
 import FFDatePicker from '@/components/FFDatePicker.vue';
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
 import IconCross2 from '@/assets/radix-icons/cross-2.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
+import { toIdfier } from '@/utils/idfier';
 
 interface FlowBoardCursorGridProps {
   x: Ref<number>,
@@ -28,6 +30,7 @@ const operations = inject(operationsKey, ref([]));
 const dateRange = inject(dateRangeKey, ref([]));
 const boardIndex = inject(indexPositionKey, ref({ x: 0, y: 0 }));
 const isDark = inject(isDarkKey);
+const update = inject(emitBoardUpdateKey, () => console.warn('No update emitter provided.'));
 
 // Parameters for laying out the grid.
 const style = computed(() => ({
@@ -52,6 +55,7 @@ const board = computed(() => computeBoardProperties(
 interface GridCell {
   location: { id: string, name: string },
   date: Date,
+  tasks: LogResource[],
   operations: OperationTerm[],
   x: number, y: number,
   style: string,
@@ -63,20 +67,65 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
   const { grid } = board.value;
   const records = matrix.value.find(l => l.id === loc.id)?.dates || [];
   return board.value.labels.x.values.reduce((cells, date, x) => {
-    const ops = records.find(r => sameDate(r.date, date))?.operations || [];
+    const {
+      operations: ops = [], tasks: tasksByDate = [],
+    } = records.find(r => sameDate(r.date, date)) || {};
     if (ops.length <= 0) return cells;
     const top = grid.origin.y + y * grid.unit;
     const left = grid.origin.x + x * grid.unit;
     const size = `width: ${grid.unit}px; height: ${grid.unit}px`;
     const style = `top: ${top}px; left: ${left}px; ${size}`;
     const gridCell = {
-      location, date, operations: ops,
+      location, date,
+      operations: ops, tasks: tasksByDate,
       x, y, style,
       ref: ref(null),
     };
     return [...cells, gridCell];
   }, [] as GridCell[]);
 }));
+
+const dialogIsOpen = ref(false);
+
+enum IndexOf { Cell, Task, Operation, Location }
+const selected = ref<{ [I in IndexOf]: number }>([-1, -1, -1, -1]);
+function selectTask(i: number, j: number) {
+  selected.value[IndexOf.Cell] = i;
+  selected.value[IndexOf.Task] = j;
+  if (i < 0 || j < 0) return;
+  const task = gridRefs.value[i].tasks[j];
+  selected.value[IndexOf.Operation] = operations.value
+    .findIndex(op => op.id === task.operation.id);
+  selected.value[IndexOf.Location] = locations.value
+    .findIndex(loc => loc.id === task.location.id);
+}
+
+const selectedTask = computed(() => {
+  const i = selected.value[IndexOf.Cell];
+  const cell = gridRefs.value[i];
+  const j = selected.value[IndexOf.Task];
+  return cell.tasks[j];
+});
+const selectedOp = computed(() => {
+  const i = selected.value[IndexOf.Operation];
+  return operations.value[i];
+});
+const selectedLoc = computed(() => {
+  const i = selected.value[IndexOf.Location];
+  return locations.value[i];
+});
+
+function confirmChanges() {
+  const { id, type } = selectedTask.value;
+  const location = toIdfier(selectedLoc.value);
+  const operation = toIdfier(selectedOp.value);
+  update({ id, type, location, operation });
+  dialogIsOpen.value = false
+}
+function cancelChanges() {
+  selectTask(-1, -1);
+  dialogIsOpen.value = false;
+}
 
 </script>
 
@@ -101,8 +150,12 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
               <span>{{ cell.date.toLocaleDateString(undefined, { dateStyle: 'medium' }) }}</span>
             </div>
             <div class="popover-content-operation">
-              <Dialog.Root  v-for="(op, j) in cell.operations" :key="j">
+              <Dialog.Root
+                v-for="(op, j) in cell.operations"
+                v-model:open="dialogIsOpen"
+                :key="j">
                 <Dialog.Trigger as="button"
+                  @click="selectTask(i, j)"
                   type="button">
                   <svg viewBox="0 0 12 12" width="12" height="12" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="6" cy="6" r="6" :fill="op.color"/>
@@ -121,12 +174,12 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
                       </Dialog.Description>
                     </VisuallyHidden>
                     <Label class="label-combobox" for="edit-task-op">Task</Label>
-                    <Combobox.Root :model-value="op.id">
+                    <Combobox.Root :model-value="selected[IndexOf.Operation]">
                       <Combobox.Anchor class="combobox-anchor">
                         <Combobox.Input
                           id="edit-task-op"
                           class="combobox-input"
-                          :value="op.name" />
+                          :value="selectedOp.name" />
                         <Combobox.Trigger >
                           <IconChevronDown/>
                         </Combobox.Trigger>
@@ -134,10 +187,11 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
                       <Combobox.Content class="combobox-content">
                         <Combobox.Viewport class="combobox-viewport" >
                           <Combobox.Empty class="combobox-empty"/>
-                          <Combobox.Item v-for="(op, i) in operations"
+                          <Combobox.Item v-for="(op, k) in operations"
                             class="combobox-item"
-                            :value="op.id"
-                            :key="i">
+                            @select="selected[IndexOf.Operation] = k"
+                            :value="k"
+                            :key="k">
                             <Combobox.ItemIndicator class="combobox-item-indicator" >
                               <IconDotFilled/>
                             </Combobox.ItemIndicator>
@@ -147,12 +201,12 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
                       </Combobox.Content>
                     </Combobox.Root>
                     <Label class="label-combobox" for="edit-task-location">Location</Label>
-                    <Combobox.Root :model-value="cell.location.id">
+                    <Combobox.Root v-model="selected[IndexOf.Location]">
                       <Combobox.Anchor class="combobox-anchor">
                         <Combobox.Input
                           id="edit-task-location"
                           class="combobox-input"
-                          :value="cell.location.name" />
+                          :value="selectedLoc.name" />
                         <Combobox.Trigger >
                           <IconChevronDown/>
                         </Combobox.Trigger>
@@ -160,10 +214,11 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
                       <Combobox.Content class="combobox-content">
                         <Combobox.Viewport class="combobox-viewport" >
                           <Combobox.Empty class="combobox-empty"/>
-                          <Combobox.Item v-for="(location, i) in locations"
+                          <Combobox.Item v-for="(location, l) in locations"
                             class="combobox-item"
-                            :value="location.id"
-                            :key="i">
+                            :value="l"
+                            @select="selected[3] = l"
+                            :key="l">
                             <Combobox.ItemIndicator class="combobox-item-indicator" >
                               <IconDotFilled/>
                             </Combobox.ItemIndicator>
@@ -174,6 +229,21 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
                     </Combobox.Root>
 
                     <FFDatePicker/>
+
+                    <div class="edit-dialog-btns">
+                      <button
+                        type="button"
+                        @click="cancelChanges"
+                        class="edit-dialog-btn btn-cancel">
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        @click="confirmChanges"
+                        class="edit-dialog-btn btn-save">
+                        Save
+                      </button>
+                    </div>
 
                     <Dialog.Close class="popover-close" aria-label="Close">
                       <IconCross2 />
@@ -305,6 +375,34 @@ button, input {
   max-height: 85vh;
   padding: 25px;
   animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.edit-dialog-btns {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+.edit-dialog-btns button.edit-dialog-btn {
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.5;
+  text-wrap: nowrap;
+  background-color: var(--color-background-soft);
+  border: 1px solid var(--color-border);
+  color: var(--ff-c-green);
+  padding: .375rem .75rem;
+  margin-right: .375rem;
+  margin-bottom: .375rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.edit-dialog-btns button.edit-dialog-btn.btn-save,
+.edit-dialog-btns button.edit-dialog-btn.btn-cancel:hover {
+  font-weight: 500;
+  background-color: var(--color-background);
+}
+.edit-dialog-btns button.edit-dialog-btn.btn-save:hover {
+  background-color: var(--ff-c-green-transparent-2);
 }
 
 .combobox-root {

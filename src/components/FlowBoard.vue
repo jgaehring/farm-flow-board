@@ -8,9 +8,10 @@ import type {
   DatesByLocation, HighlightGenerator, OperationsByDate, TaskMatrix,
 } from '@/canvas/board';
 import {
-  cropsKey, dateRangeKey, indexPositionKey, isDarkKey,
+  cropsKey, dateRangeKey, emitBoardUpdateKey, indexPositionKey, isDarkKey,
   locationsKey, matrixKey, operationsKey, plantsKey, tasksKey,
 } from '@/components/providerKeys';
+import type { UpdateValue } from '@/components/providerKeys';
 import { sameDate } from '@/utils/date';
 import FlowBoardInteractiveLayer from '@/components/FlowBoardInteractiveLayer.vue'
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
@@ -30,12 +31,17 @@ const locations = inject(locationsKey, ref([]));
 const operations = inject(operationsKey, ref([]));
 const crops = inject(cropsKey, ref([]));
 
+const emit = defineEmits<{
+  (e: 'update', value: UpdateValue): void,
+}>();
+provide(emitBoardUpdateKey, (value: UpdateValue) => emit('update', value));
+
 // The collection of all field operations, first sorted by location, then within
 // each location sorted by date. The locations will be created first, with empty
 // dates arrays, and generateTasks will populate the tasks by date after
 // randomly generating them according to the possible locations and dates.
 const matrix = computed((): TaskMatrix => {
-  return locations.value.map(({ id, name }) => {
+  return locations.value.map(({ id, type, name }) => {
     const crop = crops.value.find(crop => plants.value.some(plant =>
       crop.id === plant.crop.id && plant.location.id === id));
     const dates = tasks.value.reduce((byDate: OperationsByDate[], task) => {
@@ -45,14 +51,16 @@ const matrix = computed((): TaskMatrix => {
       const op = opId && operations.value.find(o => o.id === opId) || operations.value[2];
       const { date } = task;
       const i = byDate.findIndex(byD => sameDate(byD.date, date));
-      if (i < 0) return [...byDate, { date, operations: [op] }];
+      if (i < 0) return [...byDate, { date, operations: [op], tasks: [task] }];
+      const ops = byDate[i].operations.concat(op);
+      const tasksByDate = byDate[i].tasks.concat(task);
       return [
         ...byDate.slice(0, i),
-        { date, operations: byDate[i].operations.concat(op) },
+        { date, operations: ops, tasks: tasksByDate },
         ...byDate.slice(i + 1),
       ];
     }, []);
-    return { id, name, crop, dates } as DatesByLocation;
+    return { id, type, name, crop, dates } as DatesByLocation;
   });
 });
 provide(matrixKey, matrix);

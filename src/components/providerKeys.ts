@@ -14,3 +14,5 @@ export const cropsKey = Symbol() as InjectionKey<Ref<CropTerm[]>>;
 export const boardIdKey = Symbol() as InjectionKey<Ref<string>>;
 export const indexPositionKey = Symbol() as InjectionKey<Ref<{ x: number, y: number}>>;
 export const isDarkKey = Symbol() as InjectionKey<WritableComputedRef<boolean>>;
+export type UpdateValue = Partial<LogResource>|Partial<PlantResource>;
+export const emitBoardUpdateKey = Symbol() as InjectionKey<(value: UpdateValue) => void>;

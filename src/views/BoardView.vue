@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed, provide, ref } from 'vue';
+import type { Ref } from 'vue';
 import { useDark, useToggle } from '@vueuse/core'
 import { Switch } from 'radix-vue/namespaced';
+import { mergeRight, omit, pick } from 'ramda';
 import {
   boardIdKey, cropsKey, dateRangeKey, isDarkKey, locationsKey,
   operationsKey, plantsKey, tasksKey,
@@ -10,8 +12,10 @@ import { generateEntities } from '@/data/random';
 import {
   crops2023, locations2023, operations2023, plants2023, tasks2023,
 } from '@/data/deserialize';
+import { Asset } from '@/data/resources';
 import type {
-  CropTerm, LocationResource, LogResource, OperationTerm, PlantResource,
+  CropTerm, LocationResource, LogResource,
+  OperationTerm, PlantResource,
 } from '@/data/resources';
 import FlowBoard from '@/components/FlowBoard.vue';
 import FlowBoardOperations from '@/components/FlowBoardOperations.vue';
@@ -29,6 +33,24 @@ const locations = ref<LocationResource[]>(locations2023);
 const plants = ref<PlantResource[]>(plants2023);
 const operations = ref<OperationTerm[]>(operations2023);
 const crops = ref<CropTerm[]>(crops2023);
+
+function onBoardUpdate(value: Partial<LogResource>|Partial<PlantResource>) {
+  let collection: Ref<LogResource[]>|Ref<PlantResource[]>|false = false;
+  if (value.type?.startsWith('log')) collection = tasks;
+  else if (value.type === Asset.Plant) collection = plants;
+
+  if (collection) {
+    const i = collection.value.findIndex(item => item.id === value.id);
+    if (i >= 0) {
+      type T = typeof collection.value[number];
+      type K = keyof T;
+      const keys = Object.keys(collection.value[i]) as K[];
+      const valid = pick(keys, value);
+      const mutable = omit(['id', 'type'], valid);
+      collection.value[i] = mergeRight(collection.value[i], mutable) as T;
+    }
+  }
+}
 
 // Start and end dates used to populate the x-axis.
 const startDate = ref<Date>(new Date(2024, 2, 28));
@@ -108,7 +130,7 @@ provide(isDarkKey, isDark);
       </div>
     </header>
     <main>
-      <FlowBoard/>
+      <FlowBoard @update="onBoardUpdate"/>
     </main>
     <footer>
       <FlowBoardOperations/>
