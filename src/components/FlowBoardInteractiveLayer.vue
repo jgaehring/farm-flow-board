@@ -192,12 +192,9 @@ function cancelChanges() {
                       </Dialog.Description>
                     </VisuallyHidden>
                     <Label class="label-combobox" for="edit-task-op">Task</Label>
-                    <Combobox.Root :model-value="selected[IndexOf.Operation]">
+                    <Combobox.Root :model-value="selectedOp.name" >
                       <Combobox.Anchor class="combobox-anchor">
-                        <Combobox.Input
-                          id="edit-task-op"
-                          class="combobox-input"
-                          :value="selectedOp.name" />
+                        <Combobox.Input id="edit-task-op" class="combobox-input" />
                         <Combobox.Trigger >
                           <IconChevronDown/>
                         </Combobox.Trigger>
@@ -208,7 +205,7 @@ function cancelChanges() {
                           <Combobox.Item v-for="(op, k) in operations"
                             class="combobox-item"
                             @select="selected[IndexOf.Operation] = k"
-                            :value="k"
+                            :value="op.name"
                             :key="`edit-task-op-combobox-item-${k}`">
                             <Combobox.ItemIndicator class="combobox-item-indicator" >
                               <IconDotFilled/>
@@ -219,12 +216,9 @@ function cancelChanges() {
                       </Combobox.Content>
                     </Combobox.Root>
                     <Label class="label-combobox" for="edit-task-location">Location</Label>
-                    <Combobox.Root v-model="selected[IndexOf.Location]">
+                    <Combobox.Root :model-value="selectedLoc.name">
                       <Combobox.Anchor class="combobox-anchor">
-                        <Combobox.Input
-                          id="edit-task-location"
-                          class="combobox-input"
-                          :value="selectedLoc.name" />
+                        <Combobox.Input id="edit-task-location" class="combobox-input" />
                         <Combobox.Trigger >
                           <IconChevronDown/>
                         </Combobox.Trigger>
@@ -234,8 +228,8 @@ function cancelChanges() {
                           <Combobox.Empty class="combobox-empty"/>
                           <Combobox.Item v-for="(location, l) in locations"
                             class="combobox-item"
-                            :value="l"
-                            @select="selected[3] = l"
+                            @select="selected[IndexOf.Location] = l"
+                            :value="location.name"
                             :key="`edit-task-location-combobox-item-${l}`">
                             <Combobox.ItemIndicator class="combobox-item-indicator" >
                               <IconDotFilled/>
