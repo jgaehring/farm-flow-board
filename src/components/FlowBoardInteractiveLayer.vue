@@ -3,6 +3,8 @@ import type { Ref } from 'vue';
 import { computed, inject, ref, unref } from 'vue';
 import { Combobox, Dialog, Label, Popover } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
+import { getLocalTimeZone, now, parseDateTime } from '@internationalized/date';
+import type { AnyDateTime, CalendarDateTime } from '@internationalized/date';
 import { computeBoardProperties } from '@/canvas/board';
 import type { LogResource, OperationTerm } from '@/data/resources';
 import {
@@ -87,6 +89,8 @@ const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => 
 
 enum IndexOf { Cell, Task, Operation, Location }
 const selected = ref<{ [I in IndexOf]: number }>([-1, -1, -1, -1]);
+const selectedDateTime = ref<AnyDateTime>(now(getLocalTimeZone()));
+
 function selectCell(i: number, open?: boolean) {
   if (open === false) selected.value[IndexOf.Cell] = -1;
   else selected.value[IndexOf.Cell] = i;
@@ -97,6 +101,8 @@ function selectTask(j: number, open?: boolean) {
   const i = selected.value[IndexOf.Cell];
   if (i < 0 || j < 0) return;
   const task = gridRefs.value[i].tasks[j];
+  const iso = task.date.toISOString().replace(/\.\d\d\dZ/g, ''); // strip non-standard ms
+  selectedDateTime.value = parseDateTime(iso);
   selected.value[IndexOf.Operation] = operations.value
     .findIndex(op => op.id === task.operation.id);
   selected.value[IndexOf.Location] = locations.value
@@ -122,7 +128,12 @@ function confirmChanges() {
   const { id, type } = selectedTask.value;
   const location = toIdfier(selectedLoc.value);
   const operation = toIdfier(selectedOp.value);
-  update({ id, type, location, operation });
+  const date = (selectedDateTime.value as CalendarDateTime)
+    ?.toDate(getLocalTimeZone());
+
+  if (!date) update({ id, type, location, operation });
+  else update({ id, type, date, location, operation });
+
   selectTask(-1);
   selectCell(-1);
 }
@@ -235,7 +246,9 @@ function cancelChanges() {
                       </Combobox.Content>
                     </Combobox.Root>
 
-                    <FFDatePicker/>
+                    <FFDatePicker
+                      @change="selectedDateTime = $event"
+                      :value="selectedDateTime" />
 
                     <div class="edit-dialog-btns">
                       <button

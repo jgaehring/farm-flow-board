@@ -1,10 +1,23 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { DatePicker, Label } from 'radix-vue/namespaced';
-import type { DateValue } from '@internationalized/date';
+import { getLocalTimeZone, now } from '@internationalized/date';
+import type { AnyDateTime, DateValue } from '@internationalized/date';
 import IconCalendar from '@/assets/radix-icons/calendar.svg?component';
 import IconChevronLeft from '@/assets/radix-icons/chevron-left.svg?component';
 import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
 
+export interface Props {
+  value?: AnyDateTime,
+}
+const props = defineProps<Props>();
+const emit = defineEmits<{
+  (e: 'change', value: AnyDateTime): void,
+  (e: 'input', value: AnyDateTime): void,
+}>();
+
+const dateTime = ref<AnyDateTime>(props.value || now(getLocalTimeZone()));
+const placeholder = ref<AnyDateTime>(dateTime.value);
 </script>
 
 <template>
@@ -15,8 +28,12 @@ import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
 
     <DatePicker.Root
       id="ff-date-picker-root"
+      v-model:placeholder="(placeholder as DateValue)"
+      @update:placeholder="emit('input', placeholder)"
+      v-model:model-value="(dateTime as DateValue)"
+      @update:model-value="emit('change', dateTime)"
       :is-date-unavailable="(date: DateValue) => date.day === 19"
-      granularity="second">
+      granularity="minute">
 
       <DatePicker.Field
         v-slot="{ segments }"
