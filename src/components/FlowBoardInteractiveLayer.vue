@@ -91,6 +91,21 @@ enum IndexOf { Cell, Task, Operation, Location }
 const selected = ref<{ [I in IndexOf]: number }>([-1, -1, -1, -1]);
 const selectedDateTime = ref<AnyDateTime>(now(getLocalTimeZone()));
 
+const selectedTask = computed(() => {
+  const i = selected.value[IndexOf.Cell];
+  const cell = gridRefs.value[i];
+  const j = selected.value[IndexOf.Task];
+  return cell.tasks[j];
+});
+const selectedOp = computed(() => {
+  const i = selected.value[IndexOf.Operation];
+  return operations.value[i];
+});
+const selectedLoc = computed(() => {
+  const i = selected.value[IndexOf.Location];
+  return locations.value[i];
+});
+
 function selectCell(i: number, open?: boolean) {
   if (open === false) selected.value[IndexOf.Cell] = -1;
   else selected.value[IndexOf.Cell] = i;
@@ -108,21 +123,6 @@ function selectTask(j: number, open?: boolean) {
   selected.value[IndexOf.Location] = locations.value
     .findIndex(loc => loc.id === task.location.id);
 }
-
-const selectedTask = computed(() => {
-  const i = selected.value[IndexOf.Cell];
-  const cell = gridRefs.value[i];
-  const j = selected.value[IndexOf.Task];
-  return cell.tasks[j];
-});
-const selectedOp = computed(() => {
-  const i = selected.value[IndexOf.Operation];
-  return operations.value[i];
-});
-const selectedLoc = computed(() => {
-  const i = selected.value[IndexOf.Location];
-  return locations.value[i];
-});
 
 function confirmChanges() {
   const { id, type } = selectedTask.value;
