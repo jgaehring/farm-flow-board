@@ -32,7 +32,6 @@ const placeholder = ref<AnyDateTime>(dateTime.value);
       @update:placeholder="emit('input', placeholder)"
       v-model:model-value="(dateTime as DateValue)"
       @update:model-value="emit('change', dateTime)"
-      :is-date-unavailable="(date: DateValue) => date.day === 19"
       granularity="minute">
 
       <DatePicker.Field
