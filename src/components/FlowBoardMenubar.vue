@@ -112,6 +112,33 @@ function handleSelectBoard(e: any) {
 
     <Menubar.Menu>
       <Menubar.Trigger class="MenubarTrigger">
+        Tasks
+      </Menubar.Trigger>
+      <Menubar.Portal>
+        <Menubar.Content
+          class="MenubarContent"
+          :align="'start'"
+          :side-offset="5"
+          :align-offset="-14">
+          <Menubar.Item class="MenubarItem" disabled>
+            New Task
+            <div class="RightSlot">
+              ⌘ T
+            </div>
+          </Menubar.Item>
+          <Menubar.Separator class="MenubarSeparator" />
+          <Menubar.Item class="MenubarItem" disabled>
+            Organize Task Categories
+          </Menubar.Item>
+          <Menubar.Item class="MenubarItem" disabled>
+            Standard Operating Procedures
+          </Menubar.Item>
+        </Menubar.Content>
+      </Menubar.Portal>
+    </Menubar.Menu>
+
+    <Menubar.Menu>
+      <Menubar.Trigger class="MenubarTrigger">
         Locations
       </Menubar.Trigger>
       <Menubar.Portal>
@@ -169,32 +196,6 @@ function handleSelectBoard(e: any) {
       </Menubar.Portal>
     </Menubar.Menu>
 
-    <Menubar.Menu>
-      <Menubar.Trigger class="MenubarTrigger">
-        Tasks
-      </Menubar.Trigger>
-      <Menubar.Portal>
-        <Menubar.Content
-          class="MenubarContent"
-          :align="'start'"
-          :side-offset="5"
-          :align-offset="-14">
-          <Menubar.Item class="MenubarItem" disabled>
-            New Task
-            <div class="RightSlot">
-              ⌘ T
-            </div>
-          </Menubar.Item>
-          <Menubar.Separator class="MenubarSeparator" />
-          <Menubar.Item class="MenubarItem" disabled>
-            Organize Task Categories
-          </Menubar.Item>
-          <Menubar.Item class="MenubarItem" disabled>
-            Standard Operating Procedures
-          </Menubar.Item>
-        </Menubar.Content>
-      </Menubar.Portal>
-    </Menubar.Menu>
   </Menubar.Root>
 </template>
 
