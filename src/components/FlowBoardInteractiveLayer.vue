@@ -19,10 +19,8 @@ import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
 import { toIdfier } from '@/utils/idfier';
 
 interface FlowBoardCursorGridProps {
-  x: Ref<number>,
-  y: Ref<number>,
-  width: Ref<number>,
-  height: Ref<number>,
+  width: number,
+  height: number,
 }
 const props = defineProps<FlowBoardCursorGridProps>();
 
@@ -48,7 +46,7 @@ const style = computed(() => ({
 }));
 
 const board = computed(() => computeBoardProperties(
-  { width: props.width.value, height: props.width.value },
+  { width: props.width, height: props.height },
   { x: unref(dateRange), y: locations.value },
   boardIndex.value,
   style.value,
