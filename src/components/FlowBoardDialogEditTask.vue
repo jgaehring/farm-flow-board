@@ -1,0 +1,355 @@
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import { Combobox, Dialog, Label } from 'radix-vue/namespaced';
+import { VisuallyHidden } from 'radix-vue';
+import type { LocationResource, LogResource, OperationTerm } from '@/data/resources';
+import FFDatePicker from '@/components/FFDatePicker.vue';
+import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
+import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
+import { toIdfier } from '@/utils/idfier';
+
+const props = defineProps<{
+  open: boolean,
+  task: LogResource,
+  operations: OperationTerm[],
+  locations: LocationResource[],
+}>();
+
+const emit = defineEmits(['open', 'close', 'update:save', 'update:cancel']);
+
+enum IndexOf { Operation, Location }
+const selected = ref<{ [I in IndexOf]: number }>([
+  props.operations.findIndex(op => op.id === props.task.operation.id),
+  props.locations.findIndex(loc => loc.id === props.task.location.id),
+]);
+const selectedDateTime = ref<Date>(props.task.date);
+
+const selectedOp = computed(() => {
+  const i = selected.value[IndexOf.Operation];
+  return props.operations[i];
+});
+const selectedLoc = computed(() => {
+  const i = selected.value[IndexOf.Location];
+  return props.locations[i];
+});
+
+function confirmChanges() {
+  const { id, type } = props.task;
+  const location = toIdfier(selectedLoc.value);
+  const operation = toIdfier(selectedOp.value);
+  const date = selectedDateTime.value;
+
+  emit('update:save', { id, type, date, location, operation });
+  emit('close');
+}
+function cancelChanges() {
+  emit('update:cancel', props.task);
+  emit('close');
+}
+
+</script>
+
+<template>
+  <Dialog.Root
+    :open="open">
+
+    <Dialog.Trigger asChild>
+      <slot name="trigger" ></slot>
+    </Dialog.Trigger>
+    <Dialog.Portal>
+
+      <Dialog.Overlay class="edit-dialog-overlay" />
+      <Dialog.Content class="edit-dialog-content" >
+
+        <Dialog.Title class="edit-dialog-title" >
+          Edit Task
+        </Dialog.Title>
+        <VisuallyHidden>
+          <Dialog.Description class="edit-dialog-description" >
+            Make changes to the task.
+          </Dialog.Description>
+        </VisuallyHidden>
+
+        <Label class="label-combobox" for="edit-task-op">Task</Label>
+        <Combobox.Root :model-value="selectedOp.name" >
+          <Combobox.Anchor class="combobox-anchor">
+            <Combobox.Input id="edit-task-op" class="combobox-input" />
+            <Combobox.Trigger >
+              <IconChevronDown/>
+            </Combobox.Trigger>
+          </Combobox.Anchor>
+          <Combobox.Content class="combobox-content">
+            <Combobox.Viewport class="combobox-viewport" >
+              <Combobox.Empty class="combobox-empty"/>
+              <Combobox.Item v-for="(op, k) in operations"
+                class="combobox-item"
+                @select="selected[IndexOf.Operation] = k"
+                :value="op.name"
+                :key="`edit-task-op-combobox-item-${k}`">
+                <Combobox.ItemIndicator class="combobox-item-indicator" >
+                  <IconDotFilled/>
+                </Combobox.ItemIndicator>
+                {{ op.name }}
+              </Combobox.Item>
+            </Combobox.Viewport>
+          </Combobox.Content>
+        </Combobox.Root>
+
+        <Label class="label-combobox" for="edit-task-location">Location</Label>
+        <Combobox.Root :model-value="selectedLoc.name">
+          <Combobox.Anchor class="combobox-anchor">
+            <Combobox.Input id="edit-task-location" class="combobox-input" />
+            <Combobox.Trigger >
+              <IconChevronDown/>
+            </Combobox.Trigger>
+          </Combobox.Anchor>
+          <Combobox.Content class="combobox-content">
+            <Combobox.Viewport class="combobox-viewport" >
+              <Combobox.Empty class="combobox-empty"/>
+              <Combobox.Item v-for="(location, l) in locations"
+                class="combobox-item"
+                @select="selected[IndexOf.Location] = l"
+                :value="location.name"
+                :key="`edit-task-location-combobox-item-${l}`">
+                <Combobox.ItemIndicator class="combobox-item-indicator" >
+                  <IconDotFilled/>
+                </Combobox.ItemIndicator>
+                {{ location.name }}
+              </Combobox.Item>
+            </Combobox.Viewport>
+          </Combobox.Content>
+        </Combobox.Root>
+
+        <FFDatePicker
+          @change="selectedDateTime = $event"
+          :value="selectedDateTime" />
+
+        <div class="edit-dialog-btns">
+          <button
+            type="button"
+            @click="cancelChanges"
+            aria-label="Close"
+            class="edit-dialog-btn btn-cancel">
+            Cancel
+          </button>
+          <button
+            type="button"
+            @click="confirmChanges"
+            aria-label="Save"
+            class="edit-dialog-btn btn-save">
+            Save
+          </button>
+        </div>
+
+      </Dialog.Content>
+    </Dialog.Portal>
+  </Dialog.Root>
+</template>
+
+<style scoped>
+/* reset */
+button, input {
+  all: unset;
+}
+
+.popover-close,
+.edit-dialog-close {
+  font-family: inherit;
+  border-radius: 100%;
+  height: 15px;
+  width: 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--ff-c-green);
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+}
+.popover-close:hover,
+.edit-dialog-close:hover {
+  background-color: var(--ff-c-green-transparent);
+}
+.popover-close:focus,
+.edit-dialog-close:focus {
+  box-shadow: 0 0 0 2px var(--ff-c-green-transparent);
+}
+
+.edit-dialog-title {
+  color: var(--color-heading);
+}
+.edit-dialog-overlay {
+  background-color: var(--ff-c-black-transparent-1);
+  position: fixed;
+  inset: 0;
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.edit-dialog-content {
+  background-color: var(--color-background-soft);
+  border-radius: 6px;
+  box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: 85vh;
+  padding: 25px;
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.edit-dialog-btns {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+.edit-dialog-btns button.edit-dialog-btn {
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.5;
+  text-wrap: nowrap;
+  background-color: var(--color-background-soft);
+  border: 1px solid var(--color-border);
+  color: var(--ff-c-green);
+  padding: .375rem .75rem;
+  margin-right: .375rem;
+  margin-bottom: .375rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.edit-dialog-btns button.edit-dialog-btn.btn-save,
+.edit-dialog-btns button.edit-dialog-btn.btn-cancel:hover {
+  font-weight: 500;
+  background-color: var(--color-background);
+}
+.edit-dialog-btns button.edit-dialog-btn.btn-save:hover {
+  background-color: var(--ff-c-green-transparent-2);
+}
+
+.combobox-root {
+  position: relative;
+}
+
+.combobox-anchor {
+  display: inline-flex;
+  align-items: center;
+  justify-content: between; 
+  font-size: 13px;
+  line-height: 1;
+  height: 35px;
+  padding: 0 15px;
+  gap: 5px;
+  background-color: var(--color-background);
+  color: var(--ff-c-green);
+  border-radius: 4px;
+  box-shadow: 0 2px 10px var(--color-box-shadow-2);
+}
+.combobox-anchor:hover {
+  background-color: var(--ff-c-green-transparent-2);
+}
+
+.combobox-input {
+  height: 100%;
+  background-color: transparent;
+  color: var(--ff-c-green);
+}
+.combobox-input[data-placeholder] {
+  color: var(--ff-c-green-transparent);
+}
+
+.combobox-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--ff-c-green);
+}
+
+.combobox-content {
+  z-index: 10;
+  width: 100%;
+  position: absolute;
+  overflow: hidden;
+  background-color: var(--color-background);
+  border-radius: 6px;
+  margin-top: 8px;
+  box-shadow: 0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2);
+}
+
+.combobox-viewport {
+  padding: 5px;
+}
+
+.combobox-empty {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500; 
+  color: var(--color-text)
+}
+
+.combobox-item {
+  font-size: 13px;
+  line-height: 1;
+  color: var(--ff-c-green);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  height: 25px;
+  padding: 0 35px 0 25px;
+  position: relative;
+  user-select: none;
+}
+.combobox-item[data-disabled] {
+  color: var(--color-border);
+  pointer-events: none;
+}
+.combobox-item[data-highlighted] {
+  outline: none;
+  background-color: var(--ff-c-green-transparent);
+  color: var(--color-heading);
+}
+
+.combobox-label {
+  padding: 0 25px;
+  font-size: 12px;
+  line-height: 25px;
+  color: var(--color-text);
+}
+
+.combobox-separator {
+  height: 1px;
+  background-color: var(--ff-c-green-transparent-2);
+  margin: 5px;
+}
+
+.combobox-item-indicator {
+  position: absolute;
+  left: 0;
+  width: 25px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes overlayShow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+</style>

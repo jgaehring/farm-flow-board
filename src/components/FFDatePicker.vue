@@ -1,23 +1,23 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { DatePicker, Label } from 'radix-vue/namespaced';
-import { getLocalTimeZone, now } from '@internationalized/date';
-import type { AnyDateTime, DateValue } from '@internationalized/date';
+import { fromDate, getLocalTimeZone } from '@internationalized/date';
+import type { DateValue } from '@internationalized/date';
 import IconCalendar from '@/assets/radix-icons/calendar.svg?component';
 import IconChevronLeft from '@/assets/radix-icons/chevron-left.svg?component';
 import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
 
 export interface Props {
-  value?: AnyDateTime,
+  value?: Date,
 }
 const props = defineProps<Props>();
 const emit = defineEmits<{
-  (e: 'change', value: AnyDateTime): void,
-  (e: 'input', value: AnyDateTime): void,
+  (e: 'change', value: Date): void,
+  (e: 'input', value: Date): void,
 }>();
 
-const dateTime = ref<AnyDateTime>(props.value || now(getLocalTimeZone()));
-const placeholder = ref<AnyDateTime>(dateTime.value);
+const tz = ref(getLocalTimeZone());
+const dateTime = ref(fromDate(props.value || new Date(), tz.value));
 </script>
 
 <template>
@@ -28,10 +28,10 @@ const placeholder = ref<AnyDateTime>(dateTime.value);
 
     <DatePicker.Root
       id="ff-date-picker-root"
-      v-model:placeholder="(placeholder as DateValue)"
-      @update:placeholder="emit('input', placeholder)"
+      v-model:placeholder="(dateTime as DateValue)"
+      @update:placeholder="emit('input', $event.toDate(tz))"
       v-model:model-value="(dateTime as DateValue)"
-      @update:model-value="emit('change', dateTime)"
+      @update:model-value="emit('change', $event?.toDate(tz) || dateTime.toDate())"
       granularity="minute">
 
       <DatePicker.Field
