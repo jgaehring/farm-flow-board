@@ -5,7 +5,8 @@ import { Combobox, Dialog, Label } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { Log } from '@/data/resources';
 import type {
-  LocationResource, LogResource, OperationTerm, PlantResource,
+  LocationIdentifier, LocationResource, LogResource,
+  OperationIdentifier, OperationTerm, PlantResource,
 } from '@/data/resources';
 import { toOptionalIdfier } from '@/utils/idfier';
 import FFDatePicker from '@/components/FFDatePicker.vue';
@@ -30,9 +31,15 @@ const emit = defineEmits<{
 }>();
 
 enum IndexOf { Operation, Location }
+type ResourceCollection = OperationTerm[]|LocationResource[];
+type ResourceIdentifier = OperationIdentifier|LocationIdentifier|null;
+function matchResource(collection?: ResourceCollection, idfier?: ResourceIdentifier) {
+  const i = collection?.findIndex(resource => resource.id === idfier?.id);
+  return typeof i === 'number' ? i : -1;
+}
 const selected = ref<{ [I in IndexOf]: number }>([
-  props.operations?.findIndex(op => op.id === props.task?.operation?.id) || -1,
-  props.locations?.findIndex(loc => loc.id === props.task?.location?.id) || -1,
+  matchResource(props.operations, props.task?.operation),
+  matchResource(props.locations, props.task?.location),
 ]);
 const selectedDateTime = ref<Date|undefined>(props.task?.date);
 
