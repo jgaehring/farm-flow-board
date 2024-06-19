@@ -1,22 +1,58 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue'
-import { Menubar } from 'radix-vue/namespaced'
+import { Menubar } from 'radix-vue/namespaced';
+import FlowBoardDialogEditTask from '@/components/FlowBoardDialogEditTask.vue';
+import { boardIdKey, locationsKey, operationsKey } from '@/components/providerKeys';
+import { Log, type LogResource } from '@/data/resources';
 import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
 import IconCheck from '@/assets/radix-icons/check.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
-import { boardIdKey } from '@/components/providerKeys';
+import { v4 as uuid } from 'uuid';
+import { mergeRight } from 'ramda';
 
 const currentMenu = ref('')
 const checkboxOne = ref(false)
 const checkboxTwo = ref(false)
+const locations = inject(locationsKey, ref([]));
+const operations = inject(operationsKey, ref([]));
 const boardId = inject<'2023'|'random'>(boardIdKey);
 const boardRadio = ref<'2023'|'random'|undefined>(boardId);
-const emit = defineEmits(['select-board']);
+const emit = defineEmits<{
+  (e: 'select-board', value: '2023'|'random'): void,
+  (e: 'create-task', value: LogResource): void,
+}>();
+
 function handleSelectBoard(e: any) {
-  if (typeof e === 'string') {
+  if (['2023', 'random'].includes(e)) {
     emit('select-board', e);
   }
 }
+
+const newTask = ref<LogResource | null>(null);
+function openNewTask() {
+  const task: LogResource = {
+    id: uuid(),
+    type: Log.Activity,
+    name: '',
+    date: new Date(),
+    location: null,
+    operation: null,
+    plant: null,
+    notes: '',
+  };
+  newTask.value = task;
+}
+function saveNewTask(changes: Partial<LogResource>) {
+  const task: LogResource = mergeRight(newTask.value as LogResource, changes);
+  emit('create-task', task);
+  currentMenu.value = '';
+  newTask.value = null;
+}
+function cancelNewTask() {
+  currentMenu.value = '';
+  newTask.value = null;
+}
+
 </script>
 
 <template>
@@ -120,12 +156,24 @@ function handleSelectBoard(e: any) {
           :align="'start'"
           :side-offset="5"
           :align-offset="-14">
-          <Menubar.Item class="MenubarItem" disabled>
-            New Task
-            <div class="RightSlot">
-              ⌘ T
-            </div>
-          </Menubar.Item>
+          <FlowBoardDialogEditTask
+            @update:save="saveNewTask"
+            @update:cancel="cancelNewTask"
+            :open="newTask !== null"
+            :task="(newTask as LogResource)"
+            :operations="operations"
+            :locations="locations" >
+            <template #trigger >
+              <Menubar.Item
+                @select.prevent="openNewTask"
+                class="MenubarItem" >
+                New Task
+                <div class="RightSlot">
+                  ⌘ T
+                </div>
+              </Menubar.Item>
+            </template>
+          </FlowBoardDialogEditTask>
           <Menubar.Separator class="MenubarSeparator" />
           <Menubar.Item class="MenubarItem" disabled>
             Organize Task Categories

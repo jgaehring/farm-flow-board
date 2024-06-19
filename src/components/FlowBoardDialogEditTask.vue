@@ -6,23 +6,27 @@ import type { LocationResource, LogResource, OperationTerm } from '@/data/resour
 import FFDatePicker from '@/components/FFDatePicker.vue';
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
-import { toIdfier } from '@/utils/idfier';
+import { toOptionalIdfier } from '@/utils/idfier';
 
 const props = defineProps<{
   open: boolean,
-  task: LogResource,
+  task: LogResource | undefined,
   operations: OperationTerm[],
   locations: LocationResource[],
 }>();
 
-const emit = defineEmits(['open', 'close', 'update:save', 'update:cancel']);
+const emit = defineEmits<{
+  (e: 'close'): void,
+  (e: 'update:save', value: Partial<LogResource>): void,
+  (e: 'update:cancel', value: Partial<LogResource> | undefined): void,
+}>();
 
 enum IndexOf { Operation, Location }
 const selected = ref<{ [I in IndexOf]: number }>([
-  props.operations.findIndex(op => op.id === props.task.operation.id),
-  props.locations.findIndex(loc => loc.id === props.task.location.id),
+  props.operations.findIndex(op => op.id === props.task?.operation?.id),
+  props.locations.findIndex(loc => loc.id === props.task?.location?.id),
 ]);
-const selectedDateTime = ref<Date>(props.task.date);
+const selectedDateTime = ref<Date|undefined>(props.task?.date);
 
 const selectedOp = computed(() => {
   const i = selected.value[IndexOf.Operation];
@@ -34,9 +38,10 @@ const selectedLoc = computed(() => {
 });
 
 function confirmChanges() {
+  if (!props.task) return;
   const { id, type } = props.task;
-  const location = toIdfier(selectedLoc.value);
-  const operation = toIdfier(selectedOp.value);
+  const location = toOptionalIdfier(selectedLoc.value);
+  const operation = toOptionalIdfier(selectedOp.value);
   const date = selectedDateTime.value;
 
   emit('update:save', { id, type, date, location, operation });

@@ -88,6 +88,10 @@ function loadBoard(name: '2023'|'random') {
 }
 loadBoard(boardId.value);
 
+function createTask(task: LogResource) {
+  tasks.value.push(task);
+}
+
 const isDark = useDark({
   selector: 'body',
   attribute: 'color-scheme',
@@ -115,7 +119,9 @@ provide(isDarkKey, isDark);
       </div>
       <h1>{{ boardId === '2023' ? 'Crop 2023' : 'Random' }}</h1>
       <div class="menubar">
-        <FlowBoardMenubar @select-board="loadBoard"/>
+        <FlowBoardMenubar
+          @select-board="loadBoard"
+          @create-task="createTask" />
       </div>
       <div class="dark-mode-toggle">
         <Switch.Root
