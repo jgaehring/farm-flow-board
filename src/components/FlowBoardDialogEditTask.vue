@@ -1,50 +1,74 @@
 <script setup lang="ts">
+import { v4 as uuid } from 'uuid';
 import { computed, ref } from 'vue';
 import { Combobox, Dialog, Label } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
-import type { LocationResource, LogResource, OperationTerm } from '@/data/resources';
+import { Log } from '@/data/resources';
+import type {
+  LocationResource, LogResource, OperationTerm, PlantResource,
+} from '@/data/resources';
+import { toOptionalIdfier } from '@/utils/idfier';
 import FFDatePicker from '@/components/FFDatePicker.vue';
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
-import { toOptionalIdfier } from '@/utils/idfier';
+import IconTrash from '@/assets/radix-icons/trash.svg?component';
+import type { DeleteValue } from './providerKeys';
 
 const props = defineProps<{
   open: boolean,
-  task: LogResource | undefined,
-  operations: OperationTerm[],
-  locations: LocationResource[],
+  task?: LogResource,
+  operations?: OperationTerm[],
+  locations?: LocationResource[],
+  plants?: PlantResource[],
 }>();
 
 const emit = defineEmits<{
   (e: 'close'): void,
-  (e: 'update:save', value: Partial<LogResource>): void,
+  (e: 'update:save', value: Partial<LogResource> | LogResource): void,
   (e: 'update:cancel', value: Partial<LogResource> | undefined): void,
+  (e: 'update:delete', value: DeleteValue): void,
 }>();
 
 enum IndexOf { Operation, Location }
 const selected = ref<{ [I in IndexOf]: number }>([
-  props.operations.findIndex(op => op.id === props.task?.operation?.id),
-  props.locations.findIndex(loc => loc.id === props.task?.location?.id),
+  props.operations?.findIndex(op => op.id === props.task?.operation?.id) || -1,
+  props.locations?.findIndex(loc => loc.id === props.task?.location?.id) || -1,
 ]);
 const selectedDateTime = ref<Date|undefined>(props.task?.date);
 
 const selectedOp = computed(() => {
   const i = selected.value[IndexOf.Operation];
-  return props.operations[i];
+  return props?.operations?.[i];
 });
 const selectedLoc = computed(() => {
   const i = selected.value[IndexOf.Location];
-  return props.locations[i];
+  return props?.locations?.[i];
 });
 
+function deleteTask() {
+  const taskIdfier = toOptionalIdfier(props.task);
+  if (taskIdfier) emit('update:delete', taskIdfier);
+  emit('close');
+}
+
 function confirmChanges() {
-  if (!props.task) return;
-  const { id, type } = props.task;
   const location = toOptionalIdfier(selectedLoc.value);
   const operation = toOptionalIdfier(selectedOp.value);
-  const date = selectedDateTime.value;
-
-  emit('update:save', { id, type, date, location, operation });
+  const date = selectedDateTime.value || new Date();
+  const plantAtLocation = props.plants?.find(p =>
+    p.location.id === selectedLoc.value?.id);
+  const plant = toOptionalIdfier(plantAtLocation);
+  if (!props.task) {
+    const task: LogResource = {
+      id: uuid(), type: Log.Activity,
+      name: '', notes: '',
+      date, location, operation, plant,
+    };
+    emit('update:save', task);
+  } else {
+    const { id, type } = props.task;
+    emit('update:save', { id, type, date, location, operation, plant });
+  }
   emit('close');
 }
 function cancelChanges() {
@@ -130,6 +154,14 @@ function cancelChanges() {
           :value="selectedDateTime" />
 
         <div class="edit-dialog-btns">
+          <button
+            v-if="task"
+            type="button"
+            @click="deleteTask"
+            aria-label="Delete"
+            class="edit-dialog-btn btn-delete" >
+            <IconTrash />
+          </button>
           <button
             type="button"
             @click="cancelChanges"
@@ -227,6 +259,14 @@ button, input {
 }
 .edit-dialog-btns button.edit-dialog-btn.btn-save:hover {
   background-color: var(--ff-c-green-transparent-3);
+}
+.edit-dialog-btns button.edit-dialog-btn.btn-delete {
+  border: none;
+  color: var(--vt-c-red);
+}
+.edit-dialog-btns button.edit-dialog-btn.btn-delete:hover {
+  box-shadow: 0 0 2px 1px var(--vt-c-red);
+  background-color: var(--color-background);
 }
 
 .combobox-root {

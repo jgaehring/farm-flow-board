@@ -2,24 +2,24 @@
 import { inject, ref } from 'vue'
 import { Menubar } from 'radix-vue/namespaced';
 import FlowBoardDialogEditTask from '@/components/FlowBoardDialogEditTask.vue';
-import { boardIdKey, locationsKey, operationsKey } from '@/components/providerKeys';
-import { Log, type LogResource } from '@/data/resources';
+import { boardIdKey, locationsKey, operationsKey, plantsKey } from '@/components/providerKeys';
+import type { CreateValue } from '@/components/providerKeys';
+import type { LogResource } from '@/data/resources';
 import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
 import IconCheck from '@/assets/radix-icons/check.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
-import { v4 as uuid } from 'uuid';
-import { mergeRight } from 'ramda';
 
 const currentMenu = ref('')
 const checkboxOne = ref(false)
 const checkboxTwo = ref(false)
 const locations = inject(locationsKey, ref([]));
 const operations = inject(operationsKey, ref([]));
+const plants = inject(plantsKey, ref([]));
 const boardId = inject<'2023'|'random'>(boardIdKey);
 const boardRadio = ref<'2023'|'random'|undefined>(boardId);
 const emit = defineEmits<{
   (e: 'select-board', value: '2023'|'random'): void,
-  (e: 'create-task', value: LogResource): void,
+  (e: 'create-task', value: CreateValue): void,
 }>();
 
 function handleSelectBoard(e: any) {
@@ -28,29 +28,15 @@ function handleSelectBoard(e: any) {
   }
 }
 
-const newTask = ref<LogResource | null>(null);
-function openNewTask() {
-  const task: LogResource = {
-    id: uuid(),
-    type: Log.Activity,
-    name: '',
-    date: new Date(),
-    location: null,
-    operation: null,
-    plant: null,
-    notes: '',
-  };
-  newTask.value = task;
-}
-function saveNewTask(changes: Partial<LogResource>) {
-  const task: LogResource = mergeRight(newTask.value as LogResource, changes);
+const openEditTaskDialog = ref(false);
+function saveNewTask(task: LogResource) {
   emit('create-task', task);
   currentMenu.value = '';
-  newTask.value = null;
+  openEditTaskDialog.value = false;
 }
-function cancelNewTask() {
+function cancelEdits() {
   currentMenu.value = '';
-  newTask.value = null;
+  openEditTaskDialog.value = false;
 }
 
 </script>
@@ -157,15 +143,15 @@ function cancelNewTask() {
           :side-offset="5"
           :align-offset="-14">
           <FlowBoardDialogEditTask
-            @update:save="saveNewTask"
-            @update:cancel="cancelNewTask"
-            :open="newTask !== null"
-            :task="(newTask as LogResource)"
+            @update:save="saveNewTask($event as LogResource)"
+            @update:cancel="cancelEdits"
+            :open="openEditTaskDialog"
             :operations="operations"
-            :locations="locations" >
+            :locations="locations"
+            :plants="plants" >
             <template #trigger >
               <Menubar.Item
-                @select.prevent="openNewTask"
+                @select.prevent="openEditTaskDialog = true"
                 class="MenubarItem" >
                 New Task
                 <div class="RightSlot">

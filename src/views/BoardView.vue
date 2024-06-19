@@ -8,6 +8,7 @@ import {
   boardIdKey, cropsKey, dateRangeKey, isDarkKey, locationsKey,
   operationsKey, plantsKey, tasksKey,
 } from '@/components/providerKeys';
+import type { DeleteValue, UpdateValue } from '@/components/providerKeys';
 import { generateEntities } from '@/data/random';
 import {
   crops2023, locations2023, operations2023, plants2023, tasks2023,
@@ -34,22 +35,28 @@ const plants = ref<PlantResource[]>(plants2023);
 const operations = ref<OperationTerm[]>(operations2023);
 const crops = ref<CropTerm[]>(crops2023);
 
-function onBoardUpdate(value: Partial<LogResource>|Partial<PlantResource>) {
-  let collection: Ref<LogResource[]>|Ref<PlantResource[]>|false = false;
+function onBoardUpdate(value: UpdateValue): void {
+  let collection: Ref<LogResource[]|PlantResource[]>|false = false;
   if (value.type?.startsWith('log')) collection = tasks;
   else if (value.type === Asset.Plant) collection = plants;
 
   if (collection) {
     const i = collection.value.findIndex(item => item.id === value.id);
+    type T = typeof collection.value[number];
+    type K = keyof T;
     if (i >= 0) {
-      type T = typeof collection.value[number];
-      type K = keyof T;
       const keys = Object.keys(collection.value[i]) as K[];
       const valid = pick(keys, value);
       const mutable = omit(['id', 'type'], valid);
       collection.value[i] = mergeRight(collection.value[i], mutable) as T;
+    } else {
+      (collection.value as T[]).push(value as T);
     }
   }
+}
+function onDelete(idfier: DeleteValue) {
+  const i = tasks.value.findIndex(t => t.id === idfier.id && t.type === idfier.type);
+  if (i >= 0) tasks.value.splice(i, 1);
 }
 
 // Start and end dates used to populate the x-axis.
@@ -88,10 +95,6 @@ function loadBoard(name: '2023'|'random') {
 }
 loadBoard(boardId.value);
 
-function createTask(task: LogResource) {
-  tasks.value.push(task);
-}
-
 const isDark = useDark({
   selector: 'body',
   attribute: 'color-scheme',
@@ -121,7 +124,7 @@ provide(isDarkKey, isDark);
       <div class="menubar">
         <FlowBoardMenubar
           @select-board="loadBoard"
-          @create-task="createTask" />
+          @create-task="onBoardUpdate" />
       </div>
       <div class="dark-mode-toggle">
         <Switch.Root
@@ -136,7 +139,7 @@ provide(isDarkKey, isDark);
       </div>
     </header>
     <main>
-      <FlowBoard @update="onBoardUpdate"/>
+      <FlowBoard @update="onBoardUpdate" @delete="onDelete"/>
     </main>
     <footer>
       <FlowBoardOperations/>

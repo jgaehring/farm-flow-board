@@ -6,9 +6,11 @@ import { VisuallyHidden } from 'radix-vue';
 import { computeBoardProperties } from '@/canvas/board';
 import type { LogResource, OperationTerm } from '@/data/resources';
 import {
-  dateRangeKey, emitBoardUpdateKey, indexPositionKey, isDarkKey,
+  dateRangeKey, emitBoardDeleteKey, emitBoardUpdateKey,
+  indexPositionKey, isDarkKey,
   locationsKey, matrixKey, operationsKey,
 } from '@/components/providerKeys';
+import type { DeleteValue } from '@/components/providerKeys';
 import { sameDate } from '@/utils/date';
 import FlowBoardDialogEditTask from './FlowBoardDialogEditTask.vue';
 import IconCross2 from '@/assets/radix-icons/cross-2.svg?component';
@@ -26,6 +28,7 @@ const dateRange = inject(dateRangeKey, ref([]));
 const boardIndex = inject(indexPositionKey, ref({ x: 0, y: 0 }));
 const isDark = inject(isDarkKey);
 const update = inject(emitBoardUpdateKey, () => console.warn('No update emitter provided.'));
+const deleteResource = inject(emitBoardDeleteKey, () => console.warn('No delete emitter provided.'));
 
 // Parameters for laying out the grid.
 const style = computed(() => ({
@@ -108,6 +111,11 @@ function cancelChanges() {
   selectTask(-1);
   selectCell(-1);
 }
+function deleteTask(idfier: DeleteValue) {
+  deleteResource(idfier);
+  selectTask(-1);
+  selectCell(-1);
+}
 
 </script>
 
@@ -138,6 +146,7 @@ function cancelChanges() {
                 v-for="(op, j) in cell.operations"
                 @update:save="confirmChanges"
                 @update:cancel="cancelChanges"
+                @update:delete="deleteTask(cell.tasks[j])"
                 :open="j === selected[IndexOf.Task]"
                 :task="cell.tasks[j]"
                 :operations="operations"
