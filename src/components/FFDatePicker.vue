@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { DatePicker, Label } from 'radix-vue/namespaced';
 import { fromDate, getLocalTimeZone } from '@internationalized/date';
 import type { DateValue } from '@internationalized/date';
@@ -9,6 +9,8 @@ import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
 
 export interface Props {
   value?: Date,
+  minValue?: Date,
+  maxValue?: Date,
 }
 const props = defineProps<Props>();
 const emit = defineEmits<{
@@ -17,7 +19,11 @@ const emit = defineEmits<{
 }>();
 
 const tz = ref(getLocalTimeZone());
-const dateTime = ref(fromDate(props.value || new Date(), tz.value));
+const defaultDateTime = computed(() => fromDate(
+  props.value || props.minValue || new Date(),
+  tz.value,
+));
+const dateTime = ref(defaultDateTime);
 </script>
 
 <template>
@@ -32,6 +38,8 @@ const dateTime = ref(fromDate(props.value || new Date(), tz.value));
       @update:placeholder="emit('input', $event.toDate(tz))"
       v-model:model-value="(dateTime as DateValue)"
       @update:model-value="emit('change', $event?.toDate(tz) || dateTime.toDate())"
+      :min-value="minValue && fromDate(minValue, tz)"
+      :max-value="maxValue && fromDate(maxValue, tz)"
       granularity="minute">
 
       <DatePicker.Field

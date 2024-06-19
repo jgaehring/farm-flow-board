@@ -107,6 +107,7 @@ provide(tasksKey, tasks);
 provide(locationsKey, locations);
 provide(plantsKey, plants);
 provide(dateRangeKey, dateRange);
+provide('date-range-tuple', [startDate, endDate]);
 provide(operationsKey, operations);
 provide(cropsKey, crops);
 provide(boardIdKey, boardId);

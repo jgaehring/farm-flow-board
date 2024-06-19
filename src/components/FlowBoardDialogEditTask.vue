@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { v4 as uuid } from 'uuid';
-import { computed, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
+import type { Ref } from 'vue';
 import { Combobox, Dialog, Label } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { Log } from '@/data/resources';
@@ -9,11 +10,11 @@ import type {
   OperationIdentifier, OperationTerm, PlantResource,
 } from '@/data/resources';
 import { toOptionalIdfier } from '@/utils/idfier';
+import type { DeleteValue } from './providerKeys';
 import FFDatePicker from '@/components/FFDatePicker.vue';
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
 import IconTrash from '@/assets/radix-icons/trash.svg?component';
-import type { DeleteValue } from './providerKeys';
 
 const props = defineProps<{
   open: boolean,
@@ -29,6 +30,11 @@ const emit = defineEmits<{
   (e: 'update:cancel', value: Partial<LogResource> | undefined): void,
   (e: 'update:delete', value: DeleteValue): void,
 }>();
+
+const dateRangeTuple = inject<[Ref<Date>, Ref<Date>]>(
+  'date-range-tuple',
+  [ref(new Date(0)), ref(new Date(Date.now() * 2))],
+);
 
 enum IndexOf { Operation, Location }
 type ResourceCollection = OperationTerm[]|LocationResource[];
@@ -158,7 +164,9 @@ function cancelChanges() {
 
         <FFDatePicker
           @change="selectedDateTime = $event"
-          :value="selectedDateTime" />
+          :value="selectedDateTime"
+          :min-value="dateRangeTuple[0].value"
+          :max-value="dateRangeTuple[1].value" />
 
         <div class="edit-dialog-btns">
           <button
