@@ -94,9 +94,9 @@ function selectTask(j: number, open?: boolean) {
   if (i < 0 || j < 0) return;
   const task = gridRefs.value[i].tasks[j];
   selected.value[IndexOf.Operation] = operations.value
-    .findIndex(op => op.id === task.operation.id);
+    .findIndex(op => op.id === task.operation?.id);
   selected.value[IndexOf.Location] = locations.value
-    .findIndex(loc => loc.id === task.location.id);
+    .findIndex(loc => loc.id === task.location?.id);
 }
 
 function confirmChanges(changes: Partial<LogResource>) {

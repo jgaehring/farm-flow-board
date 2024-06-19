@@ -38,7 +38,7 @@ const matrix = computed((): TaskMatrix => {
     const crop = crops.value.find(crop => plants.value.some(plant =>
       crop.id === plant.crop.id && plant.location.id === id));
     const dates = tasks.value.reduce((byDate: OperationsByDate[], task) => {
-      if (task.location.id !== id) return byDate;
+      if (task.location?.id !== id) return byDate;
       const opId = task.operation?.id;
       // Default for unknown ops in sample data: 'Cultivation'
       const op = opId && operations.value.find(o => o.id === opId) || operations.value[2];

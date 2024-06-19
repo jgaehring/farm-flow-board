@@ -71,7 +71,7 @@ function cancelChanges() {
         </VisuallyHidden>
 
         <Label class="label-combobox" for="edit-task-op">Task</Label>
-        <Combobox.Root :model-value="selectedOp.name" >
+        <Combobox.Root :model-value="selectedOp?.name || ''" >
           <Combobox.Anchor class="combobox-anchor">
             <Combobox.Input id="edit-task-op" class="combobox-input" />
             <Combobox.Trigger >
@@ -96,7 +96,7 @@ function cancelChanges() {
         </Combobox.Root>
 
         <Label class="label-combobox" for="edit-task-location">Location</Label>
-        <Combobox.Root :model-value="selectedLoc.name">
+        <Combobox.Root :model-value="selectedLoc?.name || ''">
           <Combobox.Anchor class="combobox-anchor">
             <Combobox.Input id="edit-task-location" class="combobox-input" />
             <Combobox.Trigger >
