@@ -157,7 +157,6 @@ button, input {
   all: unset;
 }
 
-.popover-close,
 .edit-dialog-close {
   font-family: inherit;
   border-radius: 100%;
@@ -172,13 +171,11 @@ button, input {
   top: .5rem;
   right: .5rem;
 }
-.popover-close:hover,
 .edit-dialog-close:hover {
-  background-color: var(--ff-c-green-transparent);
+  background-color: var(--ff-c-green-transparent-2);
 }
-.popover-close:focus,
 .edit-dialog-close:focus {
-  box-shadow: 0 0 0 2px var(--ff-c-green-transparent);
+  box-shadow: 0 0 0 2px var(--ff-c-green-transparent-2);
 }
 
 .edit-dialog-title {
@@ -229,7 +226,7 @@ button, input {
   background-color: var(--color-background);
 }
 .edit-dialog-btns button.edit-dialog-btn.btn-save:hover {
-  background-color: var(--ff-c-green-transparent-2);
+  background-color: var(--ff-c-green-transparent-3);
 }
 
 .combobox-root {
@@ -248,10 +245,10 @@ button, input {
   background-color: var(--color-background);
   color: var(--ff-c-green);
   border-radius: 4px;
-  box-shadow: 0 2px 10px var(--color-box-shadow-2);
+  box-shadow: 0 2px 10px var(--color-box-shadow-3);
 }
 .combobox-anchor:hover {
-  background-color: var(--ff-c-green-transparent-2);
+  background-color: var(--ff-c-green-transparent-3);
 }
 
 .combobox-input {
@@ -260,7 +257,7 @@ button, input {
   color: var(--ff-c-green);
 }
 .combobox-input[data-placeholder] {
-  color: var(--ff-c-green-transparent);
+  color: var(--ff-c-green-transparent-2);
 }
 
 .combobox-icon {
@@ -312,7 +309,7 @@ button, input {
 }
 .combobox-item[data-highlighted] {
   outline: none;
-  background-color: var(--ff-c-green-transparent);
+  background-color: var(--ff-c-green-transparent-2);
   color: var(--color-heading);
 }
 
@@ -325,7 +322,7 @@ button, input {
 
 .combobox-separator {
   height: 1px;
-  background-color: var(--ff-c-green-transparent-2);
+  background-color: var(--ff-c-green-transparent-3);
   margin: 5px;
 }
 

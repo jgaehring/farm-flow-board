@@ -35,9 +35,9 @@
   --ff-c-white-transparent-2: #ffffff58;
 
   --ff-c-green: rgba(0, 189, 126, 1);
-  --ff-c-green-transparent: rgba(0, 189, 126, 0.3);
-  --ff-c-green-transparent-1: rgba(0, 189, 126, 0.3);
-  --ff-c-green-transparent-2: rgba(0, 189, 126, 0.15);
+  --ff-c-green-transparent-1: rgba(0, 189, 126, 0.6);
+  --ff-c-green-transparent-2: rgba(0, 189, 126, 0.3);
+  --ff-c-green-transparent-3: rgba(0, 189, 126, 0.15);
 
   --ff-font-family:
     Inter,

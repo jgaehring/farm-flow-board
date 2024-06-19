@@ -216,7 +216,7 @@ button, input {
   cursor: pointer;
 }
 :deep(.popover-content-operation) button:hover {
-  background-color: var(--ff-c-green-transparent-2);
+  background-color: var(--ff-c-green-transparent-3);
 }
 :deep(.popover-content-date-time) {
   text-align: center;
@@ -244,9 +244,9 @@ button, input {
   right: .5rem;
 }
 .popover-close:hover {
-  background-color: var(--ff-c-green-transparent);
+  background-color: var(--ff-c-green-transparent-2);
 }
 .popover-close:focus {
-  box-shadow: 0 0 0 2px var(--ff-c-green-transparent);
+  box-shadow: 0 0 0 2px var(--ff-c-green-transparent-2);
 }
 </style>

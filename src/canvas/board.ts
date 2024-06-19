@@ -184,7 +184,7 @@ const getColorVar = (cssVar: string, isDark: boolean|undefined|null|'') =>
 const applyStyleFallbacks = (style: StyleOptions): StyleProperties => mergeDeepRight({
   fill: getColorVar('--color-background', style.isDark)
     || lightDark('#fcfcfc', '#181818'),
-  stroke: getColorVar('--ff-c-green-transparent', style.isDark)
+  stroke: getColorVar('--ff-c-green-transparent-2', style.isDark)
     || 'rgba(0, 189, 126, 0.3)',
   isDark: false,
   font: {
@@ -205,13 +205,13 @@ const applyStyleFallbacks = (style: StyleOptions): StyleProperties => mergeDeepR
     lineWidth: 1.5,
     fill: getColorVar('--color-background-soft', style.isDark)
       || lightDark('#f4f4f4', '#222222'),
-    stroke: getColorVar('--ff-c-green-transparent', style.isDark)
+    stroke: getColorVar('--ff-c-green-transparent-2', style.isDark)
       || 'rgba(0, 189, 126, 0.3)',
   },
   highlight: {
     fill: getColorVar('--color-background-mute', style.isDark)
       || lightDark('#eaeaea','#323232'),
-    stroke: getColorVar('--ff-c-green-transparent', style.isDark)
+    stroke: getColorVar('--ff-c-green-transparent-2', style.isDark)
       || 'rgba(0, 189, 126, 0.3)',
     lineWidth: 1.5,
   },

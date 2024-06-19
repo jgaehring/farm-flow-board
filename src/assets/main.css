@@ -15,6 +15,6 @@ a,
 }
 
 ::selection {
-  background-color: var(--ff-c-green-transparent-1);
+  background-color: var(--ff-c-green-transparent-2);
   color: var(--color-heading);
 }

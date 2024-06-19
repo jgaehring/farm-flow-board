@@ -278,7 +278,7 @@ button {
 
 :deep(.MenubarTrigger)[data-highlighted],
 :deep(.MenubarTrigger)[data-state='open'] {
-  background-color: var(--ff-c-green-transparent-2);
+  background-color: var(--ff-c-green-transparent-3);
 }
 
 :deep(.MenubarContent),
@@ -319,7 +319,7 @@ button {
 
 :deep(.MenubarItem)[data-state='open'],
 :deep(.MenubarSubTrigger)[data-state='open'] {
-  background-color: var(--ff-c-green-transparent);
+  background-color: var(--ff-c-green-transparent-2);
   color: var(--ff-c-green);
 }
 
@@ -327,7 +327,7 @@ button {
 :deep(.MenubarSubTrigger)[data-highlighted],
 :deep(.MenubarCheckboxItem)[data-highlighted],
 :deep(.MenubarRadioItem)[data-highlighted] {
-  background-color: var(--ff-c-green-transparent);
+  background-color: var(--ff-c-green-transparent-2);
   color: white;
 }
 

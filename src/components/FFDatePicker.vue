@@ -163,15 +163,15 @@ button.ff-date-picker-popover-trigger {
 }
 
 .ff-date-picker-field-segment:hover{
-  background-color: var(--ff-c-green-transparent-2);
+  background-color: var(--ff-c-green-transparent-3);
 }
 
 .ff-date-picker-field-segment:focus {
-  background-color: var(--ff-c-green-transparent-2);
+  background-color: var(--ff-c-green-transparent-3);
 }
 
 .ff-date-picker-field-segment[aria-valuetext='Empty'] {
-  color: var(--ff-c-green-transparent-1);
+  color: var(--ff-c-green-transparent-2);
 }
 
 .ff-date-picker-field svg {
@@ -325,7 +325,7 @@ button.ff-date-picker-popover-trigger {
 
 .ff-date-picker-calendar-cell-trigger[data-today]::before {
   display: block;
-  background-color: var(--ff-c-green-transparent-1);
+  background-color: var(--ff-c-green-transparent-2);
 }
 
 .ff-date-picker-popover-trigger:focus {
@@ -343,7 +343,7 @@ button.ff-date-picker-popover-trigger {
 }
 .ff-date-picker-popover-content:focus {
   box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px,
-    0 0 0 2px var(--ff-c-green-transparent);
+    0 0 0 2px var(--ff-c-green-transparent-2);
 }
 .ff-date-picker-popover-content[data-state='open'][data-side='top'] {
   animation-name: slideDownAndFade;
