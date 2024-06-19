@@ -208,12 +208,12 @@ button, input {
 }
 .edit-dialog-btns button.edit-dialog-btn {
   font-size: 16px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.5;
   text-wrap: nowrap;
   background-color: var(--color-background-soft);
   border: 1px solid var(--color-border);
-  color: var(--ff-c-green);
+  color: var(--color-text);
   padding: .375rem .75rem;
   margin-right: .375rem;
   margin-bottom: .375rem;
@@ -222,7 +222,7 @@ button, input {
 }
 .edit-dialog-btns button.edit-dialog-btn.btn-save,
 .edit-dialog-btns button.edit-dialog-btn.btn-cancel:hover {
-  font-weight: 500;
+  color: var(--ff-c-green);
   background-color: var(--color-background);
 }
 .edit-dialog-btns button.edit-dialog-btn.btn-save:hover {
