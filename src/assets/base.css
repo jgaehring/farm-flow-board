@@ -20,6 +20,12 @@
   --vt-c-text-dark-1: var(--vt-c-white);
   --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
 
+  --vt-c-red: #ed3c50;
+  --vt-c-red-light: #f43771;
+  --vt-c-red-lighter: #fd1d7c;
+  --vt-c-red-dark: #cd2d3f;
+  --vt-c-red-darker: #ab2131;
+
   --ff-c-black: #181818;
   --ff-c-black-soft: #222222;
   --ff-c-black-mute: #323232;
