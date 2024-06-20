@@ -78,28 +78,28 @@ provide(indexPositionKey, currentIndex);
       type="button"
       v-if="canvas && currentIndex.x > 0"
       class="board-scroll-btn scroll-left"
-      @click="canvas.scrollTo(currentIndex.x - 7, currentIndex.y)">
+      @click="canvas.scrollTo(currentIndex.x - 14, currentIndex.y)">
       <IconChevronLeft/>
     </button>
     <button
       type="button"
       v-if="canvas && currentIndex.y > 0"
       class="board-scroll-btn scroll-up"
-      @click="canvas.scrollTo(currentIndex.x, currentIndex.y - 3)">
+      @click="canvas.scrollTo(currentIndex.x, currentIndex.y - 5)">
       <IconChevronUp/>
     </button>
     <button
       type="button"
       v-if="canvas && currentIndex.y < canvas.maxi.y"
       class="board-scroll-btn scroll-down"
-      @click="canvas.scrollTo(currentIndex.x, currentIndex.y + 3)">
+      @click="canvas.scrollTo(currentIndex.x, currentIndex.y + 5)">
       <IconChevronDown/>
     </button>
     <button
       type="button"
       v-if="canvas && currentIndex.x < canvas.maxi.x"
       class="board-scroll-btn scroll-right"
-      @click="canvas.scrollTo(currentIndex.x + 7, currentIndex.y)">
+      @click="canvas.scrollTo(currentIndex.x + 14, currentIndex.y)">
       <IconChevronRight/>
     </button>
   </figure>
