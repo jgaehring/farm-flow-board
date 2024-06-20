@@ -5,7 +5,7 @@ import { useDark, useToggle } from '@vueuse/core'
 import { Switch } from 'radix-vue/namespaced';
 import { mergeRight, omit, pick } from 'ramda';
 import {
-  boardIdKey, cropsKey, dateSequenceKey, isDarkKey, locationsKey,
+  boardIdKey, cropsKey, dateRangeKey, dateSequenceKey, isDarkKey, locationsKey,
   operationsKey, plantsKey, tasksKey,
 } from '@/components/providerKeys';
 import type { DeleteValue, UpdateValue } from '@/components/providerKeys';
@@ -63,7 +63,8 @@ function onDelete(idfier: DeleteValue) {
 const startDate = ref<Date>(new Date(2024, 2, 28));
 const endDate = ref<Date>(new Date(2024, 9));
 // Array of Date objects for every date within the specified range.
-const dateSeq = computed(() => createDateSequence(startDate.value, endDate.value));
+const dateSeq = computed<Date[]>(() => createDateSequence(startDate.value, endDate.value));
+const dateRange = computed<[Date, Date]>(() => [startDate.value, endDate.value]);
 
 function loadBoard(name: '2023'|'random') {
   tasks.value = [];
@@ -107,7 +108,7 @@ provide(tasksKey, tasks);
 provide(locationsKey, locations);
 provide(plantsKey, plants);
 provide(dateSequenceKey, dateSeq);
-provide('date-range-tuple', [startDate, endDate]);
+provide(dateRangeKey, dateRange);
 provide(operationsKey, operations);
 provide(cropsKey, crops);
 provide(boardIdKey, boardId);

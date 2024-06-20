@@ -9,6 +9,7 @@ export const tasksKey = Symbol() as InjectionKey<Ref<LogResource[]>>;
 export const locationsKey = Symbol() as InjectionKey<Ref<LocationResource[]>>;
 export const plantsKey = Symbol() as InjectionKey<Ref<PlantResource[]>>;
 export const dateSequenceKey = Symbol() as InjectionKey<Ref<Date[]>>;
+export const dateRangeKey = Symbol() as InjectionKey<Ref<[Date, Date]>>;
 export const operationsKey = Symbol() as InjectionKey<Ref<OperationTerm[]>>;
 export const cropsKey = Symbol() as InjectionKey<Ref<CropTerm[]>>;
 export const boardIdKey = Symbol() as InjectionKey<Ref<string>>;
