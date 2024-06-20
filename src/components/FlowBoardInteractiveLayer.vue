@@ -6,7 +6,7 @@ import { VisuallyHidden } from 'radix-vue';
 import { computeBoardProperties } from '@/canvas/board';
 import type { LogResource, OperationTerm } from '@/data/resources';
 import {
-  dateRangeKey, emitBoardDeleteKey, emitBoardUpdateKey,
+  dateSequenceKey, emitBoardDeleteKey, emitBoardUpdateKey,
   indexPositionKey, isDarkKey,
   locationsKey, matrixKey, operationsKey,
 } from '@/components/providerKeys';
@@ -24,7 +24,7 @@ const props = defineProps<FlowBoardCursorGridProps>();
 const matrix = inject(matrixKey, ref([]));
 const locations = inject(locationsKey, ref([]));
 const operations = inject(operationsKey, ref([]));
-const dateRange = inject(dateRangeKey, ref([]));
+const dateSeq = inject(dateSequenceKey, ref([]));
 const boardIndex = inject(indexPositionKey, ref({ x: 0, y: 0 }));
 const isDark = inject(isDarkKey);
 const update = inject(emitBoardUpdateKey, () => console.warn('No update emitter provided.'));
@@ -37,7 +37,7 @@ const style = computed(() => ({
     unit: 40,
     lineWidth: 1.5,
   },
-  labels: {
+  axes: {
     yAxisWidth: 240,
     xAxisHeight: 60,
   },
@@ -45,7 +45,7 @@ const style = computed(() => ({
 
 const board = computed(() => computeBoardProperties(
   { width: props.width, height: props.height },
-  { x: unref(dateRange), y: locations.value },
+  { x: unref(dateSeq), y: locations.value },
   boardIndex.value,
   style.value,
 ));
@@ -60,11 +60,11 @@ interface GridCell {
   ref: Ref<HTMLDivElement|null>
 }
 
-const gridRefs = computed(() => board.value.labels.y.values.flatMap((loc, y) => {
+const gridRefs = computed(() => board.value.axes.y.values.flatMap((loc, y) => {
   const location = { id: loc.id, name: loc.name };
   const { grid } = board.value;
   const records = matrix.value.find(l => l.id === loc.id)?.dates || [];
-  return board.value.labels.x.values.reduce((cells, date, x) => {
+  return board.value.axes.x.values.reduce((cells, date, x) => {
     const {
       operations: ops = [], tasks: tasksByDate = [],
     } = records.find(r => sameDate(r.date, date)) || {};

@@ -10,7 +10,7 @@ import useResizableCanvas from '@/composables/useResizableCanvas';
 import { addHighlighter, drawBoard, translateBoard } from '@/canvas/board';
 import type { HighlightGenerator } from '@/canvas/board';
 import {
-  dateRangeKey, indexPositionKey, isDarkKey, locationsKey, matrixKey,
+  dateSequenceKey, indexPositionKey, isDarkKey, locationsKey, matrixKey,
 } from '@/components/providerKeys';  
 
 // Refs for canvas DOM element.
@@ -20,7 +20,7 @@ const maxHeight = ref<number>(DEFAULT_CANVAS_HEIGHT);
 
 const matrix = inject(matrixKey, ref([]));
 const locations = inject(locationsKey, ref([]));
-const dateRange = inject(dateRangeKey, ref([]));
+const dateSeq = inject(dateSequenceKey, ref([]));
 const isDark = inject(isDarkKey);
 
 // Constants for laying out the grid.
@@ -30,14 +30,14 @@ const style = computed(() => ({
     unit: 40,
     lineWidth: 1.5,
   },
-  labels: {
+  axes: {
     yAxisWidth: 240,
     xAxisHeight: 60,
   },
 }));
 
 // The position of the board along x and y axes. The x coordinate corresponds to
-// the index of the date in the dateRange array that will occupy the first
+// the index of the date in the date sequence that will occupy the first
 // column space. The y coordinate corresponds to the index of the location in
 // locations array that will occupy the first row space.
 // const currentIndex = ref<{ x: number, y: number}>({ x: 0, y: 0 });
@@ -54,7 +54,7 @@ const drawToCanvas = () => {
       + 'context could not be found.',
     );
   } else {
-    const range = { x: unref(dateRange), y: locations.value };
+    const range = { x: unref(dateSeq), y: locations.value };
     drawBoard(ctx, range, unref(matrix.value), currentIndex.value, style.value);
     highlighter.value = addHighlighter(
       ctx, range, unref(matrix), currentIndex.value, style.value,
@@ -62,17 +62,17 @@ const drawToCanvas = () => {
   }
 }
 
-watch([matrix, dateRange, isDark], drawToCanvas);
+watch([matrix, dateSeq, isDark], drawToCanvas);
 
 // When scrolling, where `m` is the maximum width of the x- or y-axis that can
 // be displayed, `n` is the hypothetical length of the axis if all possible
 // values were displayed, and `u` is the unit length of each grid cell, then the
 // highest value for the grid index, `i`, will be `(n - m) / u`, rounded down.
 const maxi = computed<{ x: number, y: number }>(() => {
-  const totalValuesX = unref(dateRange).length;
+  const totalValuesX = unref(dateSeq).length;
   const totalValuesY = locations.value.length;
-  const maxGridW = maxWidth.value - style.value.labels.yAxisWidth;
-  const maxGridH = maxHeight.value - style.value.labels.xAxisHeight;
+  const maxGridW = maxWidth.value - style.value.axes.yAxisWidth;
+  const maxGridH = maxHeight.value - style.value.axes.xAxisHeight;
   const maxValuesX = Math.floor(maxGridW / style.value.grid.unit);
   const maxValuesY = Math.floor(maxGridH / style.value.grid.unit);
   return {
@@ -92,7 +92,7 @@ const scrollTo = (x: number, y: number) => {
   const positionChanged = xChanged || yChanged;
   const ctx = canvas.value?.getContext('2d');
   if (positionChanged && ctx) {
-    const range = { x: unref(dateRange), y: locations.value };
+    const range = { x: unref(dateSeq), y: locations.value };
     const translation = {
       from: { x: currentIndex.value.x, y: currentIndex.value.y },
       to: { x: nextX, y: nextY },

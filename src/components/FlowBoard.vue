@@ -61,7 +61,7 @@ const matrix = computed((): TaskMatrix => {
 provide(matrixKey, matrix);
 
 // The position of the board along x and y axes. The x coordinate corresponds to
-// the index of the date in the dateRange array that will occupy the first
+// the index of the date in the date sequence that will occupy the first
 // column space. The y coordinate corresponds to the index of the location in
 // locations array that will occupy the first row space.
 const currentIndex = ref<{ x: number, y: number}>({ x: 0, y: 0 });

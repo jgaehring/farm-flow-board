@@ -10,10 +10,10 @@ export const plusDay = (d: Date) => new Date(d.valueOf() + 24 * 60 * 60 * 1000);
 
 // Given a starting Date object and an ending Date object, return an array of
 // Date objects spanning that date range, including the start and end dates.
-export function createDateRange(start: Date, end: Date, prevRange = [] as Date[]) {
-  if (start.valueOf() >= end.valueOf()) return [...prevRange, end];
-  const nextRange = [...prevRange, start];
+export function createDateSequence(start: Date, end: Date, prevSeq = [] as Date[]) {
+  if (start.valueOf() >= end.valueOf()) return [...prevSeq, end];
+  const nextSeq = [...prevSeq, start];
   const nextStart = plusDay(start);
-  if (nextStart.valueOf() >= end.valueOf()) return [...nextRange, end];
-  return createDateRange(nextStart, end, nextRange);
+  if (nextStart.valueOf() >= end.valueOf()) return [...nextSeq, end];
+  return createDateSequence(nextStart, end, nextSeq);
 }

@@ -5,7 +5,7 @@ import { useDark, useToggle } from '@vueuse/core'
 import { Switch } from 'radix-vue/namespaced';
 import { mergeRight, omit, pick } from 'ramda';
 import {
-  boardIdKey, cropsKey, dateRangeKey, isDarkKey, locationsKey,
+  boardIdKey, cropsKey, dateSequenceKey, isDarkKey, locationsKey,
   operationsKey, plantsKey, tasksKey,
 } from '@/components/providerKeys';
 import type { DeleteValue, UpdateValue } from '@/components/providerKeys';
@@ -21,7 +21,7 @@ import type {
 import FlowBoard from '@/components/FlowBoard.vue';
 import FlowBoardOperations from '@/components/FlowBoardOperations.vue';
 import FlowBoardMenubar from '@/components/FlowBoardMenubar.vue';
-import { createDateRange } from '@/utils/date';
+import { createDateSequence } from '@/utils/date';
 import LogoType from '@/assets/logotype_color.svg?component';
 import IconSun from '@/assets/radix-icons/sun.svg?component'
 import IconMoon from '@/assets/radix-icons/moon.svg?component'
@@ -63,7 +63,7 @@ function onDelete(idfier: DeleteValue) {
 const startDate = ref<Date>(new Date(2024, 2, 28));
 const endDate = ref<Date>(new Date(2024, 9));
 // Array of Date objects for every date within the specified range.
-const dateRange = computed(() => createDateRange(startDate.value, endDate.value));
+const dateSeq = computed(() => createDateSequence(startDate.value, endDate.value));
 
 function loadBoard(name: '2023'|'random') {
   tasks.value = [];
@@ -75,7 +75,7 @@ function loadBoard(name: '2023'|'random') {
     const frequency = 6; // coefficient to adjust total tasks below
     const count = frequency * Math.floor(
       // Correlate total # of tasks to the 2 main parameters, fields & dates.
-      Math.sqrt(locations.value.length * dateRange.value.length)
+      Math.sqrt(locations.value.length * dateSeq.value.length)
     );
     const entities = generateEntities(
       count,
@@ -106,7 +106,7 @@ const toggleDark = useToggle(isDark);
 provide(tasksKey, tasks);
 provide(locationsKey, locations);
 provide(plantsKey, plants);
-provide(dateRangeKey, dateRange);
+provide(dateSequenceKey, dateSeq);
 provide('date-range-tuple', [startDate, endDate]);
 provide(operationsKey, operations);
 provide(cropsKey, crops);

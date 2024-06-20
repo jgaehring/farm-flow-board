@@ -29,19 +29,19 @@ interface GridProperties extends BoxProperties, GridStyles {
   markers: MarkerStyles,
 }
 
-interface LabelProperties<V> extends BoxProperties {
+interface AxisProperties<V> extends BoxProperties {
   values: V[],
   color: string,
   fontFamily: string,
 }
-interface BoardLabels<XData, YData> {
-  x: LabelProperties<XData>,
-  y: LabelProperties<YData>,
+interface BoardAxes<XData, YData> {
+  x: AxisProperties<XData>,
+  y: AxisProperties<YData>,
 }
 interface BoardProperties {
   width: number,
   height: number,
-  labels: BoardLabels<Date, LocationResource>,
+  axes: BoardAxes<Date, LocationResource>,
   grid: GridProperties,
   highlight: GridStyles,
   index: { x: number, y: number },
@@ -50,7 +50,7 @@ interface BoardProperties {
     stroke: string,
   },
 }
-interface RangeConfig<XData, YData> {
+interface AxisValues<XData, YData> {
   x: XData[],
   y: YData[],
 }
@@ -82,7 +82,7 @@ interface StyleOptions {
   isDark?: boolean,
   grid?: GridOptions,
   highlight?: HighlightOptions,
-  labels?: LabelOptions,
+  axes?: LabelOptions,
   markers?: {
     shadowColor?: string,
     shadowBlur?: number,
@@ -108,7 +108,7 @@ interface StyleProperties {
     stroke: string,
   },
   highlight: GridStyles,
-  labels: {
+  axes: {
     yAxisWidth: number,
     xAxisHeight: number,
   },
@@ -194,7 +194,7 @@ const applyStyleFallbacks = (style: StyleOptions): StyleProperties => mergeDeepR
       || `Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, `
       + `Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif`,
   },
-  labels: {
+  axes: {
     yAxisWidth: 240,
     xAxisHeight: 60,
   },
@@ -230,23 +230,23 @@ const applyStyleFallbacks = (style: StyleOptions): StyleProperties => mergeDeepR
 // off any columns or rows; the last column/row should be fully displayed.
 export function computeBoardProperties(
   canvas: { width: number, height: number },
-  range: RangeConfig<Date, LocationResource>,
+  values: AxisValues<Date, LocationResource>,
   index: { x: number, y: number },
   style?: StyleOptions,
 ): BoardProperties {
   const sureStyle = applyStyleFallbacks(style || {});
-  const { labels: { yAxisWidth, xAxisHeight }, grid, highlight, markers, } = sureStyle;
+  const { axes: { yAxisWidth, xAxisHeight }, grid, highlight, markers, } = sureStyle;
   const dates = fitToGrid(
     canvas.width,
     yAxisWidth,
-    range.x,
+    values.x,
     grid.unit,
     index.x,
   );
   const locations = fitToGrid(
     canvas.height,
     xAxisHeight,
-    range.y,
+    values.y,
     grid.unit,
     index.y,
   );
@@ -256,7 +256,7 @@ export function computeBoardProperties(
   const gridHeight = rows * grid.unit;
   const boardWidth = yAxisWidth + gridWidth;
   const boardHeight = xAxisHeight + gridHeight;
-  const labels: BoardLabels<Date, LocationResource> = {
+  const axes: BoardAxes<Date, LocationResource> = {
     x: {
       origin: { x: yAxisWidth, y: 0 },
       terminus: { x: boardWidth, y: xAxisHeight },
@@ -293,7 +293,7 @@ export function computeBoardProperties(
       markers,
     },
     highlight,
-    labels,
+    axes,
     index,
     style: {
       fill: sureStyle.fill,
@@ -318,20 +318,20 @@ export type TaskMatrix = DatesByLocation[];
 // Draw Farm Flow's main board.
 export function drawBoard(
   ctx: CanvasContext,
-  range: RangeConfig<Date, LocationResource>,
+  values: AxisValues<Date, LocationResource>,
   matrix: TaskMatrix,
   index: { x: number, y: number },
   style: StyleOptions,
 ): BoardProperties {
-  const board = computeBoardProperties(ctx.canvas, range, index, style);
-  const { labels, grid } = board;
+  const board = computeBoardProperties(ctx.canvas, values, index, style);
+  const { axes, grid } = board;
   // Clear the canvas & apply a fill so previous paints don't show through.
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   ctx.fillStyle = board.style.fill;
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   drawGrid(ctx, grid);
-  labelAxisX(ctx, grid, labels.x);
-  labelAxisY(ctx, grid, labels.y);
+  labelAxisX(ctx, grid, axes.x);
+  labelAxisY(ctx, grid, axes.y);
   plotTasks(ctx, board, matrix);
   return board;
 }
@@ -380,13 +380,13 @@ interface TranslationParameters {
 
 export function translateBoard(
   ctx: CanvasContext,
-  range: RangeConfig<Date, LocationResource>,
+  values: AxisValues<Date, LocationResource>,
   matrix: TaskMatrix,
   translation: TranslationParameters,
   style: StyleOptions,
 ) {
   // The board properties for the translation's starting and ending points.
-  const fromBoard = computeBoardProperties(ctx.canvas, range, translation.from, style);
+  const fromBoard = computeBoardProperties(ctx.canvas, values, translation.from, style);
 
   // Compute the offscreen canvas's board dimensions, which will be larger than
   // the main canvas b/c it must include all gridpoints from the translation's
@@ -415,7 +415,7 @@ export function translateBoard(
     y: Math.min(translation.to.y, translation.from.y),
   };
   // The properties of the board rendered while animating the translation.
-  const transBoard = computeBoardProperties(canvasDeltas, range, index, style);
+  const transBoard = computeBoardProperties(canvasDeltas, values, index, style);
 
   // Invoke the beforeAll() callback now that the deltas and board dimensions
   // have been calculated, but before the animation starts.
@@ -494,8 +494,8 @@ export function translateBoard(
     // along the x and/or y axes, as well as eased progress of the animation,
     // which has already been factored into the translation coordinates.
     ctx.translate(translateX, translateY);
-    if (dX !== 0) labelAxisX(ctx, transBoard.grid, transBoard.labels.x);
-    if (dY !== 0) labelAxisY(ctx, transBoard.grid, transBoard.labels.y);
+    if (dX !== 0) labelAxisX(ctx, transBoard.grid, transBoard.axes.x);
+    if (dY !== 0) labelAxisY(ctx, transBoard.grid, transBoard.axes.y);
     drawGrid(ctx, transBoard.grid);
     plotTasks(ctx, transBoard, matrix);
 
@@ -517,7 +517,7 @@ export function translateBoard(
     // coordinates, and invoke the afterAll() translation callback.
       window.cancelAnimationFrame(frame);
       ctx.restore();
-      drawBoard(ctx, range, matrix, translation.to, style);
+      drawBoard(ctx, values, matrix, translation.to, style);
       if (typeof translation.afterAll === 'function') {
         translation.afterAll(ctx, transBoard, deltas);
       }
@@ -612,31 +612,31 @@ const reduceDatesToMonths = reduce((
 function labelAxisX(
   ctx: CanvasContext,
   grid: GridProperties,
-  label: LabelProperties<Date>,
+  axis: AxisProperties<Date>,
 ) {
   // Label the x-axis with the date numeral directly above each column.
-  const dateLineheight = Math.floor(label.height * (5 / 9));
+  const dateLineheight = Math.floor(axis.height * (5 / 9));
   const dateFontSize = Math.floor(dateLineheight * (5 / 9));
-  const dateBaseline = label.height - Math.floor(dateLineheight * (1 / 3));
+  const dateBaseline = axis.height - Math.floor(dateLineheight * (1 / 3));
   const dateTextMarginLeft = grid.unit * .5;
-  const { origin, values: dates } = label;
+  const { origin, values: dates } = axis;
   // Before drawing, always save the context's state.
   ctx.save();
   dates.forEach((d, i) => {
     const text = d.getDate().toString();
     const x = origin.x + i * grid.unit + dateTextMarginLeft;
-    ctx.fillStyle = label.color;
-    ctx.font = `${dateFontSize}px ${label.fontFamily}`;
+    ctx.fillStyle = axis.color;
+    ctx.font = `${dateFontSize}px ${axis.fontFamily}`;
     ctx.textAlign = 'center';
     ctx.fillText(text, x, dateBaseline);
   });
   // Draw a bounding box around both month and date labels.
   ctx.strokeStyle = grid.stroke;
-  ctx.strokeRect(origin.x, 0, dates.length * grid.unit, label.height);
+  ctx.strokeRect(origin.x, 0, dates.length * grid.unit, axis.height);
 
   // Add the months across the top, spread out over the date numerals.
   const months = reduceDatesToMonths(dates);
-  const monthLineheight = Math.floor(label.height * (3 / 9));
+  const monthLineheight = Math.floor(axis.height * (3 / 9));
   const monthFontSize = Math.floor(monthLineheight * (2 / 3));
   const monthBaseline = monthLineheight - Math.floor(monthLineheight * (1 / 5));
   // Draw a horizontal rule between months and dates.
@@ -652,12 +652,12 @@ function labelAxisX(
     if (i !== 0) {
       ctx.beginPath();
       ctx.moveTo(bgX, 0);
-      ctx.lineTo(bgX, label.height);
+      ctx.lineTo(bgX, axis.height);
       ctx.stroke();
     }
     const textX = bgX + .5 * width;
-    ctx.fillStyle = label.color;
-    ctx.font = `${monthFontSize}px ${label.fontFamily}`;
+    ctx.fillStyle = axis.color;
+    ctx.font = `${monthFontSize}px ${axis.fontFamily}`;
     ctx.textAlign = 'center';
     ctx.fillText(month.name, textX, monthBaseline);
   });
@@ -668,15 +668,15 @@ function labelAxisX(
 function labelAxisY(
   ctx: CanvasContext,
   grid: GridProperties,
-  label: LabelProperties<LocationResource>,
+  axis: AxisProperties<LocationResource>,
 ) {
   // Before drawing, always save the context's state.
   ctx.save();
-  const { origin, values: locations } = label;
-  ctx.fillStyle = label.color;
-  ctx.font = `${grid.unit * .65}px ${label.fontFamily}`;
+  const { origin, values: locations } = axis;
+  ctx.fillStyle = axis.color;
+  ctx.font = `${grid.unit * .65}px ${axis.fontFamily}`;
   ctx.textAlign = 'end';
-  const x = label.width - 6;
+  const x = axis.width - 6;
   locations.forEach((loc, i) => {
     const y = origin.y + (i + 1) * grid.unit - grid.unit * .25;
     ctx.fillText(loc.name, x, y);
@@ -690,7 +690,7 @@ function plotTasks (
   board: BoardProperties,
   matrix: TaskMatrix,
 ) {
-  const { grid, labels: { x, y } } = board;
+  const { grid, axes: { x, y } } = board;
   y.values.forEach((location, indexY) => {
     plotTasksByLocation(ctx, grid, x.values, matrix, location, indexY);
   });
@@ -714,24 +714,24 @@ function plotTasksByLocation(
 export type HighlightGenerator = Generator<void, void, [number, number, number?, number?]>;
 export function* addHighlighter(
   ctx: CanvasContext,
-  range: RangeConfig<Date, LocationResource>,
+  values: AxisValues<Date, LocationResource>,
   matrix: TaskMatrix,
   origin: { x: number, y: number },
   style?: StyleOptions,
 ): Generator<void, void, [number, number, number?, number?]> {
-  const board = computeBoardProperties(ctx.canvas, range, origin, style);
-  const { grid, labels } = board;
+  const board = computeBoardProperties(ctx.canvas, values, origin, style);
+  const { grid, axes } = board;
   const gridHL = { ...grid, ...board.highlight };
   function refresh(vector: [[curX: number, curY: number], [prevX: number, prevY: number]]): void {
     const [position, prevPosition] = vector;
-    const curX = Math.floor((position[0] - labels.y.width) / grid.unit);
-    const prevX = Math.floor((prevPosition[0] - labels.y.width) / grid.unit);
-    const curY = Math.floor((position[1] - labels.x.height) / grid.unit);
-    const prevY = Math.floor((prevPosition[1] - labels.x.height) / grid.unit);
+    const curX = Math.floor((position[0] - axes.y.width) / grid.unit);
+    const prevX = Math.floor((prevPosition[0] - axes.y.width) / grid.unit);
+    const curY = Math.floor((position[1] - axes.x.height) / grid.unit);
+    const prevY = Math.floor((prevPosition[1] - axes.x.height) / grid.unit);
 
     if (curX !== prevX || curY !== prevY) {
-      const { x: { values: dateLabels } } = labels;
-      const { y: { values: locLabels } } = labels;
+      const { x: { values: dateLabels } } = axes;
+      const { y: { values: locLabels } } = axes;
 
       // A list of tuples for the rows and columns which must be repainted,
       // containing the x or y coordinate for columns or rows, respectively, and
