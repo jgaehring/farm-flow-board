@@ -5,8 +5,8 @@ import { useDark, useToggle } from '@vueuse/core'
 import { Switch } from 'radix-vue/namespaced';
 import { mergeRight, omit, pick } from 'ramda';
 import {
-  boardIdKey, cropsKey, dateRangeKey, dateSequenceKey, isDarkKey, locationsKey,
-  operationsKey, plantsKey, tasksKey,
+  boardIndexKey, boardsKey, cropsKey, dateRangeKey, dateSequenceKey, isDarkKey,
+  locationsKey, operationsKey, plantsKey, tasksKey,
 } from '@/components/providerKeys';
 import type { DeleteValue, UpdateValue } from '@/components/providerKeys';
 import { boardInfoRandom, generateEntities } from '@/data/random';
@@ -15,7 +15,7 @@ import {
 } from '@/data/deserialize';
 import { Asset } from '@/data/resources';
 import type {
-  CropTerm, LocationResource, LogResource,
+  BoardInfo, CropTerm, LocationResource, LogResource,
   OperationTerm, PlantResource,
 } from '@/data/resources';
 import FlowBoard from '@/components/FlowBoard.vue';
@@ -26,7 +26,12 @@ import LogoType from '@/assets/logotype_color.svg?component';
 import IconSun from '@/assets/radix-icons/sun.svg?component'
 import IconMoon from '@/assets/radix-icons/moon.svg?component'
 
-const boardId = ref<string>(boardInfo2023.id);
+const boards = ref<BoardInfo[]>([
+  boardInfo2023,
+  boardInfoRandom,
+]);
+const boardIndex = ref<number>(0);
+const boardInfo = computed(() => boards.value[boardIndex.value]);
 
 // All of the core data entities.
 const tasks = ref<LogResource[]>(tasks2023);
@@ -59,41 +64,40 @@ function onDelete(idfier: DeleteValue) {
   if (i >= 0) tasks.value.splice(i, 1);
 }
 
-// Start and end dates used to populate the x-axis.
-const startDate = ref<Date>(new Date(2024, 2, 28));
-const endDate = ref<Date>(new Date(2024, 9));
+// Start & end dates used to populate the x-axis & limit selection in date picker.
+const dateRange = computed<[Date, Date]>(() => boardInfo.value.dateRange);
 // Array of Date objects for every date within the specified range.
-const dateSeq = computed<Date[]>(() => createDateSequence(startDate.value, endDate.value));
-const dateRange = computed<[Date, Date]>(() => [startDate.value, endDate.value]);
+const dateSeq = computed<Date[]>(() =>
+  createDateSequence(dateRange.value[0], dateRange.value[1]));
 
-watch(boardId, (id: string, prevId: string|undefined) => {
-  if (prevId !== undefined && id === prevId) return;
-  tasks.value = [];
-  plants.value = [];
-  if (id === boardInfoRandom.id) {
-    startDate.value = boardInfoRandom.dateRange[0];
-    endDate.value = boardInfoRandom.dateRange[1];
+// Mock retrieving the task & plant entities from a database, API, file, etc.
+type BoardResources = [LogResource[], PlantResource[]];
+function loadEntities(info: BoardInfo): BoardResources {
+  if (info.id === boardInfoRandom.id) {
     // Generate a random scatter of tasks for the grid.
     const frequency = 6; // coefficient to adjust total tasks below
     const count = frequency * Math.floor(
       // Correlate total # of tasks to the 2 main parameters, fields & dates.
       Math.sqrt(locations.value.length * dateSeq.value.length)
     );
-    const [tasksRandom, plantsRandom] = generateEntities(
+    return generateEntities(
       count,
       locations.value,
       operations.value,
       crops.value,
       [boardInfoRandom.dateRange[0], boardInfoRandom.dateRange[1]],
     );
-    tasks.value = tasksRandom;
-    plants.value = plantsRandom;
-  } else if (id === boardInfo2023.id) {
-    startDate.value = boardInfo2023.dateRange[0];
-    endDate.value = boardInfo2023.dateRange[1];
-    tasks.value = tasks2023;
-    plants.value = plants2023;
   }
+  return [tasks2023, plants2023];
+}
+
+watch(boardIndex, (i: number, prevI: number|undefined) => {
+  if (prevI !== undefined && i === prevI) return;
+  const entities = loadEntities(boardInfo.value);
+  if (!entities) return;
+  const [tasksFromEntities, plantsFromEntities] = entities;
+  tasks.value = tasksFromEntities;
+  plants.value = plantsFromEntities;
 }, { immediate: true });
 
 const isDark = useDark({
@@ -111,7 +115,8 @@ provide(dateSequenceKey, dateSeq);
 provide(dateRangeKey, dateRange);
 provide(operationsKey, operations);
 provide(cropsKey, crops);
-provide(boardIdKey, boardId);
+provide(boardIndexKey, boardIndex);
+provide(boardsKey, boards);
 provide(isDarkKey, isDark);
 
 </script>
@@ -122,10 +127,10 @@ provide(isDarkKey, isDark);
       <div class="logotype">
         <LogoType/>
       </div>
-      <h1>{{ boardId === boardInfo2023.id ? boardInfo2023.name : boardInfoRandom.name }}</h1>
+      <h1>{{ boardInfo.name }}</h1>
       <div class="menubar">
         <FlowBoardMenubar
-          @select-board="boardId = $event"
+          @select-board="boardIndex = $event"
           @create-task="onBoardUpdate" />
       </div>
       <div class="dark-mode-toggle">

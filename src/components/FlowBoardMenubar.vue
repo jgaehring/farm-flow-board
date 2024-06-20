@@ -2,11 +2,9 @@
 import { inject, ref } from 'vue'
 import { Menubar } from 'radix-vue/namespaced';
 import FlowBoardDialogEditTask from '@/components/FlowBoardDialogEditTask.vue';
-import { boardIdKey, locationsKey, operationsKey, plantsKey } from '@/components/providerKeys';
+import { boardIndexKey, boardsKey, locationsKey, operationsKey, plantsKey } from '@/components/providerKeys';
 import type { CreateValue } from '@/components/providerKeys';
 import type { LogResource } from '@/data/resources';
-import { boardInfoRandom } from '@/data/random';
-import { boardInfo2023 } from '@/data/deserialize';
 import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
 import IconCheck from '@/assets/radix-icons/check.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
@@ -17,16 +15,17 @@ const checkboxTwo = ref(false)
 const locations = inject(locationsKey, ref([]));
 const operations = inject(operationsKey, ref([]));
 const plants = inject(plantsKey, ref([]));
-const boardId = inject(boardIdKey, ref(boardInfo2023.id));
-const boardRadio = ref<string>(boardId.value);
+const boardIndex = inject(boardIndexKey, ref(0));
+const boards = inject(boardsKey, ref([]));
+const boardRadio = ref<string>(boardIndex.value.toString());
 const emit = defineEmits<{
-  (e: 'select-board', value: string): void,
+  (e: 'select-board', value: number): void,
   (e: 'create-task', value: CreateValue): void,
 }>();
 
 function handleSelectBoard(evt: any) {
-  if (typeof evt === 'string') {
-    emit('select-board', evt as string);
+  if (['string', 'number'].includes(typeof evt)) {
+    emit('select-board', +evt as number);
   }
 }
 
@@ -94,21 +93,14 @@ function cancelEdits() {
                   @update:model-value="handleSelectBoard">
 
                   <Menubar.RadioItem
+                    v-for="(board, i) in boards"
                     class="MenubarCheckboxItem inset"
-                    :value="boardInfo2023.id">
+                    :value="i.toString()"
+                    :key="`menu-radio-item-board-${i}`">
                     <Menubar.ItemIndicator class="MenubarItemIndicator">
                       <IconDotFilled />
                     </Menubar.ItemIndicator>
-                    {{ boardInfo2023.name }}
-                  </Menubar.RadioItem>
-
-                  <Menubar.RadioItem
-                    class="MenubarCheckboxItem inset"
-                    :value="boardInfoRandom.id">
-                    <Menubar.ItemIndicator class="MenubarItemIndicator">
-                      <IconDotFilled />
-                    </Menubar.ItemIndicator>
-                    {{ boardInfoRandom.name }}
+                    {{ board.name }}
                   </Menubar.RadioItem>
 
                 </Menubar.RadioGroup>

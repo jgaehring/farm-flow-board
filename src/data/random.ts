@@ -1,14 +1,15 @@
 import { v4 as uuid } from 'uuid';
 import { Asset, Log } from '@/data/resources';
+import { Plan } from '@/data/resources';
 import type {
-  CropTerm, LocationResource, LogResource,
+  BoardInfo, CropTerm, LocationResource, LogResource,
   OperationTerm, PlantIdentifier, PlantResource,
 } from '@/data/resources';
 import { toIdfier } from '@/utils/idfier';
 
-export const boardInfoRandom = {
+export const boardInfoRandom: BoardInfo = {
   id: 'f9dd7461-4eb3-4c3e-b6ee-e3e9b3a3dffd',
-  type: 'plan--farm_flow_board',
+  type: Plan.FarmFlow,
   name: 'Random',
   dateRange: [new Date(2024, 2, 28), new Date(2024, 9)],
 };

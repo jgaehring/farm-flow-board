@@ -1,6 +1,7 @@
 import type { InjectionKey, Ref, WritableComputedRef } from "vue";
 import type {
-  CropTerm, LocationResource, LogIdentifier, LogResource, OperationTerm, PlantIdentifier, PlantResource,
+  BoardInfo, CropTerm, LocationResource, LogIdentifier, LogResource,
+  OperationTerm, PlantIdentifier, PlantResource,
 } from '@/data/resources';
 import type { TaskMatrix } from '@/canvas/board';
 
@@ -12,7 +13,8 @@ export const dateSequenceKey = Symbol() as InjectionKey<Ref<Date[]>>;
 export const dateRangeKey = Symbol() as InjectionKey<Ref<[Date, Date]>>;
 export const operationsKey = Symbol() as InjectionKey<Ref<OperationTerm[]>>;
 export const cropsKey = Symbol() as InjectionKey<Ref<CropTerm[]>>;
-export const boardIdKey = Symbol() as InjectionKey<Ref<string>>;
+export const boardIndexKey = Symbol() as InjectionKey<Ref<number>>;
+export const boardsKey = Symbol() as InjectionKey<Ref<BoardInfo[]>>;
 export const indexPositionKey = Symbol() as InjectionKey<Ref<{ x: number, y: number}>>;
 export const isDarkKey = Symbol() as InjectionKey<WritableComputedRef<boolean>>;
 export type UpdateValue = Partial<LogResource>|Partial<PlantResource>;
