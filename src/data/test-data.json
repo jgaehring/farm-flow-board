@@ -1,4 +1,10 @@
 {
+  "board": {
+    "id": "c343b248-8d1b-4f79-9239-41567a82db25",
+    "type": "plan--farm_flow_board",
+    "name": "Crop 2023",
+    "dateRange": ["2023-05-06", "2023-11-15"]
+  },
   "tasks": [
     {
       "id": "bf039dca-06b5-4775-8810-a379d31d3da6",

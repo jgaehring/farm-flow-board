@@ -6,6 +6,13 @@ import type {
 } from '@/data/resources';
 import { toIdfier } from '@/utils/idfier';
 
+export const boardInfoRandom = {
+  id: 'f9dd7461-4eb3-4c3e-b6ee-e3e9b3a3dffd',
+  type: 'plan--farm_flow_board',
+  name: 'Random',
+  dateRange: [new Date(2024, 2, 28), new Date(2024, 9)],
+};
+
 type TaskGenerator = Generator<LogResource, void, unknown>
 export function* randomTasks(
   dateRange: [Date, Date],

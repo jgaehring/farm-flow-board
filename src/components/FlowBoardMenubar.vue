@@ -5,6 +5,8 @@ import FlowBoardDialogEditTask from '@/components/FlowBoardDialogEditTask.vue';
 import { boardIdKey, locationsKey, operationsKey, plantsKey } from '@/components/providerKeys';
 import type { CreateValue } from '@/components/providerKeys';
 import type { LogResource } from '@/data/resources';
+import { boardInfoRandom } from '@/data/random';
+import { boardInfo2023 } from '@/data/deserialize';
 import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
 import IconCheck from '@/assets/radix-icons/check.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
@@ -15,16 +17,16 @@ const checkboxTwo = ref(false)
 const locations = inject(locationsKey, ref([]));
 const operations = inject(operationsKey, ref([]));
 const plants = inject(plantsKey, ref([]));
-const boardId = inject<'2023'|'random'>(boardIdKey);
-const boardRadio = ref<'2023'|'random'|undefined>(boardId);
+const boardId = inject(boardIdKey, ref(boardInfo2023.id));
+const boardRadio = ref<string>(boardId.value);
 const emit = defineEmits<{
-  (e: 'select-board', value: '2023'|'random'): void,
+  (e: 'select-board', value: string): void,
   (e: 'create-task', value: CreateValue): void,
 }>();
 
-function handleSelectBoard(e: any) {
-  if (['2023', 'random'].includes(e)) {
-    emit('select-board', e);
+function handleSelectBoard(evt: any) {
+  if (typeof evt === 'string') {
+    emit('select-board', evt as string);
   }
 }
 
@@ -93,20 +95,20 @@ function cancelEdits() {
 
                   <Menubar.RadioItem
                     class="MenubarCheckboxItem inset"
-                    value="2023">
+                    :value="boardInfo2023.id">
                     <Menubar.ItemIndicator class="MenubarItemIndicator">
                       <IconDotFilled />
                     </Menubar.ItemIndicator>
-                    2023 Crops
+                    {{ boardInfo2023.name }}
                   </Menubar.RadioItem>
 
                   <Menubar.RadioItem
                     class="MenubarCheckboxItem inset"
-                    value="random">
+                    :value="boardInfoRandom.id">
                     <Menubar.ItemIndicator class="MenubarItemIndicator">
                       <IconDotFilled />
                     </Menubar.ItemIndicator>
-                    Random
+                    {{ boardInfoRandom.name }}
                   </Menubar.RadioItem>
 
                 </Menubar.RadioGroup>

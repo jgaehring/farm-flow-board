@@ -9,9 +9,9 @@ import {
   operationsKey, plantsKey, tasksKey,
 } from '@/components/providerKeys';
 import type { DeleteValue, UpdateValue } from '@/components/providerKeys';
-import { generateEntities } from '@/data/random';
+import { boardInfoRandom, generateEntities } from '@/data/random';
 import {
-  crops2023, locations2023, operations2023, plants2023, tasks2023,
+  boardInfo2023, crops2023, locations2023, operations2023, plants2023, tasks2023,
 } from '@/data/deserialize';
 import { Asset } from '@/data/resources';
 import type {
@@ -26,7 +26,7 @@ import LogoType from '@/assets/logotype_color.svg?component';
 import IconSun from '@/assets/radix-icons/sun.svg?component'
 import IconMoon from '@/assets/radix-icons/moon.svg?component'
 
-const boardId = ref<'2023'|'random'>('2023');
+const boardId = ref<string>(boardInfo2023.id);
 
 // All of the core data entities.
 const tasks = ref<LogResource[]>(tasks2023);
@@ -66,30 +66,30 @@ const endDate = ref<Date>(new Date(2024, 9));
 const dateSeq = computed<Date[]>(() => createDateSequence(startDate.value, endDate.value));
 const dateRange = computed<[Date, Date]>(() => [startDate.value, endDate.value]);
 
-function loadBoard(name: '2023'|'random') {
+function loadBoard(id: string) {
   tasks.value = [];
   plants.value = [];
-  if (name === 'random') {
-    startDate.value = new Date(2024, 2, 28);
-    endDate.value = new Date(2024, 9);
+  if (id === boardInfoRandom.id) {
+    startDate.value = boardInfoRandom.dateRange[0];
+    endDate.value = boardInfoRandom.dateRange[1];
     // Generate a random scatter of tasks for the grid.
     const frequency = 6; // coefficient to adjust total tasks below
     const count = frequency * Math.floor(
       // Correlate total # of tasks to the 2 main parameters, fields & dates.
       Math.sqrt(locations.value.length * dateSeq.value.length)
     );
-    const entities = generateEntities(
+    const [tasksRandom, plantsRandom] = generateEntities(
       count,
       locations.value,
       operations.value,
       crops.value,
-      [startDate.value, endDate.value],
+      [boardInfoRandom.dateRange[0], boardInfoRandom.dateRange[1]],
     );
-    tasks.value = entities[0];
-    plants.value = entities[1];
-  } else if (name === '2023') {
-    startDate.value = new Date(2023, 4, 6);
-    endDate.value = new Date(2023, 10, 15);
+    tasks.value = tasksRandom;
+    plants.value = plantsRandom;
+  } else if (id === boardInfo2023.id) {
+    startDate.value = boardInfo2023.dateRange[0];
+    endDate.value = boardInfo2023.dateRange[1];
     tasks.value = tasks2023;
     plants.value = plants2023;
   }

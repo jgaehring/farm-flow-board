@@ -11,7 +11,7 @@ export enum Log {
 }
 
 export enum Plan {
-  FarmFlow = 'plan--farm_flow',
+  FarmFlow = 'plan--farm_flow_board',
 }
 
 export enum Term {
@@ -85,6 +85,4 @@ export interface LogResource extends Resource {
 export interface BoardInfo extends Resource {
   type: Plan.FarmFlow,
   dateRange: [Date, Date],
-  operations: OperationIdentifier[],
-  crops: CropIdentifier
 }
