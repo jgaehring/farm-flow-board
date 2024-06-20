@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, provide, ref } from 'vue';
+import { computed, provide, ref, watch } from 'vue';
 import type { Ref } from 'vue';
 import { useDark, useToggle } from '@vueuse/core'
 import { Switch } from 'radix-vue/namespaced';
@@ -66,7 +66,8 @@ const endDate = ref<Date>(new Date(2024, 9));
 const dateSeq = computed<Date[]>(() => createDateSequence(startDate.value, endDate.value));
 const dateRange = computed<[Date, Date]>(() => [startDate.value, endDate.value]);
 
-function loadBoard(id: string) {
+watch(boardId, (id: string, prevId: string|undefined) => {
+  if (prevId !== undefined && id === prevId) return;
   tasks.value = [];
   plants.value = [];
   if (id === boardInfoRandom.id) {
@@ -93,8 +94,7 @@ function loadBoard(id: string) {
     tasks.value = tasks2023;
     plants.value = plants2023;
   }
-}
-loadBoard(boardId.value);
+}, { immediate: true });
 
 const isDark = useDark({
   selector: 'body',
@@ -122,10 +122,10 @@ provide(isDarkKey, isDark);
       <div class="logotype">
         <LogoType/>
       </div>
-      <h1>{{ boardId === '2023' ? 'Crop 2023' : 'Random' }}</h1>
+      <h1>{{ boardId === boardInfo2023.id ? boardInfo2023.name : boardInfoRandom.name }}</h1>
       <div class="menubar">
         <FlowBoardMenubar
-          @select-board="loadBoard"
+          @select-board="boardId = $event"
           @create-task="onBoardUpdate" />
       </div>
       <div class="dark-mode-toggle">
