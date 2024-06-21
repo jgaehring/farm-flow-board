@@ -6,13 +6,14 @@ import { Dialog, Editable, Label } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { Plan } from '@/data/resources';
 import type { BoardInfo } from '@/data/resources';
+import { defaultSeason, fallbackRange } from '@/utils/date';
 import type { DeleteValue } from './providerKeys';
 import FFDatePicker from '@/components/FFDatePicker.vue';
 import IconPencil2 from '@/assets/radix-icons/pencil-2.svg?component';
 
 const props = defineProps<{
   open: boolean,
-  boardInfo: BoardInfo,
+  boardInfo?: BoardInfo,
 }>();
 
 const emit = defineEmits<{
@@ -22,8 +23,8 @@ const emit = defineEmits<{
   (e: 'update:delete', value: DeleteValue): void,
 }>();
 
-const name = ref(props.boardInfo.name);
-const dateRange = ref(props.boardInfo.dateRange);
+const name = ref(props.boardInfo?.name || 'Untitled Board');
+const dateRange = ref<[Date, Date]>(props.boardInfo?.dateRange || fallbackRange(defaultSeason));
 
 const forceConfirm = () => {
   const selector = 'button.editable-trigger-submit'
@@ -51,6 +52,15 @@ function cancelChanges() {
   emit('close');
 }
 
+/**
+ * As of radix-vue@1.8.4, using 'enter' forces the user to hold the SHIFT key in
+ * order to input a SPACE, which otherwise calls .submit(). This was fixed and
+ * merged into main as of Jun 19, 2024, but as of writing this, it hasn't yet
+ * been released to the npm registry (presumably as 1.8.5). So for now, using
+ * 'blur' for the submit-mode is prop is necessary. No need for reactivity.
+ * @see https://github.com/radix-vue/radix-vue/pull/1013
+ */
+const submitMode = 'blur';
 </script>
 
 <template>
@@ -81,7 +91,7 @@ function cancelChanges() {
           v-model="name"
           v-slot="{ isEditing }"
           placeholder="Untitled Board"
-          submit-mode="both"
+          :submit-mode="submitMode"
           auto-resize
           class="editable-root" >
           <Editable.Area class="editable-area">

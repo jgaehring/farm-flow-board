@@ -1,3 +1,5 @@
+import { getLocalTimeZone, today } from '@internationalized/date';
+
 // Find out if two dates are the same, w/o regard to hours, minutes or smaller units.
 export const sameDate = (d1: Date, d2: Date) =>
   d1 instanceof Date && d2 instanceof Date
@@ -17,3 +19,18 @@ export function createDateSequence(start: Date, end: Date, prevSeq = [] as Date[
   if (nextStart.valueOf() >= end.valueOf()) return [...nextSeq, end];
   return createDateSequence(nextStart, end, nextSeq);
 }
+
+export const defaultSeason = {
+  start: { month: 3, day: 1 },
+  end: { month: 11, day: 30 },
+};
+export const fallbackRange = (season: typeof defaultSeason) => {
+  const tz = getLocalTimeZone()
+  const current = today(tz);
+  const index = current.month > season.end.month 
+    ? current.cycle('year', 1).set(season.start)
+    : current;
+  const start = index.set(season.start);
+  const end = current.set(season.end);
+  return [start.toDate(tz), end.toDate(tz)] as [Date, Date];
+};

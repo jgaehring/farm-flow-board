@@ -35,9 +35,11 @@ const openEditBoardDialog = ref(false);
 function saveBoardInfo(info: BoardInfo) {
   emit('update-board-info', info);
   currentMenu.value = '';
+  openNewBoardDialog.value = false;
   openEditBoardDialog.value = false;
 }
 
+const openNewBoardDialog = ref(false);
 const openEditTaskDialog = ref(false);
 function saveNewTask(task: LogResource) {
   emit('create-task', task);
@@ -46,6 +48,7 @@ function saveNewTask(task: LogResource) {
 }
 function cancelEdits() {
   currentMenu.value = '';
+  openNewBoardDialog.value = false;
   openEditTaskDialog.value = false;
   openEditBoardDialog.value = false;
 }
@@ -65,12 +68,21 @@ function cancelEdits() {
           :align="'start'"
           :side-offset="5"
           :align-offset="-3">
-          <Menubar.Item class="MenubarItem" disabled>
-            New Board
-            <div class="RightSlot">
-              ⌘ N
-            </div>
-          </Menubar.Item>
+          <FlowBoardDialogEditBoardInfo
+            @update:save="saveBoardInfo($event as BoardInfo)"
+            @update:cancel="cancelEdits"
+            :open="openNewBoardDialog" >
+            <template #trigger >
+              <Menubar.Item
+                @select.prevent="openNewBoardDialog = true"
+                class="MenubarItem" >
+                New Board
+                <div class="RightSlot">
+                  ⌘ N
+                </div>
+              </Menubar.Item>
+            </template>
+          </FlowBoardDialogEditBoardInfo>
 
           <Menubar.Item class="MenubarItem" disabled>
             Duplicate
