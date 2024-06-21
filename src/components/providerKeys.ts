@@ -17,7 +17,7 @@ export const boardIndexKey = Symbol() as InjectionKey<Ref<number>>;
 export const boardsKey = Symbol() as InjectionKey<Ref<BoardInfo[]>>;
 export const indexPositionKey = Symbol() as InjectionKey<Ref<{ x: number, y: number}>>;
 export const isDarkKey = Symbol() as InjectionKey<WritableComputedRef<boolean>>;
-export type UpdateValue = Partial<LogResource>|Partial<PlantResource>;
+export type UpdateValue = Partial<LogResource>|Partial<PlantResource>|Partial<BoardInfo>;
 export type CreateValue = LogResource|PlantResource;
 export type DeleteValue = LogIdentifier|PlantIdentifier;
 export const emitBoardUpdateKey = Symbol() as InjectionKey<(value: UpdateValue) => void>;

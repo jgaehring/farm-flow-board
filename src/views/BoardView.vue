@@ -13,7 +13,7 @@ import { boardInfoRandom, generateEntities } from '@/data/random';
 import {
   boardInfo2023, crops2023, locations2023, operations2023, plants2023, tasks2023,
 } from '@/data/deserialize';
-import { Asset } from '@/data/resources';
+import { Asset, Plan } from '@/data/resources';
 import type {
   BoardInfo, CropTerm, LocationResource, LogResource,
   OperationTerm, PlantResource,
@@ -41,9 +41,10 @@ const operations = ref<OperationTerm[]>(operations2023);
 const crops = ref<CropTerm[]>(crops2023);
 
 function onBoardUpdate(value: UpdateValue): void {
-  let collection: Ref<LogResource[]|PlantResource[]>|false = false;
+  let collection: Ref<UpdateValue[]>|false = false;
   if (value.type?.startsWith('log')) collection = tasks;
   else if (value.type === Asset.Plant) collection = plants;
+  else if (value.type === Plan.FarmFlow) collection = boards;
 
   if (collection) {
     const i = collection.value.findIndex(item => item.id === value.id);
@@ -131,7 +132,8 @@ provide(isDarkKey, isDark);
       <div class="menubar">
         <FlowBoardMenubar
           @select-board="boardIndex = $event"
-          @create-task="onBoardUpdate" />
+          @create-task="onBoardUpdate"
+          @update-board-info="onBoardUpdate" />
       </div>
       <div class="dark-mode-toggle">
         <Switch.Root

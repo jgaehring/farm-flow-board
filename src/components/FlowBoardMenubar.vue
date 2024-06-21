@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue'
 import { Menubar } from 'radix-vue/namespaced';
+import FlowBoardDialogEditBoardInfo from '@/components/FlowBoardDialogEditBoardInfo.vue';
 import FlowBoardDialogEditTask from '@/components/FlowBoardDialogEditTask.vue';
 import { boardIndexKey, boardsKey, locationsKey, operationsKey, plantsKey } from '@/components/providerKeys';
 import type { CreateValue } from '@/components/providerKeys';
-import type { LogResource } from '@/data/resources';
+import type { BoardInfo, LogResource } from '@/data/resources';
 import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
 import IconCheck from '@/assets/radix-icons/check.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
@@ -21,12 +22,20 @@ const boardRadio = ref<string>(boardIndex.value.toString());
 const emit = defineEmits<{
   (e: 'select-board', value: number): void,
   (e: 'create-task', value: CreateValue): void,
+  (e: 'update-board-info', value: BoardInfo): void,
 }>();
 
 function handleSelectBoard(evt: any) {
   if (['string', 'number'].includes(typeof evt)) {
     emit('select-board', +evt as number);
   }
+}
+
+const openEditBoardDialog = ref(false);
+function saveBoardInfo(info: BoardInfo) {
+  emit('update-board-info', info);
+  currentMenu.value = '';
+  openEditBoardDialog.value = false;
 }
 
 const openEditTaskDialog = ref(false);
@@ -38,6 +47,7 @@ function saveNewTask(task: LogResource) {
 function cancelEdits() {
   currentMenu.value = '';
   openEditTaskDialog.value = false;
+  openEditBoardDialog.value = false;
 }
 
 </script>
@@ -110,9 +120,19 @@ function cancelEdits() {
 
           <Menubar.Separator class="MenubarSeparator" />
 
-          <Menubar.Item class="MenubarItem" disabled>
-            Edit Board Info
-          </Menubar.Item>
+          <FlowBoardDialogEditBoardInfo
+            @update:save="saveBoardInfo($event as BoardInfo)"
+            @update:cancel="cancelEdits"
+            :board-info="boards[boardIndex]"
+            :open="openEditBoardDialog" >
+            <template #trigger >
+              <Menubar.Item
+                @select.prevent="openEditBoardDialog = true"
+                class="MenubarItem" >
+                Edit Board Info
+              </Menubar.Item>
+            </template>
+          </FlowBoardDialogEditBoardInfo>
 
           <Menubar.Item class="MenubarItem" disabled>
             Preferences
