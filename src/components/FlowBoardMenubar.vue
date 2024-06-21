@@ -77,9 +77,8 @@ function cancelEdits() {
                 @select.prevent="openNewBoardDialog = true"
                 class="MenubarItem" >
                 New Board
-                <div class="RightSlot">
-                  ⌘ N
-                </div>
+                <!-- TODO: Implement key bindings. -->
+                <!-- <div class="RightSlot">⌘ N</div> -->
               </Menubar.Item>
             </template>
           </FlowBoardDialogEditBoardInfo>
@@ -180,9 +179,8 @@ function cancelEdits() {
                 @select.prevent="openEditTaskDialog = true"
                 class="MenubarItem" >
                 New Task
-                <div class="RightSlot">
-                  ⌘ T
-                </div>
+                <!-- TODO: Implement key bindings. -->
+                <!-- <div class="RightSlot">⌘ T</div> -->
               </Menubar.Item>
             </template>
           </FlowBoardDialogEditTask>
