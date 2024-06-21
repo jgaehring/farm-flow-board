@@ -6,11 +6,9 @@ import { Dialog, Editable, Label } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { Plan } from '@/data/resources';
 import type { BoardInfo } from '@/data/resources';
-import { toOptionalIdfier } from '@/utils/idfier';
 import type { DeleteValue } from './providerKeys';
 import FFDatePicker from '@/components/FFDatePicker.vue';
 import IconPencil2 from '@/assets/radix-icons/pencil-2.svg?component';
-import IconTrash from '@/assets/radix-icons/trash.svg?component';
 
 const props = defineProps<{
   open: boolean,
@@ -26,12 +24,6 @@ const emit = defineEmits<{
 
 const name = ref(props.boardInfo.name);
 const dateRange = ref(props.boardInfo.dateRange);
-
-function deleteBoard() {
-  const boardIdfier = toOptionalIdfier(props.boardInfo);
-  if (boardIdfier) emit('update:delete', boardIdfier);
-  emit('close');
-}
 
 const forceConfirm = () => {
   const selector = 'button.editable-trigger-submit'
@@ -125,14 +117,6 @@ function cancelChanges() {
           class="edit-dialog-date-picker" />
 
         <div class="edit-dialog-btns">
-          <button
-            v-if="boardInfo"
-            type="button"
-            @click="deleteBoard"
-            aria-label="Delete"
-            class="edit-dialog-btn btn-delete" >
-            <IconTrash />
-          </button>
           <button
             type="button"
             @click="cancelChanges"
