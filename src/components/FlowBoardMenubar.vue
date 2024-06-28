@@ -3,9 +3,11 @@ import { inject, ref } from 'vue'
 import { Menubar } from 'radix-vue/namespaced';
 import FlowBoardDialogEditBoardInfo from '@/components/FlowBoardDialogEditBoardInfo.vue';
 import FlowBoardDialogEditTask from '@/components/FlowBoardDialogEditTask.vue';
+import FlowBoardDialogImportBoard from '@/components/FlowBoardDialogImportBoard.vue';
 import { boardIndexKey, boardsKey, locationsKey, operationsKey, plantsKey } from '@/components/providerKeys';
 import type { CreateValue } from '@/components/providerKeys';
 import type { BoardInfo, LogResource } from '@/data/resources';
+import type { BoardData } from '@/data/deserialize';
 import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
 import IconCheck from '@/assets/radix-icons/check.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
@@ -20,6 +22,7 @@ const boardIndex = inject(boardIndexKey, ref(0));
 const boards = inject(boardsKey, ref([]));
 const boardRadio = ref<string>(boardIndex.value.toString());
 const emit = defineEmits<{
+  (e: 'import-board', value: BoardData): void,
   (e: 'select-board', value: number): void,
   (e: 'create-task', value: CreateValue): void,
   (e: 'update-board-info', value: Partial<BoardInfo>): void,
@@ -32,6 +35,7 @@ function handleSelectBoard(evt: any) {
 }
 
 const openEditBoardDialog = ref(false);
+const openNewBoardDialog = ref(false);
 function saveBoardInfo(info: Partial<BoardInfo>) {
   emit('update-board-info', info);
   currentMenu.value = '';
@@ -39,7 +43,13 @@ function saveBoardInfo(info: Partial<BoardInfo>) {
   openEditBoardDialog.value = false;
 }
 
-const openNewBoardDialog = ref(false);
+const openImportBoardDialog = ref(false);
+function importBoard(data: BoardData) {
+  emit('import-board', data);
+  currentMenu.value = '';
+  openImportBoardDialog.value = false;
+}
+
 const openEditTaskDialog = ref(false);
 function saveNewTask(task: LogResource) {
   emit('create-task', task);
@@ -51,6 +61,7 @@ function cancelEdits() {
   openNewBoardDialog.value = false;
   openEditTaskDialog.value = false;
   openEditBoardDialog.value = false;
+  openImportBoardDialog.value = false;
 }
 
 </script>
@@ -87,9 +98,18 @@ function cancelEdits() {
             Duplicate
           </Menubar.Item>
 
-          <Menubar.Item class="MenubarItem" disabled>
-            Import Data
-          </Menubar.Item>
+          <FlowBoardDialogImportBoard
+            @update:save="importBoard"
+            @update:cancel="cancelEdits"
+            :open="openImportBoardDialog" >
+            <template #trigger >
+              <Menubar.Item
+                @select.prevent="openImportBoardDialog = true"
+                class="MenubarItem" >
+                Import Data
+              </Menubar.Item>
+            </template>
+          </FlowBoardDialogImportBoard>
 
           <Menubar.Item class="MenubarItem" disabled>
             Export Data

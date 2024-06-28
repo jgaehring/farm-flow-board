@@ -10,9 +10,10 @@ import {
 } from '@/components/providerKeys';
 import type { DeleteValue, UpdateValue } from '@/components/providerKeys';
 import { boardInfoRandom, generateEntities } from '@/data/random';
-import {
+import deserialize, {
   boardInfo2023, crops2023, locations2023, operations2023, plants2023, tasks2023,
 } from '@/data/deserialize';
+import type { BoardData } from '@/data/deserialize';
 import { Asset, Plan } from '@/data/resources';
 import type {
   BoardInfo, CropTerm, LocationResource, LogResource,
@@ -72,33 +73,53 @@ const dateSeq = computed<Date[]>(() =>
   createDateSequence(dateRange.value[0], dateRange.value[1]));
 
 // Mock retrieving the task & plant entities from a database, API, file, etc.
-type BoardResources = [LogResource[], PlantResource[]];
-function loadEntities(info: BoardInfo): BoardResources {
-  if (info.id === boardInfoRandom.id) {
+function loadEntities(): void {
+  const info = boards.value[boardIndex.value];
+  if (info.id === boardInfo2023.id) {
+    crops.value = crops2023;
+    locations.value = locations2023;
+    operations.value = operations2023;
+    tasks.value = tasks2023;
+    plants.value = plants2023;
+  }
+  else if (info.id === boardInfoRandom.id) {
     // Generate a random scatter of tasks for the grid.
     const frequency = 6; // coefficient to adjust total tasks below
     const count = frequency * Math.floor(
       // Correlate total # of tasks to the 2 main parameters, fields & dates.
       Math.sqrt(locations.value.length * dateSeq.value.length)
     );
-    return generateEntities(
+    const random = generateEntities(
       count,
       locations.value,
       operations.value,
       crops.value,
       [boardInfoRandom.dateRange[0], boardInfoRandom.dateRange[1]],
     );
+    crops.value = crops2023;
+    locations.value = locations2023;
+    operations.value = operations2023;
+    tasks.value = random[0];
+    plants.value = random[1];
   }
-  return [tasks2023, plants2023];
+  else if (info.id in sessionStorage && typeof sessionStorage[info.id] === 'string') {
+    const json = JSON.parse(sessionStorage[info.id]);
+    const data = deserialize(json);
+    crops.value = data.crops;
+    locations.value = data.locations;
+    operations.value = data.operations;
+    tasks.value = data.tasks;
+    plants.value = data.plants;
+  }
+}
+
+function importBoard(data: BoardData) {
+  sessionStorage.setItem(data.board.id, JSON.stringify(data));
+  boardIndex.value = boards.value.push(data.board) - 1;
 }
 
 watch(boardIndex, (i: number, prevI: number|undefined) => {
-  if (prevI !== undefined && i === prevI) return;
-  const entities = loadEntities(boardInfo.value);
-  if (!entities) return;
-  const [tasksFromEntities, plantsFromEntities] = entities;
-  tasks.value = tasksFromEntities;
-  plants.value = plantsFromEntities;
+  if (prevI === undefined || i !== prevI) loadEntities();
 }, { immediate: true });
 
 const isDark = useDark({
@@ -132,6 +153,7 @@ provide(isDarkKey, isDark);
       <div class="menubar">
         <FlowBoardMenubar
           @select-board="boardIndex = $event"
+          @import-board="importBoard"
           @create-task="onBoardUpdate"
           @update-board-info="onBoardUpdate" />
       </div>
