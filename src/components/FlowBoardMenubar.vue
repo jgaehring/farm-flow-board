@@ -22,7 +22,7 @@ const boardRadio = ref<string>(boardIndex.value.toString());
 const emit = defineEmits<{
   (e: 'select-board', value: number): void,
   (e: 'create-task', value: CreateValue): void,
-  (e: 'update-board-info', value: BoardInfo): void,
+  (e: 'update-board-info', value: Partial<BoardInfo>): void,
 }>();
 
 function handleSelectBoard(evt: any) {
@@ -32,7 +32,7 @@ function handleSelectBoard(evt: any) {
 }
 
 const openEditBoardDialog = ref(false);
-function saveBoardInfo(info: BoardInfo) {
+function saveBoardInfo(info: Partial<BoardInfo>) {
   emit('update-board-info', info);
   currentMenu.value = '';
   openNewBoardDialog.value = false;
@@ -69,7 +69,7 @@ function cancelEdits() {
           :side-offset="5"
           :align-offset="-3">
           <FlowBoardDialogEditBoardInfo
-            @update:save="saveBoardInfo($event as BoardInfo)"
+            @update:save="saveBoardInfo"
             @update:cancel="cancelEdits"
             :open="openNewBoardDialog" >
             <template #trigger >
@@ -132,7 +132,7 @@ function cancelEdits() {
           <Menubar.Separator class="MenubarSeparator" />
 
           <FlowBoardDialogEditBoardInfo
-            @update:save="saveBoardInfo($event as BoardInfo)"
+            @update:save="saveBoardInfo"
             @update:cancel="cancelEdits"
             :board-info="boards[boardIndex]"
             :open="openEditBoardDialog" >
