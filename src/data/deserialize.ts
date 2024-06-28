@@ -4,13 +4,31 @@ import type {
 } from '@/data/resources';
 import entities2023 from './test-data.json';
 
+export interface BoardData {
+  board: BoardInfo,
+  crops: CropTerm[],
+  locations: LocationResource[],
+  operations: OperationTerm[],
+  plants: PlantResource[],
+  tasks: LogResource[],
+}
+
 const date = (str: string) => new Date(str);
 const withDateObj = evolve({ date });
 const dateRange = evolve({ dateRange: map(date)})
 
-export const crops2023 = entities2023.crops as CropTerm[];
-export const locations2023 = entities2023.locations as LocationResource[];
-export const operations2023 = entities2023.operations as OperationTerm[];
-export const plants2023 = entities2023.plants as PlantResource[];
-export const tasks2023 = entities2023.tasks.map(withDateObj) as LogResource[];
-export const boardInfo2023 = dateRange(entities2023.board) as BoardInfo;
+const deserialize = evolve({
+  tasks: t => t.map(withDateObj),
+  board: dateRange,
+});
+
+export const {
+  crops: crops2023,
+  locations: locations2023,
+  operations: operations2023,
+  plants: plants2023,
+  tasks: tasks2023,
+  board: boardInfo2023,
+} = deserialize(entities2023) as BoardData;
+
+export default deserialize as (json: typeof entities2023) => BoardData;
