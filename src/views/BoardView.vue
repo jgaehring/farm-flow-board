@@ -10,8 +10,9 @@ import {
 } from '@/components/providerKeys';
 import type { DeleteValue, UpdateValue } from '@/components/providerKeys';
 import { boardInfoRandom, generateEntities } from '@/data/random';
-import deserialize, {
-  boardInfo2023, crops2023, locations2023, operations2023, plants2023, tasks2023,
+import {
+  boardInfo2023, crops2023, deserialize, locations2023, operations2023,
+  plants2023, serialize, tasks2023,
 } from '@/data/deserialize';
 import type { BoardData } from '@/data/deserialize';
 import { Asset, Plan } from '@/data/resources';
@@ -114,7 +115,8 @@ function loadEntities(): void {
 }
 
 function importBoard(data: BoardData) {
-  sessionStorage.setItem(data.board.id, JSON.stringify(data));
+  const json = JSON.stringify(serialize(data));
+  sessionStorage.setItem(data.board.id, json);
   boardIndex.value = boards.value.push(data.board) - 1;
 }
 

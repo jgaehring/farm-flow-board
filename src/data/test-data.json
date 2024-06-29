@@ -10,7 +10,7 @@
       "id": "bf039dca-06b5-4775-8810-a379d31d3da6",
       "type": "log--activity",
       "name": "Tillage: Home Corn",
-      "date": "2023-05-06T04:00:00.000Z",
+      "date": "2023-05-06T06:00:00[US/Central]",
       "location": {
         "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
         "type": "asset--land"
@@ -29,7 +29,7 @@
       "id": "bf100c5d-4ba7-4b43-b873-04b1c11810cd",
       "type": "log--activity",
       "name": "Tillage: Home Corn",
-      "date": "2023-05-18T04:00:00.000Z",
+      "date": "2023-05-18T06:00:00[US/Central]",
       "location": {
         "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
         "type": "asset--land"
@@ -48,7 +48,7 @@
       "id": "58243c37-390b-4e0b-896f-61ce11ea25b7",
       "type": "log--activity",
       "name": "Cultivation: Home Corn",
-      "date": "2023-05-20T04:00:00.000Z",
+      "date": "2023-05-20T06:00:00[US/Central]",
       "location": {
         "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
         "type": "asset--land"
@@ -67,7 +67,7 @@
       "id": "3eecd225-ce32-49c8-8b0b-0b199e35f64e",
       "type": "log--seeding",
       "name": "Plant: Home Corn",
-      "date": "2023-05-20T04:00:00.000Z",
+      "date": "2023-05-20T06:00:00[US/Central]",
       "location": {
         "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
         "type": "asset--land"
@@ -86,7 +86,7 @@
       "id": "6561daeb-ced1-4e36-a5b5-f172191c94b4",
       "type": "log--activity",
       "name": "Cultivation: Home Corn",
-      "date": "2023-05-23T04:00:00.000Z",
+      "date": "2023-05-23T06:00:00[US/Central]",
       "location": {
         "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
         "type": "asset--land"
@@ -105,7 +105,7 @@
       "id": "7ac14656-1ddc-4a7b-9808-d32c8d179486",
       "type": "log--activity",
       "name": "Rotary Hoe: Home Corn",
-      "date": "2023-05-30T04:00:00.000Z",
+      "date": "2023-05-30T06:00:00[US/Central]",
       "location": {
         "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
         "type": "asset--land"
@@ -124,7 +124,7 @@
       "id": "71f22981-b2af-4281-bec9-00b00fa04ebe",
       "type": "log--activity",
       "name": "Cultivation: Home Corn",
-      "date": "2023-06-07T04:00:00.000Z",
+      "date": "2023-06-07T06:00:00[US/Central]",
       "location": {
         "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
         "type": "asset--land"
@@ -143,7 +143,7 @@
       "id": "e3896ad5-9913-4633-9da5-7a4118a662c2",
       "type": "log--activity",
       "name": "Cultivation: Home Corn",
-      "date": "2023-06-22T04:00:00.000Z",
+      "date": "2023-06-22T06:00:00[US/Central]",
       "location": {
         "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
         "type": "asset--land"
@@ -162,7 +162,7 @@
       "id": "21a86f02-802e-4428-8b1b-0662e5245718",
       "type": "log--harvest",
       "name": "Harvest: Home Corn",
-      "date": "2023-10-02T04:00:00.000Z",
+      "date": "2023-10-02T06:00:00[US/Central]",
       "location": {
         "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
         "type": "asset--land"
@@ -181,7 +181,7 @@
       "id": "3eccca48-a92d-4936-88cd-4733c14f2cb2",
       "type": "log--harvest",
       "name": "Harvest: Home Corn",
-      "date": "2023-10-03T04:00:00.000Z",
+      "date": "2023-10-03T06:00:00[US/Central]",
       "location": {
         "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
         "type": "asset--land"
@@ -200,7 +200,7 @@
       "id": "feb7c4e0-98eb-4d91-b1ba-125f9c6627f4",
       "type": "log--harvest",
       "name": "Harvest: Home Corn",
-      "date": "2023-10-04T04:00:00.000Z",
+      "date": "2023-10-04T06:00:00[US/Central]",
       "location": {
         "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
         "type": "asset--land"
@@ -219,7 +219,7 @@
       "id": "e51ca83f-9b04-4c79-ad43-c42264c7910a",
       "type": "log--harvest",
       "name": "Harvest: Home Corn",
-      "date": "2023-10-05T04:00:00.000Z",
+      "date": "2023-10-05T06:00:00[US/Central]",
       "location": {
         "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
         "type": "asset--land"
@@ -238,7 +238,7 @@
       "id": "0848dcb0-1530-4edf-989a-4d91f28b13ea",
       "type": "log--activity",
       "name": "Tillage: Johnson Corn",
-      "date": "2023-05-06T04:00:00.000Z",
+      "date": "2023-05-06T06:00:00[US/Central]",
       "location": {
         "id": "2ea23b15-f496-4b20-b664-0facc101714b",
         "type": "asset--land"
@@ -257,7 +257,7 @@
       "id": "303d6062-a25c-4b99-814c-515795ab0889",
       "type": "log--activity",
       "name": "Tillage: Johnson Corn",
-      "date": "2023-05-19T04:00:00.000Z",
+      "date": "2023-05-19T06:00:00[US/Central]",
       "location": {
         "id": "2ea23b15-f496-4b20-b664-0facc101714b",
         "type": "asset--land"
@@ -276,7 +276,7 @@
       "id": "aad084a6-1bb4-4c41-b596-293e100d5502",
       "type": "log--seeding",
       "name": "Plant: Johnson Corn",
-      "date": "2023-05-20T04:00:00.000Z",
+      "date": "2023-05-20T06:00:00[US/Central]",
       "location": {
         "id": "2ea23b15-f496-4b20-b664-0facc101714b",
         "type": "asset--land"
@@ -295,7 +295,7 @@
       "id": "a9ab8903-ddfd-49cf-a519-a2cb59c7cd3e",
       "type": "log--activity",
       "name": "Cultivation: Johnson Corn",
-      "date": "2023-05-23T04:00:00.000Z",
+      "date": "2023-05-23T06:00:00[US/Central]",
       "location": {
         "id": "2ea23b15-f496-4b20-b664-0facc101714b",
         "type": "asset--land"
@@ -314,7 +314,7 @@
       "id": "9733eec1-eabb-4c24-a059-155cd4766ff4",
       "type": "log--activity",
       "name": "Rotary Hoe: Johnson Corn",
-      "date": "2023-05-30T04:00:00.000Z",
+      "date": "2023-05-30T06:00:00[US/Central]",
       "location": {
         "id": "2ea23b15-f496-4b20-b664-0facc101714b",
         "type": "asset--land"
@@ -333,7 +333,7 @@
       "id": "4785c965-9a68-4b3c-a045-4a493b5601fa",
       "type": "log--activity",
       "name": "Cultivation: Johnson Corn",
-      "date": "2023-06-07T04:00:00.000Z",
+      "date": "2023-06-07T06:00:00[US/Central]",
       "location": {
         "id": "2ea23b15-f496-4b20-b664-0facc101714b",
         "type": "asset--land"
@@ -352,7 +352,7 @@
       "id": "d40947d6-905b-4bec-ad96-e697042bceb7",
       "type": "log--activity",
       "name": "Cultivation: Johnson Corn",
-      "date": "2023-06-22T04:00:00.000Z",
+      "date": "2023-06-22T06:00:00[US/Central]",
       "location": {
         "id": "2ea23b15-f496-4b20-b664-0facc101714b",
         "type": "asset--land"
@@ -371,7 +371,7 @@
       "id": "5a79526a-3912-4354-ab5e-2aa405dedff7",
       "type": "log--harvest",
       "name": "Harvest: Johnson Corn",
-      "date": "2023-10-05T04:00:00.000Z",
+      "date": "2023-10-05T06:00:00[US/Central]",
       "location": {
         "id": "2ea23b15-f496-4b20-b664-0facc101714b",
         "type": "asset--land"
@@ -390,7 +390,7 @@
       "id": "8bb55d53-f0f3-4a93-b6d1-f2477a0f5f00",
       "type": "log--harvest",
       "name": "Harvest: Johnson Corn",
-      "date": "2023-10-06T04:00:00.000Z",
+      "date": "2023-10-06T06:00:00[US/Central]",
       "location": {
         "id": "2ea23b15-f496-4b20-b664-0facc101714b",
         "type": "asset--land"
@@ -409,7 +409,7 @@
       "id": "2914ac08-255e-4e25-b439-47aa49f13bcc",
       "type": "log--harvest",
       "name": "Harvest: Johnson Corn",
-      "date": "2023-10-07T04:00:00.000Z",
+      "date": "2023-10-07T06:00:00[US/Central]",
       "location": {
         "id": "2ea23b15-f496-4b20-b664-0facc101714b",
         "type": "asset--land"
@@ -428,7 +428,7 @@
       "id": "58cf9b1c-7a68-4a5d-beef-3b822619d11f",
       "type": "log--activity",
       "name": "Tillage: Lake Corn",
-      "date": "2023-05-07T04:00:00.000Z",
+      "date": "2023-05-07T06:00:00[US/Central]",
       "location": {
         "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
         "type": "asset--land"
@@ -447,7 +447,7 @@
       "id": "0cf77a3c-4244-4b6c-a1ac-1f973e0577d5",
       "type": "log--activity",
       "name": "Tillage: Lake Corn",
-      "date": "2023-05-21T04:00:00.000Z",
+      "date": "2023-05-21T06:00:00[US/Central]",
       "location": {
         "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
         "type": "asset--land"
@@ -466,7 +466,7 @@
       "id": "8914aec6-5a02-4129-847f-1969facb1bcb",
       "type": "log--seeding",
       "name": "Plant: Lake Corn",
-      "date": "2023-05-22T04:00:00.000Z",
+      "date": "2023-05-22T06:00:00[US/Central]",
       "location": {
         "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
         "type": "asset--land"
@@ -485,7 +485,7 @@
       "id": "8fa61ea2-08b2-4827-b626-35c953756271",
       "type": "log--activity",
       "name": "Cultivation: Lake Corn",
-      "date": "2023-05-25T04:00:00.000Z",
+      "date": "2023-05-25T06:00:00[US/Central]",
       "location": {
         "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
         "type": "asset--land"
@@ -504,7 +504,7 @@
       "id": "43f7e0d7-4dae-4bd3-9d39-9835cbfe6e8b",
       "type": "log--activity",
       "name": "Rotary Hoe: Lake Corn",
-      "date": "2023-05-30T04:00:00.000Z",
+      "date": "2023-05-30T06:00:00[US/Central]",
       "location": {
         "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
         "type": "asset--land"
@@ -523,7 +523,7 @@
       "id": "878634d4-066b-4dc4-a028-7dc8c5d48206",
       "type": "log--activity",
       "name": "Cultivation: Lake Corn",
-      "date": "2023-06-09T04:00:00.000Z",
+      "date": "2023-06-09T06:00:00[US/Central]",
       "location": {
         "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
         "type": "asset--land"
@@ -542,7 +542,7 @@
       "id": "c0436ad9-7861-4709-8b7a-673eec431af9",
       "type": "log--activity",
       "name": "Cultivation: Lake Corn",
-      "date": "2023-06-13T04:00:00.000Z",
+      "date": "2023-06-13T06:00:00[US/Central]",
       "location": {
         "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
         "type": "asset--land"
@@ -561,7 +561,7 @@
       "id": "00fea804-94f2-4186-b70a-4356782ba73d",
       "type": "log--activity",
       "name": "Cultivation: Lake Corn",
-      "date": "2023-06-21T04:00:00.000Z",
+      "date": "2023-06-21T06:00:00[US/Central]",
       "location": {
         "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
         "type": "asset--land"
@@ -580,7 +580,7 @@
       "id": "fe3a15be-5466-4224-99ec-3a89f1f3f4a0",
       "type": "log--harvest",
       "name": "Harvest: Lake Corn",
-      "date": "2023-10-28T04:00:00.000Z",
+      "date": "2023-10-28T06:00:00[US/Central]",
       "location": {
         "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
         "type": "asset--land"
@@ -599,7 +599,7 @@
       "id": "d90c2a31-25b9-4a0e-976a-44397298a21a",
       "type": "log--activity",
       "name": "Tillage: Cotter Corn",
-      "date": "2023-05-07T04:00:00.000Z",
+      "date": "2023-05-07T06:00:00[US/Central]",
       "location": {
         "id": "ede2c654-0d0f-4fa8-9d12-51c37068240b",
         "type": "asset--land"
@@ -618,7 +618,7 @@
       "id": "0eaa41bf-c177-4308-8e92-9cd1703c7b1b",
       "type": "log--activity",
       "name": "Tillage: Cotter Corn",
-      "date": "2023-05-21T04:00:00.000Z",
+      "date": "2023-05-21T06:00:00[US/Central]",
       "location": {
         "id": "ede2c654-0d0f-4fa8-9d12-51c37068240b",
         "type": "asset--land"
@@ -637,7 +637,7 @@
       "id": "09389fdf-a1df-4343-97d7-a455d233f4d8",
       "type": "log--seeding",
       "name": "Plant: Cotter Corn",
-      "date": "2023-05-22T04:00:00.000Z",
+      "date": "2023-05-22T06:00:00[US/Central]",
       "location": {
         "id": "ede2c654-0d0f-4fa8-9d12-51c37068240b",
         "type": "asset--land"
@@ -656,7 +656,7 @@
       "id": "e6b6ab3f-11b8-407a-9bab-6f0bb226262f",
       "type": "log--activity",
       "name": "Cultivation: Cotter Corn",
-      "date": "2023-05-25T04:00:00.000Z",
+      "date": "2023-05-25T06:00:00[US/Central]",
       "location": {
         "id": "ede2c654-0d0f-4fa8-9d12-51c37068240b",
         "type": "asset--land"
@@ -675,7 +675,7 @@
       "id": "257fb2c5-76fc-4401-bc51-6b3cae6fb3fe",
       "type": "log--activity",
       "name": "Rotary Hoe: Cotter Corn",
-      "date": "2023-05-30T04:00:00.000Z",
+      "date": "2023-05-30T06:00:00[US/Central]",
       "location": {
         "id": "ede2c654-0d0f-4fa8-9d12-51c37068240b",
         "type": "asset--land"
@@ -694,7 +694,7 @@
       "id": "80e602f5-969e-42d5-b65c-bcb19c571c42",
       "type": "log--activity",
       "name": "Cultivation: Cotter Corn",
-      "date": "2023-06-09T04:00:00.000Z",
+      "date": "2023-06-09T06:00:00[US/Central]",
       "location": {
         "id": "ede2c654-0d0f-4fa8-9d12-51c37068240b",
         "type": "asset--land"
@@ -713,7 +713,7 @@
       "id": "402ef72e-91c0-4f36-908c-4344cf70df7b",
       "type": "log--activity",
       "name": "Cultivation: Cotter Corn",
-      "date": "2023-06-10T04:00:00.000Z",
+      "date": "2023-06-10T06:00:00[US/Central]",
       "location": {
         "id": "ede2c654-0d0f-4fa8-9d12-51c37068240b",
         "type": "asset--land"
@@ -732,7 +732,7 @@
       "id": "6e34ca76-aa52-422c-a8e9-1d1e4950e47b",
       "type": "log--activity",
       "name": "Cultivation: Cotter Corn",
-      "date": "2023-06-21T04:00:00.000Z",
+      "date": "2023-06-21T06:00:00[US/Central]",
       "location": {
         "id": "ede2c654-0d0f-4fa8-9d12-51c37068240b",
         "type": "asset--land"
@@ -751,7 +751,7 @@
       "id": "daa84835-1231-4ed8-b9df-0794f5834ff7",
       "type": "log--harvest",
       "name": "Harvest: Cotter Corn",
-      "date": "2023-11-01T04:00:00.000Z",
+      "date": "2023-11-01T06:00:00[US/Central]",
       "location": {
         "id": "ede2c654-0d0f-4fa8-9d12-51c37068240b",
         "type": "asset--land"
@@ -770,7 +770,7 @@
       "id": "ef3ada33-ee0d-4cdd-8431-7d84021b68f6",
       "type": "log--activity",
       "name": "Tillage: Yak Corn",
-      "date": "2023-05-08T04:00:00.000Z",
+      "date": "2023-05-08T06:00:00[US/Central]",
       "location": {
         "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
         "type": "asset--land"
@@ -789,7 +789,7 @@
       "id": "90168a51-36fa-4300-bfae-429f25e94426",
       "type": "log--activity",
       "name": "Tillage: Yak Corn",
-      "date": "2023-05-20T04:00:00.000Z",
+      "date": "2023-05-20T06:00:00[US/Central]",
       "location": {
         "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
         "type": "asset--land"
@@ -808,7 +808,7 @@
       "id": "f3b6758c-a9ca-49ba-aa71-14b7f6f8308f",
       "type": "log--seeding",
       "name": "Plant: Yak Corn",
-      "date": "2023-05-21T04:00:00.000Z",
+      "date": "2023-05-21T06:00:00[US/Central]",
       "location": {
         "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
         "type": "asset--land"
@@ -827,7 +827,7 @@
       "id": "b4a2cb6c-e75d-43fe-9480-820083818377",
       "type": "log--activity",
       "name": "Cultivation: Yak Corn",
-      "date": "2023-05-24T04:00:00.000Z",
+      "date": "2023-05-24T06:00:00[US/Central]",
       "location": {
         "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
         "type": "asset--land"
@@ -846,7 +846,7 @@
       "id": "e75a4d80-8d57-4f0c-bb19-350c792c8786",
       "type": "log--activity",
       "name": "Rotary Hoe: Yak Corn",
-      "date": "2023-05-31T04:00:00.000Z",
+      "date": "2023-05-31T06:00:00[US/Central]",
       "location": {
         "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
         "type": "asset--land"
@@ -865,7 +865,7 @@
       "id": "2a385431-2438-4c76-a353-414c8e049998",
       "type": "log--activity",
       "name": "Cultivation: Yak Corn",
-      "date": "2023-06-08T04:00:00.000Z",
+      "date": "2023-06-08T06:00:00[US/Central]",
       "location": {
         "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
         "type": "asset--land"
@@ -884,7 +884,7 @@
       "id": "d516b221-c1a4-4a2e-bd90-8b9879176c76",
       "type": "log--activity",
       "name": "Cultivation: Yak Corn",
-      "date": "2023-06-23T04:00:00.000Z",
+      "date": "2023-06-23T06:00:00[US/Central]",
       "location": {
         "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
         "type": "asset--land"
@@ -903,7 +903,7 @@
       "id": "57e4640e-d7f0-44fe-8ac6-a5574fba4b26",
       "type": "log--harvest",
       "name": "Harvest: Yak Corn",
-      "date": "2023-11-11T05:00:00.000Z",
+      "date": "2023-11-11T06:00:00[US/Central]",
       "location": {
         "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
         "type": "asset--land"
@@ -922,7 +922,7 @@
       "id": "0b1c6b6a-6858-481c-a2df-c11e4cc22726",
       "type": "log--harvest",
       "name": "Harvest: Yak Corn",
-      "date": "2023-11-12T05:00:00.000Z",
+      "date": "2023-11-12T06:00:00[US/Central]",
       "location": {
         "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
         "type": "asset--land"
@@ -941,7 +941,7 @@
       "id": "06965cc6-b585-45da-99bd-7c808efe88d4",
       "type": "log--harvest",
       "name": "Harvest: Yak Corn",
-      "date": "2023-11-13T05:00:00.000Z",
+      "date": "2023-11-13T06:00:00[US/Central]",
       "location": {
         "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
         "type": "asset--land"
@@ -960,7 +960,7 @@
       "id": "d746744a-b84d-4418-8594-b9cf1031ec76",
       "type": "log--harvest",
       "name": "Harvest: Yak Corn",
-      "date": "2023-11-14T05:00:00.000Z",
+      "date": "2023-11-14T06:00:00[US/Central]",
       "location": {
         "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
         "type": "asset--land"
@@ -979,7 +979,7 @@
       "id": "9cf7c510-2a90-4eca-b0a8-eae1740d1033",
       "type": "log--activity",
       "name": "Tillage: Boonie Corn",
-      "date": "2023-05-09T04:00:00.000Z",
+      "date": "2023-05-09T06:00:00[US/Central]",
       "location": {
         "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
         "type": "asset--land"
@@ -998,7 +998,7 @@
       "id": "ae1e907c-38e4-4b61-acc6-02c221ae3d03",
       "type": "log--activity",
       "name": "Tillage: Boonie Corn",
-      "date": "2023-05-23T04:00:00.000Z",
+      "date": "2023-05-23T06:00:00[US/Central]",
       "location": {
         "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
         "type": "asset--land"
@@ -1017,7 +1017,7 @@
       "id": "6bc03f79-dece-49d1-b21e-82c150f200c4",
       "type": "log--activity",
       "name": "Cultivation: Boonie Corn",
-      "date": "2023-05-23T04:00:00.000Z",
+      "date": "2023-05-23T06:00:00[US/Central]",
       "location": {
         "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
         "type": "asset--land"
@@ -1036,7 +1036,7 @@
       "id": "e2d61bc6-bf16-457a-896f-6982293510c3",
       "type": "log--seeding",
       "name": "Plant: Boonie Corn",
-      "date": "2023-05-24T04:00:00.000Z",
+      "date": "2023-05-24T06:00:00[US/Central]",
       "location": {
         "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
         "type": "asset--land"
@@ -1055,7 +1055,7 @@
       "id": "2fed8c3f-9812-4299-a2f2-09f133bc816b",
       "type": "log--activity",
       "name": "Rotary Hoe: Boonie Corn",
-      "date": "2023-06-06T04:00:00.000Z",
+      "date": "2023-06-06T06:00:00[US/Central]",
       "location": {
         "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
         "type": "asset--land"
@@ -1074,7 +1074,7 @@
       "id": "6b364749-24c8-4d74-b0be-b154961baeae",
       "type": "log--activity",
       "name": "Cultivation: Boonie Corn",
-      "date": "2023-06-09T04:00:00.000Z",
+      "date": "2023-06-09T06:00:00[US/Central]",
       "location": {
         "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
         "type": "asset--land"
@@ -1093,7 +1093,7 @@
       "id": "0e0b9815-7ad0-4736-8e5b-77d98e6532f9",
       "type": "log--activity",
       "name": "Cultivation: Boonie Corn",
-      "date": "2023-06-19T04:00:00.000Z",
+      "date": "2023-06-19T06:00:00[US/Central]",
       "location": {
         "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
         "type": "asset--land"
@@ -1112,7 +1112,7 @@
       "id": "41da212e-eaf2-41a0-a35f-70c61081dcc6",
       "type": "log--activity",
       "name": "Cultivation: Boonie Corn",
-      "date": "2023-06-27T04:00:00.000Z",
+      "date": "2023-06-27T06:00:00[US/Central]",
       "location": {
         "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
         "type": "asset--land"
@@ -1131,7 +1131,7 @@
       "id": "01dbd866-d58f-4d87-b3cf-5a1bc073e961",
       "type": "log--harvest",
       "name": "Harvest: Boonie Corn",
-      "date": "2023-11-06T05:00:00.000Z",
+      "date": "2023-11-06T06:00:00[US/Central]",
       "location": {
         "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
         "type": "asset--land"
@@ -1150,7 +1150,7 @@
       "id": "836249f6-a76c-44ed-b3e5-7e18d26bf4a0",
       "type": "log--harvest",
       "name": "Harvest: Boonie Corn",
-      "date": "2023-11-07T05:00:00.000Z",
+      "date": "2023-11-07T06:00:00[US/Central]",
       "location": {
         "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
         "type": "asset--land"
@@ -1169,7 +1169,7 @@
       "id": "b68d6ce6-fdf2-47d1-b692-5c2088c0fafd",
       "type": "log--harvest",
       "name": "Harvest: Boonie Corn",
-      "date": "2023-11-08T05:00:00.000Z",
+      "date": "2023-11-08T06:00:00[US/Central]",
       "location": {
         "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
         "type": "asset--land"
@@ -1188,7 +1188,7 @@
       "id": "58607af1-f47d-4931-aa13-5440cf883821",
       "type": "log--activity",
       "name": "Tillage: Lilly 1 Soy",
-      "date": "2023-05-10T04:00:00.000Z",
+      "date": "2023-05-10T06:00:00[US/Central]",
       "location": {
         "id": "9f0b1320-9485-4617-9950-920518a54ed6",
         "type": "asset--land"
@@ -1207,7 +1207,7 @@
       "id": "25c97d5b-3ba0-4810-8ee2-6da8689f7fea",
       "type": "log--activity",
       "name": "Tillage: Lilly 1 Soy",
-      "date": "2023-05-25T04:00:00.000Z",
+      "date": "2023-05-25T06:00:00[US/Central]",
       "location": {
         "id": "9f0b1320-9485-4617-9950-920518a54ed6",
         "type": "asset--land"
@@ -1226,7 +1226,7 @@
       "id": "ec8489ee-14e1-4115-b173-5f34a42cf05d",
       "type": "log--seeding",
       "name": "Plant: Lilly 1 Soy",
-      "date": "2023-05-25T04:00:00.000Z",
+      "date": "2023-05-25T06:00:00[US/Central]",
       "location": {
         "id": "9f0b1320-9485-4617-9950-920518a54ed6",
         "type": "asset--land"
@@ -1245,7 +1245,7 @@
       "id": "f6ca6835-4a7d-477c-a703-535d6561a86a",
       "type": "log--activity",
       "name": "Rotary Hoe: Lilly 1 Soy",
-      "date": "2023-06-05T04:00:00.000Z",
+      "date": "2023-06-05T06:00:00[US/Central]",
       "location": {
         "id": "9f0b1320-9485-4617-9950-920518a54ed6",
         "type": "asset--land"
@@ -1264,7 +1264,7 @@
       "id": "0d09aff0-5585-4d28-a263-9f25fbac4131",
       "type": "log--activity",
       "name": "Rotary Hoe: Lilly 1 Soy",
-      "date": "2023-06-10T04:00:00.000Z",
+      "date": "2023-06-10T06:00:00[US/Central]",
       "location": {
         "id": "9f0b1320-9485-4617-9950-920518a54ed6",
         "type": "asset--land"
@@ -1283,7 +1283,7 @@
       "id": "d6260400-5c34-40b9-9038-2d34de6a28b1",
       "type": "log--activity",
       "name": "Rotary Hoe: Lilly 1 Soy",
-      "date": "2023-06-12T04:00:00.000Z",
+      "date": "2023-06-12T06:00:00[US/Central]",
       "location": {
         "id": "9f0b1320-9485-4617-9950-920518a54ed6",
         "type": "asset--land"
@@ -1302,7 +1302,7 @@
       "id": "1484b79e-9b70-4fdf-83ab-272a5774eb9d",
       "type": "log--activity",
       "name": "Tine Weed: Lilly 1 Soy",
-      "date": "2023-06-22T04:00:00.000Z",
+      "date": "2023-06-22T06:00:00[US/Central]",
       "location": {
         "id": "9f0b1320-9485-4617-9950-920518a54ed6",
         "type": "asset--land"
@@ -1321,7 +1321,7 @@
       "id": "e3ff36b0-6552-400f-8641-42271dc085bb",
       "type": "log--activity",
       "name": "Cultivation: Lilly 1 Soy",
-      "date": "2023-06-28T04:00:00.000Z",
+      "date": "2023-06-28T06:00:00[US/Central]",
       "location": {
         "id": "9f0b1320-9485-4617-9950-920518a54ed6",
         "type": "asset--land"
@@ -1340,7 +1340,7 @@
       "id": "1c96dea8-b9db-4725-9cdd-e61db3097356",
       "type": "log--activity",
       "name": "Zap: Lilly 1 Soy",
-      "date": "2023-07-17T04:00:00.000Z",
+      "date": "2023-07-17T06:00:00[US/Central]",
       "location": {
         "id": "9f0b1320-9485-4617-9950-920518a54ed6",
         "type": "asset--land"
@@ -1359,7 +1359,7 @@
       "id": "36eca3f4-6dbb-4f86-8d43-38fc6f76fa55",
       "type": "log--activity",
       "name": "Cultivation: Lilly 1 Soy",
-      "date": "2023-07-24T04:00:00.000Z",
+      "date": "2023-07-24T06:00:00[US/Central]",
       "location": {
         "id": "9f0b1320-9485-4617-9950-920518a54ed6",
         "type": "asset--land"
@@ -1378,7 +1378,7 @@
       "id": "a644e120-d37d-43cf-884e-8019b3c88a72",
       "type": "log--harvest",
       "name": "Harvest: Lilly 1 Soy",
-      "date": "2023-10-22T04:00:00.000Z",
+      "date": "2023-10-22T06:00:00[US/Central]",
       "location": {
         "id": "9f0b1320-9485-4617-9950-920518a54ed6",
         "type": "asset--land"
@@ -1397,7 +1397,7 @@
       "id": "0c4a45bf-5856-4263-acc2-51ff87478fe2",
       "type": "log--harvest",
       "name": "Harvest: Lilly 1 Soy",
-      "date": "2023-10-23T04:00:00.000Z",
+      "date": "2023-10-23T06:00:00[US/Central]",
       "location": {
         "id": "9f0b1320-9485-4617-9950-920518a54ed6",
         "type": "asset--land"
@@ -1416,7 +1416,7 @@
       "id": "b16909ef-9488-497e-a090-202973fdf1d2",
       "type": "log--activity",
       "name": "Tillage: Lilly 2 Soy",
-      "date": "2023-05-10T04:00:00.000Z",
+      "date": "2023-05-10T06:00:00[US/Central]",
       "location": {
         "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
         "type": "asset--land"
@@ -1435,7 +1435,7 @@
       "id": "b3ffdf8f-e977-4386-b26a-cfb39119a5d2",
       "type": "log--activity",
       "name": "Tillage: Lilly 2 Soy",
-      "date": "2023-05-25T04:00:00.000Z",
+      "date": "2023-05-25T06:00:00[US/Central]",
       "location": {
         "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
         "type": "asset--land"
@@ -1454,7 +1454,7 @@
       "id": "825b19e8-b1cf-4eca-b08a-44c5b73edd15",
       "type": "log--seeding",
       "name": "Plant: Lilly 2 Soy",
-      "date": "2023-05-26T04:00:00.000Z",
+      "date": "2023-05-26T06:00:00[US/Central]",
       "location": {
         "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
         "type": "asset--land"
@@ -1473,7 +1473,7 @@
       "id": "38e00ee5-1104-45c8-8ea1-2a0b50b6074b",
       "type": "log--activity",
       "name": "Rotary Hoe: Lilly 2 Soy",
-      "date": "2023-06-05T04:00:00.000Z",
+      "date": "2023-06-05T06:00:00[US/Central]",
       "location": {
         "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
         "type": "asset--land"
@@ -1492,7 +1492,7 @@
       "id": "197466d9-cb6c-4a3e-9028-8101108b16db",
       "type": "log--activity",
       "name": "Rotary Hoe: Lilly 2 Soy",
-      "date": "2023-06-10T04:00:00.000Z",
+      "date": "2023-06-10T06:00:00[US/Central]",
       "location": {
         "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
         "type": "asset--land"
@@ -1511,7 +1511,7 @@
       "id": "41f20914-64dd-4dfd-a671-cb398ab1c717",
       "type": "log--activity",
       "name": "Rotary Hoe: Lilly 2 Soy",
-      "date": "2023-06-12T04:00:00.000Z",
+      "date": "2023-06-12T06:00:00[US/Central]",
       "location": {
         "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
         "type": "asset--land"
@@ -1530,7 +1530,7 @@
       "id": "06fcb5bf-5153-4235-b604-2d154f012a79",
       "type": "log--activity",
       "name": "Tine Weed: Lilly 2 Soy",
-      "date": "2023-06-21T04:00:00.000Z",
+      "date": "2023-06-21T06:00:00[US/Central]",
       "location": {
         "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
         "type": "asset--land"
@@ -1549,7 +1549,7 @@
       "id": "f6552042-44ea-42f6-b4af-0e83c2bd163f",
       "type": "log--activity",
       "name": "Cultivation: Lilly 2 Soy",
-      "date": "2023-06-27T04:00:00.000Z",
+      "date": "2023-06-27T06:00:00[US/Central]",
       "location": {
         "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
         "type": "asset--land"
@@ -1568,7 +1568,7 @@
       "id": "14c29df3-f5d2-4476-ae6f-5622311422c3",
       "type": "log--activity",
       "name": "Zap: Lilly 2 Soy",
-      "date": "2023-07-11T04:00:00.000Z",
+      "date": "2023-07-11T06:00:00[US/Central]",
       "location": {
         "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
         "type": "asset--land"
@@ -1587,7 +1587,7 @@
       "id": "1f96e009-a320-4464-bc2c-4806efab5531",
       "type": "log--activity",
       "name": "Cultivation: Lilly 2 Soy",
-      "date": "2023-07-21T04:00:00.000Z",
+      "date": "2023-07-21T06:00:00[US/Central]",
       "location": {
         "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
         "type": "asset--land"
@@ -1606,7 +1606,7 @@
       "id": "9a9392e1-5559-4436-a7ab-a29a7326a56c",
       "type": "log--activity",
       "name": "Zap: Lilly 2 Soy",
-      "date": "2023-08-22T04:00:00.000Z",
+      "date": "2023-08-22T06:00:00[US/Central]",
       "location": {
         "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
         "type": "asset--land"
@@ -1625,7 +1625,7 @@
       "id": "0a74f587-1d02-4c7e-88a8-a77b3b12d049",
       "type": "log--harvest",
       "name": "Harvest: Lilly 2 Soy",
-      "date": "2023-10-21T04:00:00.000Z",
+      "date": "2023-10-21T06:00:00[US/Central]",
       "location": {
         "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
         "type": "asset--land"
@@ -1644,7 +1644,7 @@
       "id": "46ffcbe8-7065-4ae4-bde4-dd9ec4b1dfdf",
       "type": "log--activity",
       "name": "Tillage: Lilly 3 Soy",
-      "date": "2023-05-17T04:00:00.000Z",
+      "date": "2023-05-17T06:00:00[US/Central]",
       "location": {
         "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
         "type": "asset--land"
@@ -1663,7 +1663,7 @@
       "id": "37f90675-0827-4d13-9b7d-b5b50a816392",
       "type": "log--activity",
       "name": "Tillage: Lilly 3 Soy",
-      "date": "2023-05-26T04:00:00.000Z",
+      "date": "2023-05-26T06:00:00[US/Central]",
       "location": {
         "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
         "type": "asset--land"
@@ -1682,7 +1682,7 @@
       "id": "aa22e977-b8fc-4ca1-bf7a-a8cc1db21ab8",
       "type": "log--seeding",
       "name": "Plant: Lilly 3 Soy",
-      "date": "2023-05-27T04:00:00.000Z",
+      "date": "2023-05-27T06:00:00[US/Central]",
       "location": {
         "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
         "type": "asset--land"
@@ -1701,7 +1701,7 @@
       "id": "147290cc-e750-4d35-98c0-2c2289f207e3",
       "type": "log--activity",
       "name": "Rotary Hoe: Lilly 3 Soy",
-      "date": "2023-06-06T04:00:00.000Z",
+      "date": "2023-06-06T06:00:00[US/Central]",
       "location": {
         "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
         "type": "asset--land"
@@ -1720,7 +1720,7 @@
       "id": "1eb56309-98d7-46f2-8095-069a26376b3e",
       "type": "log--activity",
       "name": "Rotary Hoe: Lilly 3 Soy",
-      "date": "2023-06-12T04:00:00.000Z",
+      "date": "2023-06-12T06:00:00[US/Central]",
       "location": {
         "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
         "type": "asset--land"
@@ -1739,7 +1739,7 @@
       "id": "071d63ff-f592-4cf9-b410-78fda740e75b",
       "type": "log--activity",
       "name": "Tine Weed: Lilly 3 Soy",
-      "date": "2023-06-14T04:00:00.000Z",
+      "date": "2023-06-14T06:00:00[US/Central]",
       "location": {
         "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
         "type": "asset--land"
@@ -1758,7 +1758,7 @@
       "id": "b1ccf6ba-0a47-4e9a-a1b9-d015f4e096c3",
       "type": "log--activity",
       "name": "Tine Weed: Lilly 3 Soy",
-      "date": "2023-06-20T04:00:00.000Z",
+      "date": "2023-06-20T06:00:00[US/Central]",
       "location": {
         "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
         "type": "asset--land"
@@ -1777,7 +1777,7 @@
       "id": "c0bf74d3-e6c9-4cdd-81c6-23558f688dfe",
       "type": "log--activity",
       "name": "Cultivation: Lilly 3 Soy",
-      "date": "2023-06-21T04:00:00.000Z",
+      "date": "2023-06-21T06:00:00[US/Central]",
       "location": {
         "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
         "type": "asset--land"
@@ -1796,7 +1796,7 @@
       "id": "9df93492-e021-4dff-a359-c71a1133e694",
       "type": "log--activity",
       "name": "Cultivation: Lilly 3 Soy",
-      "date": "2023-06-29T04:00:00.000Z",
+      "date": "2023-06-29T06:00:00[US/Central]",
       "location": {
         "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
         "type": "asset--land"
@@ -1815,7 +1815,7 @@
       "id": "734e5089-94b3-42ab-8ed7-406dc83a3764",
       "type": "log--activity",
       "name": "Zap: Lilly 3 Soy",
-      "date": "2023-07-15T04:00:00.000Z",
+      "date": "2023-07-15T06:00:00[US/Central]",
       "location": {
         "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
         "type": "asset--land"
@@ -1834,7 +1834,7 @@
       "id": "8f8f6f87-5139-46f5-bbe3-e05f7f6aed4b",
       "type": "log--activity",
       "name": "Cultivation: Lilly 3 Soy",
-      "date": "2023-07-20T04:00:00.000Z",
+      "date": "2023-07-20T06:00:00[US/Central]",
       "location": {
         "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
         "type": "asset--land"
@@ -1853,7 +1853,7 @@
       "id": "f73fc76b-af6e-4486-838a-48e311a4e1b3",
       "type": "log--activity",
       "name": "Zap: Lilly 3 Soy",
-      "date": "2023-08-21T04:00:00.000Z",
+      "date": "2023-08-21T06:00:00[US/Central]",
       "location": {
         "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
         "type": "asset--land"
@@ -1872,7 +1872,7 @@
       "id": "6db2cd37-9b13-4901-b78b-ac1adc3276c0",
       "type": "log--harvest",
       "name": "Harvest: Lilly 3 Soy",
-      "date": "2023-10-20T04:00:00.000Z",
+      "date": "2023-10-20T06:00:00[US/Central]",
       "location": {
         "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
         "type": "asset--land"
@@ -1891,7 +1891,7 @@
       "id": "bb4fa2cb-84af-4098-a8ba-484c12dbe54b",
       "type": "log--activity",
       "name": "Tillage: Stockholm Home Soy",
-      "date": "2023-05-17T04:00:00.000Z",
+      "date": "2023-05-17T06:00:00[US/Central]",
       "location": {
         "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
         "type": "asset--land"
@@ -1910,7 +1910,7 @@
       "id": "bfdfe421-5030-4645-b3f9-453b6c6baa5e",
       "type": "log--activity",
       "name": "Tillage: Stockholm Home Soy",
-      "date": "2023-05-29T04:00:00.000Z",
+      "date": "2023-05-29T06:00:00[US/Central]",
       "location": {
         "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
         "type": "asset--land"
@@ -1929,7 +1929,7 @@
       "id": "b14d68d9-eaf1-43e5-ae5b-75d39bf2adf5",
       "type": "log--seeding",
       "name": "Plant: Stockholm Home Soy",
-      "date": "2023-05-29T04:00:00.000Z",
+      "date": "2023-05-29T06:00:00[US/Central]",
       "location": {
         "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
         "type": "asset--land"
@@ -1948,7 +1948,7 @@
       "id": "d94f0cdb-46e9-447a-b03d-9af053a9080c",
       "type": "log--activity",
       "name": "Rotary Hoe: Stockholm Home Soy",
-      "date": "2023-06-05T04:00:00.000Z",
+      "date": "2023-06-05T06:00:00[US/Central]",
       "location": {
         "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
         "type": "asset--land"
@@ -1967,7 +1967,7 @@
       "id": "9633dab8-f81b-43cd-93f4-b62ca6d1fc9c",
       "type": "log--activity",
       "name": "Tine Weed: Stockholm Home Soy",
-      "date": "2023-06-13T04:00:00.000Z",
+      "date": "2023-06-13T06:00:00[US/Central]",
       "location": {
         "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
         "type": "asset--land"
@@ -1986,7 +1986,7 @@
       "id": "e6ff1083-e9df-4aa5-b84e-b62e8e7e1eeb",
       "type": "log--activity",
       "name": "Cultivation: Stockholm Home Soy",
-      "date": "2023-06-29T04:00:00.000Z",
+      "date": "2023-06-29T06:00:00[US/Central]",
       "location": {
         "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
         "type": "asset--land"
@@ -2005,7 +2005,7 @@
       "id": "7f3a9621-f291-4918-b884-baabdf96e94a",
       "type": "log--activity",
       "name": "Zap: Stockholm Home Soy",
-      "date": "2023-07-19T04:00:00.000Z",
+      "date": "2023-07-19T06:00:00[US/Central]",
       "location": {
         "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
         "type": "asset--land"
@@ -2024,7 +2024,7 @@
       "id": "f76a0f36-f564-4ec6-a1b6-196332b9a7fb",
       "type": "log--activity",
       "name": "Zap: Stockholm Home Soy",
-      "date": "2023-08-03T04:00:00.000Z",
+      "date": "2023-08-03T06:00:00[US/Central]",
       "location": {
         "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
         "type": "asset--land"
@@ -2043,7 +2043,7 @@
       "id": "ef782d74-e74c-4b3c-a308-1fab362dc369",
       "type": "log--harvest",
       "name": "Harvest: Stockholm Home Soy",
-      "date": "2023-10-08T04:00:00.000Z",
+      "date": "2023-10-08T06:00:00[US/Central]",
       "location": {
         "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
         "type": "asset--land"
@@ -2062,7 +2062,7 @@
       "id": "201051f0-6e9d-4aef-a18b-36a80394eae3",
       "type": "log--harvest",
       "name": "Harvest: Stockholm Home Soy",
-      "date": "2023-10-09T04:00:00.000Z",
+      "date": "2023-10-09T06:00:00[US/Central]",
       "location": {
         "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
         "type": "asset--land"
@@ -2081,7 +2081,7 @@
       "id": "d670d93d-f2af-4d08-af2a-d7770b7e8a10",
       "type": "log--activity",
       "name": "Tillage: Stockholm East Soy",
-      "date": "2023-05-21T04:00:00.000Z",
+      "date": "2023-05-21T06:00:00[US/Central]",
       "location": {
         "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
         "type": "asset--land"
@@ -2100,7 +2100,7 @@
       "id": "5f234786-ce25-47e7-abe2-f58f0f32ae78",
       "type": "log--activity",
       "name": "Tillage: Stockholm East Soy",
-      "date": "2023-05-30T04:00:00.000Z",
+      "date": "2023-05-30T06:00:00[US/Central]",
       "location": {
         "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
         "type": "asset--land"
@@ -2119,7 +2119,7 @@
       "id": "c574049f-5d57-4ff0-b932-7feadea1502a",
       "type": "log--seeding",
       "name": "Plant: Stockholm East Soy",
-      "date": "2023-05-30T04:00:00.000Z",
+      "date": "2023-05-30T06:00:00[US/Central]",
       "location": {
         "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
         "type": "asset--land"
@@ -2138,7 +2138,7 @@
       "id": "4e9445e5-2b87-4032-92eb-5e820fe43a62",
       "type": "log--activity",
       "name": "Rotary Hoe: Stockholm East Soy",
-      "date": "2023-06-07T04:00:00.000Z",
+      "date": "2023-06-07T06:00:00[US/Central]",
       "location": {
         "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
         "type": "asset--land"
@@ -2157,7 +2157,7 @@
       "id": "9a9e091f-5b72-4633-95dd-35c40b37e14e",
       "type": "log--activity",
       "name": "Tine Weed: Stockholm East Soy",
-      "date": "2023-06-14T04:00:00.000Z",
+      "date": "2023-06-14T06:00:00[US/Central]",
       "location": {
         "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
         "type": "asset--land"
@@ -2176,7 +2176,7 @@
       "id": "bbed6899-5874-42de-8538-57282d987c8c",
       "type": "log--activity",
       "name": "Tine Weed: Stockholm East Soy",
-      "date": "2023-06-19T04:00:00.000Z",
+      "date": "2023-06-19T06:00:00[US/Central]",
       "location": {
         "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
         "type": "asset--land"
@@ -2195,7 +2195,7 @@
       "id": "b590b6ab-940d-4020-b9b4-c59c5462efbe",
       "type": "log--activity",
       "name": "Cultivation: Stockholm East Soy",
-      "date": "2023-06-30T04:00:00.000Z",
+      "date": "2023-06-30T06:00:00[US/Central]",
       "location": {
         "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
         "type": "asset--land"
@@ -2214,7 +2214,7 @@
       "id": "e527f923-7a1b-470e-b4aa-89d08ab7396b",
       "type": "log--activity",
       "name": "Cultivation: Stockholm East Soy",
-      "date": "2023-07-12T04:00:00.000Z",
+      "date": "2023-07-12T06:00:00[US/Central]",
       "location": {
         "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
         "type": "asset--land"
@@ -2233,7 +2233,7 @@
       "id": "bbf1d6cd-6f54-4f5a-91ec-ea32c609364f",
       "type": "log--activity",
       "name": "Zap: Stockholm East Soy",
-      "date": "2023-07-20T04:00:00.000Z",
+      "date": "2023-07-20T06:00:00[US/Central]",
       "location": {
         "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
         "type": "asset--land"
@@ -2252,7 +2252,7 @@
       "id": "8053e5f1-488e-48e0-8ad4-3d16550988bd",
       "type": "log--activity",
       "name": "Zap: Stockholm East Soy",
-      "date": "2023-08-04T04:00:00.000Z",
+      "date": "2023-08-04T06:00:00[US/Central]",
       "location": {
         "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
         "type": "asset--land"
@@ -2271,7 +2271,7 @@
       "id": "14436f7d-ec57-4d93-9c3e-6a3e02b25537",
       "type": "log--harvest",
       "name": "Harvest: Stockholm East Soy",
-      "date": "2023-10-10T04:00:00.000Z",
+      "date": "2023-10-10T06:00:00[US/Central]",
       "location": {
         "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
         "type": "asset--land"
@@ -2290,7 +2290,7 @@
       "id": "e3842221-3a46-4a30-a9cd-14bae7f868d0",
       "type": "log--activity",
       "name": "Tillage: Carlson Soy",
-      "date": "2023-05-22T04:00:00.000Z",
+      "date": "2023-05-22T06:00:00[US/Central]",
       "location": {
         "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
         "type": "asset--land"
@@ -2309,7 +2309,7 @@
       "id": "0a6fd829-1b6f-4db9-a012-cc40a0e0fea1",
       "type": "log--activity",
       "name": "Tillage: Carlson Soy",
-      "date": "2023-05-31T04:00:00.000Z",
+      "date": "2023-05-31T06:00:00[US/Central]",
       "location": {
         "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
         "type": "asset--land"
@@ -2328,7 +2328,7 @@
       "id": "e7948dbb-6ecb-4f62-84a2-11a217c95e34",
       "type": "log--seeding",
       "name": "Plant: Carlson Soy",
-      "date": "2023-05-31T04:00:00.000Z",
+      "date": "2023-05-31T06:00:00[US/Central]",
       "location": {
         "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
         "type": "asset--land"
@@ -2347,7 +2347,7 @@
       "id": "e6022248-f245-4728-b52d-141d86b8d024",
       "type": "log--activity",
       "name": "Rotary Hoe: Carlson Soy",
-      "date": "2023-06-08T04:00:00.000Z",
+      "date": "2023-06-08T06:00:00[US/Central]",
       "location": {
         "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
         "type": "asset--land"
@@ -2366,7 +2366,7 @@
       "id": "85d594f8-021e-44ed-8a9d-e6b4d1338539",
       "type": "log--activity",
       "name": "Tine Weed: Carlson Soy",
-      "date": "2023-06-16T04:00:00.000Z",
+      "date": "2023-06-16T06:00:00[US/Central]",
       "location": {
         "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
         "type": "asset--land"
@@ -2385,7 +2385,7 @@
       "id": "678de3f5-450e-4d14-b06d-2cd3a28794c5",
       "type": "log--activity",
       "name": "Cultivation: Carlson Soy",
-      "date": "2023-06-26T04:00:00.000Z",
+      "date": "2023-06-26T06:00:00[US/Central]",
       "location": {
         "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
         "type": "asset--land"
@@ -2404,7 +2404,7 @@
       "id": "cea0103b-5c75-4ed9-9d65-7574ffb14348",
       "type": "log--activity",
       "name": "Cultivation: Carlson Soy",
-      "date": "2023-07-13T04:00:00.000Z",
+      "date": "2023-07-13T06:00:00[US/Central]",
       "location": {
         "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
         "type": "asset--land"
@@ -2423,7 +2423,7 @@
       "id": "0286b164-e53a-4982-bb6e-25d7cd25ae07",
       "type": "log--activity",
       "name": "Zap: Carlson Soy",
-      "date": "2023-07-21T04:00:00.000Z",
+      "date": "2023-07-21T06:00:00[US/Central]",
       "location": {
         "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
         "type": "asset--land"
@@ -2442,7 +2442,7 @@
       "id": "3e0bc409-e035-46de-8a4e-1d8ca7dce71a",
       "type": "log--activity",
       "name": "Zap: Carlson Soy",
-      "date": "2023-08-02T04:00:00.000Z",
+      "date": "2023-08-02T06:00:00[US/Central]",
       "location": {
         "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
         "type": "asset--land"
@@ -2461,7 +2461,7 @@
       "id": "f4330338-5063-4b1e-b5bd-0aece8dbad66",
       "type": "log--harvest",
       "name": "Harvest: Carlson Soy",
-      "date": "2023-10-10T04:00:00.000Z",
+      "date": "2023-10-10T06:00:00[US/Central]",
       "location": {
         "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
         "type": "asset--land"
@@ -2480,7 +2480,7 @@
       "id": "e932e359-84dc-432f-8fad-afdc52a982ab",
       "type": "log--harvest",
       "name": "Harvest: Carlson Soy",
-      "date": "2023-10-11T04:00:00.000Z",
+      "date": "2023-10-11T06:00:00[US/Central]",
       "location": {
         "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
         "type": "asset--land"
@@ -2499,7 +2499,7 @@
       "id": "721e4d9e-2e55-483c-bc61-c4983393d7c1",
       "type": "log--harvest",
       "name": "Harvest: Carlson Soy",
-      "date": "2023-11-14T05:00:00.000Z",
+      "date": "2023-11-14T06:00:00[US/Central]",
       "location": {
         "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
         "type": "asset--land"
