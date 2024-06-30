@@ -120,6 +120,33 @@ function importBoard(data: BoardData) {
   boardIndex.value = boards.value.push(data.board) - 1;
 }
 
+function exportBoard() {
+  const data = {
+    board: boards.value[boardIndex.value],
+    crops: crops.value,
+    locations: locations.value,
+    operations: operations.value,
+    tasks: tasks.value,
+    plants: plants.value,
+  };
+  const json = JSON.stringify(serialize(data), null, 2);
+  const blob = new Blob([json], { type: 'text/json' });
+  const link = document.createElement('a');
+
+  link.download = data.board.name.toLowerCase().replaceAll(/\s+/g, '_') + '.json';
+  link.href = window.URL.createObjectURL(blob);
+  link.dataset.downloadurl = ['text/json', link.download, link.href].join(':');
+
+  const evt = new MouseEvent('click', {
+      view: window,
+      bubbles: true,
+      cancelable: true,
+  });
+
+  link.dispatchEvent(evt);
+  link.remove();
+}
+
 watch(boardIndex, (i: number, prevI: number|undefined) => {
   if (prevI === undefined || i !== prevI) loadEntities();
 }, { immediate: true });
@@ -155,6 +182,7 @@ provide(isDarkKey, isDark);
       <div class="menubar">
         <FlowBoardMenubar
           @select-board="boardIndex = $event"
+          @export-board="exportBoard"
           @import-board="importBoard"
           @create-task="onBoardUpdate"
           @update-board-info="onBoardUpdate" />

@@ -22,6 +22,7 @@ const boardIndex = inject(boardIndexKey, ref(0));
 const boards = inject(boardsKey, ref([]));
 const boardRadio = ref<string>(boardIndex.value.toString());
 const emit = defineEmits<{
+  (e: 'export-board'): void,
   (e: 'import-board', value: BoardData): void,
   (e: 'select-board', value: number): void,
   (e: 'create-task', value: CreateValue): void,
@@ -48,6 +49,10 @@ function importBoard(data: BoardData) {
   emit('import-board', data);
   currentMenu.value = '';
   openImportBoardDialog.value = false;
+}
+function exportBoard() {
+  emit('export-board');
+  currentMenu.value = '';
 }
 
 const openEditTaskDialog = ref(false);
@@ -111,7 +116,7 @@ function cancelEdits() {
             </template>
           </FlowBoardDialogImportBoard>
 
-          <Menubar.Item class="MenubarItem" disabled>
+          <Menubar.Item class="MenubarItem" @click="exportBoard" >
             Export Data
           </Menubar.Item>
 
