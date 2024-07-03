@@ -6,7 +6,7 @@ import { VisuallyHidden } from 'radix-vue';
 import { Log } from '@/data/resources';
 import type {
   LocationIdentifier, LocationResource, LogResource,
-  OperationIdentifier, OperationTerm, PlantResource,
+  OperationIdentifier, OperationTerm, PartialLog, PlantResource,
 } from '@/data/resources';
 import { toOptionalIdfier } from '@/utils/idfier';
 import { dateRangeKey } from './providerKeys';
@@ -26,8 +26,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'close'): void,
-  (e: 'update:save', value: Partial<LogResource> | LogResource): void,
-  (e: 'update:cancel', value: Partial<LogResource> | undefined): void,
+  (e: 'update:save', value: PartialLog): void,
+  (e: 'update:cancel', value: PartialLog | undefined): void,
   (e: 'update:delete', value: DeleteValue): void,
 }>();
 
@@ -77,7 +77,8 @@ function confirmChanges() {
     emit('update:save', task);
   } else {
     const { id, type } = props.task;
-    emit('update:save', { id, type, date, location, operation, plant });
+    const log = { id, type, date, location, operation, plant } as PartialLog;
+    emit('update:save', log);
   }
   emit('close');
 }

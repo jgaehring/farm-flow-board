@@ -6,7 +6,7 @@ import FlowBoardDialogEditTask from '@/components/FlowBoardDialogEditTask.vue';
 import FlowBoardDialogImportBoard from '@/components/FlowBoardDialogImportBoard.vue';
 import { boardIndexKey, boardsKey, locationsKey, operationsKey, plantsKey } from '@/components/providerKeys';
 import type { CreateValue } from '@/components/providerKeys';
-import type { BoardInfo, LogResource } from '@/data/resources';
+import type { BoardInfo, LogResource, PartialResource } from '@/data/resources';
 import type { BoardData } from '@/data/deserialize';
 import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
 import IconCheck from '@/assets/radix-icons/check.svg?component';
@@ -26,7 +26,7 @@ const emit = defineEmits<{
   (e: 'import-board', value: BoardData): void,
   (e: 'select-board', value: number): void,
   (e: 'create-task', value: CreateValue): void,
-  (e: 'update-board-info', value: Partial<BoardInfo>): void,
+  (e: 'update-board-info', value: PartialResource<BoardInfo>): void,
 }>();
 
 function handleSelectBoard(evt: any) {
@@ -37,7 +37,7 @@ function handleSelectBoard(evt: any) {
 
 const openEditBoardDialog = ref(false);
 const openNewBoardDialog = ref(false);
-function saveBoardInfo(info: Partial<BoardInfo>) {
+function saveBoardInfo(info: PartialResource<BoardInfo>) {
   emit('update-board-info', info);
   currentMenu.value = '';
   openNewBoardDialog.value = false;

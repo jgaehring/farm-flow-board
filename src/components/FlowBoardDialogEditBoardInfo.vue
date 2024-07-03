@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import { Dialog, Label } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { Plan } from '@/data/resources';
-import type { BoardInfo } from '@/data/resources';
+import type { BoardInfo, PartialResource } from '@/data/resources';
 import { defaultSeason, fallbackRange } from '@/utils/date';
 import type { DeleteValue } from './providerKeys';
 import FFDatePicker from '@/components/FFDatePicker.vue';
@@ -16,8 +16,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'close'): void,
-  (e: 'update:save', value: Partial<BoardInfo> | BoardInfo): void,
-  (e: 'update:cancel', value: Partial<BoardInfo> | undefined): void,
+  (e: 'update:save', value: PartialResource<BoardInfo> | BoardInfo): void,
+  (e: 'update:cancel', value: PartialResource<BoardInfo> | undefined): void,
   (e: 'update:delete', value: DeleteValue): void,
 }>();
 
@@ -27,13 +27,18 @@ const dateRange = ref<[Date, Date]>(props.boardInfo?.dateRange || fallbackRange(
 function confirmChanges() {
   if (!props.boardInfo) {
     const board: BoardInfo = {
-      id: uuid(), type: Plan.FarmFlow,
-      name: name.value, dateRange: dateRange.value,
+      id: uuid(),
+      type: Plan.FarmFlow,
+      name: name.value,
+      dateRange: dateRange.value,
     };
     emit('update:save', board);
   } else {
     const { id, type } = props.boardInfo;
-    emit('update:save', { id, type, name: name.value, dateRange: dateRange.value });
+    const info = {
+      id, type, name: name.value, dateRange: dateRange.value,
+    } as PartialResource<BoardInfo>;
+    emit('update:save', info);
   }
   emit('close');
 }

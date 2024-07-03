@@ -4,7 +4,7 @@ import { computed, inject, ref, unref } from 'vue';
 import { Popover } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { computeBoardProperties } from '@/canvas/board';
-import type { LogResource, OperationTerm } from '@/data/resources';
+import type { LogResource, OperationTerm, PartialLog } from '@/data/resources';
 import {
   dateSequenceKey, emitBoardDeleteKey, emitBoardUpdateKey,
   indexPositionKey, isDarkKey,
@@ -102,7 +102,7 @@ function selectTask(j: number, open?: boolean) {
     .findIndex(loc => loc.id === task.location?.id);
 }
 
-function confirmChanges(changes: Partial<LogResource>) {
+function confirmChanges(changes: PartialLog) {
   update(changes);
   selectTask(-1);
   selectCell(-1);

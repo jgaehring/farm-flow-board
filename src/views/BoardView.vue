@@ -15,7 +15,7 @@ import {
   plants2023, serialize, tasks2023,
 } from '@/data/deserialize';
 import type { BoardData } from '@/data/deserialize';
-import { Asset, Plan } from '@/data/resources';
+import { Asset, Log, Plan } from '@/data/resources';
 import type {
   BoardInfo, CropTerm, LocationResource, LogResource,
   OperationTerm, PlantResource,
@@ -57,7 +57,7 @@ const crops = ref<CropTerm[]>(crops2023);
 
 function onBoardUpdate(value: UpdateValue): void {
   let collection: Ref<UpdateValue[]>|false = false;
-  if (value.type?.startsWith('log')) collection = tasks;
+  if (value.type in Log) collection = tasks;
   else if (value.type === Asset.Plant) collection = plants;
   else if (value.type === Plan.FarmFlow) collection = boards;
 
