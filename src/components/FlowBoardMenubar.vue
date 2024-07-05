@@ -114,13 +114,13 @@ function cancelEdits() {
             </template>
           </FlowBoardDialogImportBoard>
 
-          <Menubar.Item class="MenubarItem" @click="exportBoard" >
+          <Menubar.Item @click="exportBoard" :disabled="!boardInfo" class="MenubarItem" >
             Export Data
           </Menubar.Item>
 
           <Menubar.Separator class="MenubarSeparator" />
 
-          <Menubar.Sub>
+          <Menubar.Sub v-if="boardInfo" >
             <Menubar.SubTrigger class="MenubarItem">
               Recent
               <div class="RightSlot">
@@ -151,6 +151,9 @@ function cancelEdits() {
               </Menubar.SubContent>
             </Menubar.Portal>
           </Menubar.Sub>
+          <Menubar.Item v-else disabled class="MenubarItem" >
+            Recent
+          </Menubar.Item>
 
           <Menubar.Separator class="MenubarSeparator" />
 
@@ -204,6 +207,7 @@ function cancelEdits() {
             <template #trigger >
               <Menubar.Item
                 @select.prevent="openEditTaskDialog = true"
+                :disabled="!boardInfo"
                 class="MenubarItem" >
                 New Task
                 <!-- TODO: Implement key bindings. -->
