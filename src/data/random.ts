@@ -12,6 +12,7 @@ export const boardInfoRandom: BoardInfo = {
   type: Plan.FarmFlow,
   name: 'Random',
   dateRange: [new Date(2024, 2, 28), new Date(2024, 9)],
+  crops: [],
 };
 
 type TaskGenerator = Generator<LogResource, void, unknown>

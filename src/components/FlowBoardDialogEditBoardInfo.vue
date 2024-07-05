@@ -31,6 +31,7 @@ function confirmChanges() {
       type: Plan.FarmFlow,
       name: name.value,
       dateRange: dateRange.value,
+      crops: [],
     };
     emit('update:save', board);
   } else {

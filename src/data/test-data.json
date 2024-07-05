@@ -3,7 +3,57 @@
     "id": "c343b248-8d1b-4f79-9239-41567a82db25",
     "type": "plan--farm_flow_board",
     "name": "Crop 2023",
-    "dateRange": ["2023-05-06", "2023-11-15"]
+    "dateRange": ["2023-05-06", "2023-11-15"],
+    "crops": [
+      {
+        "id": "3b625774-9212-4372-af2c-aadd7f8b564f",
+        "type": "asset--plant"
+      },
+      {
+        "id": "1c212a6f-94e5-4046-a931-aeca2e079bbd",
+        "type": "asset--plant"
+      },
+      {
+        "id": "b8897e62-52b9-4a3a-9eb1-3431aa626832",
+        "type": "asset--plant"
+      },
+      {
+        "id": "092b5fc2-bd44-450a-8c75-f12ba7a7a62c",
+        "type": "asset--plant"
+      },
+      {
+        "id": "8f08acb5-bd6f-4877-afb5-361a8768f6c2",
+        "type": "asset--plant"
+      },
+      {
+        "id": "632584e8-f0b3-4d01-8073-82430490c834",
+        "type": "asset--plant"
+      },
+      {
+        "id": "6f9bde17-0a3e-4fc7-9319-9edfcfc078f0",
+        "type": "asset--plant"
+      },
+      {
+        "id": "8ced1e04-ae7d-4c2d-83d2-c8fbfdbc01a1",
+        "type": "asset--plant"
+      },
+      {
+        "id": "5c6df309-7f56-4571-a854-a2038e222588",
+        "type": "asset--plant"
+      },
+      {
+        "id": "ad93b6c3-51e3-4d9d-b4a1-b4a09582374b",
+        "type": "asset--plant"
+      },
+      {
+        "id": "81b13749-7a4b-4215-ae9f-b4c7b10f0f1f",
+        "type": "asset--plant"
+      },
+      {
+        "id": "d3d64b0a-3991-4f32-9c11-097f73813073",
+        "type": "asset--plant"
+      }
+    ]
   },
   "tasks": [
     {

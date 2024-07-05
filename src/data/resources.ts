@@ -106,4 +106,5 @@ export interface PlanIdentifier extends ResourceIdentifier {
 export interface BoardInfo extends PlanResource {
   type: Plan.FarmFlow,
   dateRange: [Date, Date],
+  crops: PlantIdentifier[],
 }
