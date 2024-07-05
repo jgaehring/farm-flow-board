@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { validate } from 'uuid';
-import { computed, provide, ref } from 'vue';
+import { computed, onMounted, provide, ref } from 'vue';
 import { useDark, useToggle } from '@vueuse/core'
 import { Editable, Switch } from 'radix-vue/namespaced';
 import {
   boardInfoKey, boardsKey, cropsKey, dateRangeKey, dateSequenceKey, isDarkKey,
   locationsKey, operationsKey, plantsKey, tasksKey,
 } from '@/components/providerKeys';
-import { boardInfoRandom } from '@/data/random';
-import { boardInfo2023, serialize } from '@/data/deserialize';
+import { serialize } from '@/data/deserialize';
 import type { BoardData } from '@/data/deserialize';
 import type { BoardInfo } from '@/data/resources';
 import useBoardData from '@/composables/useBoardData';
@@ -20,7 +19,7 @@ import IconMoon from '@/assets/radix-icons/moon.svg?component';
 import IconPencil2 from '@/assets/radix-icons/pencil-2.svg?component';
 import IconSun from '@/assets/radix-icons/sun.svg?component';
 
-const board = useBoardData(boardInfo2023);
+const board = useBoardData();
 
 const editableName = ref<string>(board.info.value?.name || '');
 function submitBoardName(name: string|undefined) {
@@ -35,10 +34,7 @@ const dateRange = computed<[Date, Date]>(() => board.date.value.range);
 // Array of Date objects for every date within the specified range.
 const dateSeq = computed<Date[]>(() => board.date.value.sequence);
 
-const boards = ref<BoardInfo[]>([
-  boardInfo2023,
-  boardInfoRandom,
-]);
+const boards = ref<BoardInfo[]>([]);
 
 function selectBoard(id: string) {
   if (!validate(id)) return;
@@ -92,6 +88,12 @@ const isDark = useDark({
   valueLight: 'light',
 });
 const toggleDark = useToggle(isDark);
+
+onMounted(async () => {
+  const all = await board.getAllBoardInfo();
+  all.forEach((board: BoardInfo) => { boards.value.push(board); });
+  if (all.length > 0) board.load(all[0]);
+});
 
 provide(tasksKey, board.tasks);
 provide(locationsKey, board.locations);

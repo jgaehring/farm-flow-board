@@ -109,6 +109,13 @@ export default function useBoardData(initInfo?: BoardInfo) {
     }
   }
 
+  async function getAllBoardInfo() {
+    return [
+      boardInfo2023,
+      boardInfoRandom,
+    ];
+  }
+
   type CollectionValue = (UpdateValue | DeleteValue) & ResourceIdentifier;
   type Collection = Ref<CollectionValue[]>;
   function idCollection(value: CollectionValue): Collection | false {
@@ -164,6 +171,7 @@ export default function useBoardData(initInfo?: BoardInfo) {
     // ACTIONS
     // For modifying the board state & data collections.
     delete: onDelete,
+    getAllBoardInfo,
     load,
     update,
   }
