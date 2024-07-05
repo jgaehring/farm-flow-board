@@ -21,11 +21,11 @@ export enum Term {
 
 type Entity = Asset|Log|Plan|Term;
 
-interface ResourceIdentifier {
+export interface ResourceIdentifier {
   id: string,
   type: Entity,
 }
-interface Resource extends ResourceIdentifier {
+export interface Resource extends ResourceIdentifier {
   name: string,
 }
 export type PartialResource<R> = ResourceIdentifier & R;
