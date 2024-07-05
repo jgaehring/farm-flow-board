@@ -4,7 +4,7 @@ import { Menubar } from 'radix-vue/namespaced';
 import FlowBoardDialogEditBoardInfo from '@/components/FlowBoardDialogEditBoardInfo.vue';
 import FlowBoardDialogEditTask from '@/components/FlowBoardDialogEditTask.vue';
 import FlowBoardDialogImportBoard from '@/components/FlowBoardDialogImportBoard.vue';
-import { boardIndexKey, boardsKey, locationsKey, operationsKey, plantsKey } from '@/components/providerKeys';
+import { boardInfoKey, boardsKey, locationsKey, operationsKey, plantsKey } from '@/components/providerKeys';
 import type { CreateValue } from '@/components/providerKeys';
 import type { BoardInfo, LogResource, PartialResource } from '@/data/resources';
 import type { BoardData } from '@/data/deserialize';
@@ -18,21 +18,19 @@ const checkboxTwo = ref(false)
 const locations = inject(locationsKey, ref([]));
 const operations = inject(operationsKey, ref([]));
 const plants = inject(plantsKey, ref([]));
-const boardIndex = inject(boardIndexKey, ref(0));
+const boardInfo = inject(boardInfoKey, ref(null));
 const boards = inject(boardsKey, ref([]));
-const boardRadio = ref<string>(boardIndex.value.toString());
+const boardRadio = ref<string>(boardInfo.value?.id || '');
 const emit = defineEmits<{
   (e: 'export-board'): void,
   (e: 'import-board', value: BoardData): void,
-  (e: 'select-board', value: number): void,
+  (e: 'select-board', value: string): void,
   (e: 'create-task', value: CreateValue): void,
   (e: 'update-board-info', value: PartialResource<BoardInfo>): void,
 }>();
 
-function handleSelectBoard(evt: any) {
-  if (['string', 'number'].includes(typeof evt)) {
-    emit('select-board', +evt as number);
-  }
+function handleSelectBoard(id: any) {
+  if (typeof id === 'string') emit('select-board', id);
 }
 
 const openEditBoardDialog = ref(false);
@@ -141,7 +139,7 @@ function cancelEdits() {
                   <Menubar.RadioItem
                     v-for="(board, i) in boards"
                     class="MenubarCheckboxItem inset"
-                    :value="i.toString()"
+                    :value="board.id"
                     :key="`menu-radio-item-board-${i}`">
                     <Menubar.ItemIndicator class="MenubarItemIndicator">
                       <IconDotFilled />
@@ -157,9 +155,10 @@ function cancelEdits() {
           <Menubar.Separator class="MenubarSeparator" />
 
           <FlowBoardDialogEditBoardInfo
+            v-if="boardInfo"
             @update:save="saveBoardInfo"
             @update:cancel="cancelEdits"
-            :board-info="boards[boardIndex]"
+            :board-info="boardInfo"
             :open="openEditBoardDialog" >
             <template #trigger >
               <Menubar.Item
@@ -169,6 +168,9 @@ function cancelEdits() {
               </Menubar.Item>
             </template>
           </FlowBoardDialogEditBoardInfo>
+          <Menubar.Item v-else disabled class="MenubarItem" >
+            Edit Board Info
+          </Menubar.Item>
 
           <Menubar.Item class="MenubarItem" disabled>
             Preferences

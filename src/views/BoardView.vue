@@ -1,145 +1,71 @@
 <script setup lang="ts">
-import { computed, provide, ref, watch } from 'vue';
-import type { Ref } from 'vue';
+import { validate } from 'uuid';
+import { computed, provide, ref } from 'vue';
 import { useDark, useToggle } from '@vueuse/core'
 import { Editable, Switch } from 'radix-vue/namespaced';
-import { mergeRight, omit, pick } from 'ramda';
 import {
-  boardIndexKey, boardsKey, cropsKey, dateRangeKey, dateSequenceKey, isDarkKey,
+  boardInfoKey, boardsKey, cropsKey, dateRangeKey, dateSequenceKey, isDarkKey,
   locationsKey, operationsKey, plantsKey, tasksKey,
 } from '@/components/providerKeys';
-import type { DeleteValue, UpdateValue } from '@/components/providerKeys';
-import { boardInfoRandom, generateEntities } from '@/data/random';
-import {
-  boardInfo2023, crops2023, deserialize, locations2023, operations2023,
-  plants2023, serialize, tasks2023,
-} from '@/data/deserialize';
+import { boardInfoRandom } from '@/data/random';
+import { boardInfo2023, serialize } from '@/data/deserialize';
 import type { BoardData } from '@/data/deserialize';
-import { Asset, Log, Plan } from '@/data/resources';
-import type {
-  BoardInfo, CropTerm, LocationResource, LogResource,
-  OperationTerm, PlantResource,
-} from '@/data/resources';
+import type { BoardInfo } from '@/data/resources';
+import useBoardData from '@/composables/useBoardData';
 import FlowBoard from '@/components/FlowBoard.vue';
 import FlowBoardOperations from '@/components/FlowBoardOperations.vue';
 import FlowBoardMenubar from '@/components/FlowBoardMenubar.vue';
-import { createDateSequence } from '@/utils/date';
 import LogoType from '@/assets/logotype_color.svg?component';
 import IconMoon from '@/assets/radix-icons/moon.svg?component';
 import IconPencil2 from '@/assets/radix-icons/pencil-2.svg?component';
 import IconSun from '@/assets/radix-icons/sun.svg?component';
 
+const board = useBoardData(boardInfo2023);
+
+const editableName = ref<string>(board.info.value?.name || '');
+function submitBoardName(name: string|undefined) {
+  if (board.info.value && typeof name === 'string') {
+    const { id, type } = board.info.value;
+    board.update({ id, type, name });
+  }
+}
+
+// Start & end dates used to populate the x-axis & limit selection in date picker.
+const dateRange = computed<[Date, Date]>(() => board.date.value.range);
+// Array of Date objects for every date within the specified range.
+const dateSeq = computed<Date[]>(() => board.date.value.sequence);
+
 const boards = ref<BoardInfo[]>([
   boardInfo2023,
   boardInfoRandom,
 ]);
-const boardIndex = ref<number>(0);
-const boardInfo = computed(() => boards.value[boardIndex.value]);
 
-const editableName = ref<string>(boardInfo.value?.name || '');
-watch([() => boardInfo.value.name, boardIndex], ([name]) => {
-  if (name !== editableName.value) {
-    editableName.value = boardInfo.value.name;
-  }
-});
-function submitBoardName(name: string|undefined) {
-  if (typeof name === 'string' && name !== '') {
-    boards.value[boardIndex.value].name = name;
-  }
-}
-
-// All of the core data entities.
-const tasks = ref<LogResource[]>(tasks2023);
-const locations = ref<LocationResource[]>(locations2023);
-const plants = ref<PlantResource[]>(plants2023);
-const operations = ref<OperationTerm[]>(operations2023);
-const crops = ref<CropTerm[]>(crops2023);
-
-function onBoardUpdate(value: UpdateValue): void {
-  let collection: Ref<UpdateValue[]>|false = false;
-  if (value.type in Log) collection = tasks;
-  else if (value.type === Asset.Plant) collection = plants;
-  else if (value.type === Plan.FarmFlow) collection = boards;
-
-  if (collection) {
-    const i = collection.value.findIndex(item => item.id === value.id);
-    type T = typeof collection.value[number];
-    type K = keyof T;
-    if (i >= 0) {
-      const keys = Object.keys(collection.value[i]) as K[];
-      const valid = pick(keys, value);
-      const mutable = omit(['id', 'type'], valid);
-      collection.value[i] = mergeRight(collection.value[i], mutable) as T;
-    } else {
-      (collection.value as T[]).push(value as T);
-    }
-  }
-}
-function onDelete(idfier: DeleteValue) {
-  const i = tasks.value.findIndex(t => t.id === idfier.id && t.type === idfier.type);
-  if (i >= 0) tasks.value.splice(i, 1);
-}
-
-// Start & end dates used to populate the x-axis & limit selection in date picker.
-const dateRange = computed<[Date, Date]>(() => boardInfo.value.dateRange);
-// Array of Date objects for every date within the specified range.
-const dateSeq = computed<Date[]>(() =>
-  createDateSequence(dateRange.value[0], dateRange.value[1]));
-
-// Mock retrieving the task & plant entities from a database, API, file, etc.
-function loadEntities(): void {
-  const info = boards.value[boardIndex.value];
-  if (info.id === boardInfo2023.id) {
-    crops.value = crops2023;
-    locations.value = locations2023;
-    operations.value = operations2023;
-    tasks.value = tasks2023;
-    plants.value = plants2023;
-  }
-  else if (info.id === boardInfoRandom.id) {
-    // Generate a random scatter of tasks for the grid.
-    const frequency = 6; // coefficient to adjust total tasks below
-    const count = frequency * Math.floor(
-      // Correlate total # of tasks to the 2 main parameters, fields & dates.
-      Math.sqrt(locations.value.length * dateSeq.value.length)
-    );
-    const random = generateEntities(
-      count,
-      locations.value,
-      operations.value,
-      crops.value,
-      [boardInfoRandom.dateRange[0], boardInfoRandom.dateRange[1]],
-    );
-    crops.value = crops2023;
-    locations.value = locations2023;
-    operations.value = operations2023;
-    tasks.value = random[0];
-    plants.value = random[1];
-  }
-  else if (info.id in sessionStorage && typeof sessionStorage[info.id] === 'string') {
-    const data = deserialize(sessionStorage[info.id]);
-    crops.value = data.crops;
-    locations.value = data.locations;
-    operations.value = data.operations;
-    tasks.value = data.tasks;
-    plants.value = data.plants;
+function selectBoard(id: string) {
+  if (!validate(id)) return;
+  const info = boards.value.find(b => b.id === id);
+  if (info) board.load(info);
+  if (info?.name !== editableName.value) {
+    editableName.value = info?.name || '';
   }
 }
 
 function importBoard(data: BoardData) {
+  if (!validate(data.board.id)) return;
   const json = serialize(data);
   sessionStorage.setItem(data.board.id, json);
-  boardIndex.value = boards.value.push(data.board) - 1;
+  boards.value.push(data.board);
+  selectBoard(data.board.id);
 }
 
 function exportBoard() {
+  if (!board.info.value) return;
   const data = {
-    board: boards.value[boardIndex.value],
-    crops: crops.value,
-    locations: locations.value,
-    operations: operations.value,
-    tasks: tasks.value,
-    plants: plants.value,
+    board: board.info.value,
+    crops: board.crops.value,
+    locations: board.locations.value,
+    operations: board.operations.value,
+    tasks: board.tasks.value,
+    plants: board.plants.value,
   };
   const json = serialize(data, null, 2);
   const blob = new Blob([json], { type: 'text/json' });
@@ -159,10 +85,6 @@ function exportBoard() {
   link.remove();
 }
 
-watch(boardIndex, (i: number, prevI: number|undefined) => {
-  if (prevI === undefined || i !== prevI) loadEntities();
-}, { immediate: true });
-
 const isDark = useDark({
   selector: 'body',
   attribute: 'color-scheme',
@@ -171,14 +93,14 @@ const isDark = useDark({
 });
 const toggleDark = useToggle(isDark);
 
-provide(tasksKey, tasks);
-provide(locationsKey, locations);
-provide(plantsKey, plants);
+provide(tasksKey, board.tasks);
+provide(locationsKey, board.locations);
+provide(plantsKey, board.plants);
 provide(dateSequenceKey, dateSeq);
 provide(dateRangeKey, dateRange);
-provide(operationsKey, operations);
-provide(cropsKey, crops);
-provide(boardIndexKey, boardIndex);
+provide(operationsKey, board.operations);
+provide(cropsKey, board.crops);
+provide(boardInfoKey, board.info);
 provide(boardsKey, boards);
 provide(isDarkKey, isDark);
 
@@ -229,11 +151,11 @@ provide(isDarkKey, isDark);
 
       <div class="menubar">
         <FlowBoardMenubar
-          @select-board="boardIndex = $event"
+          @select-board="selectBoard"
           @export-board="exportBoard"
           @import-board="importBoard"
-          @create-task="onBoardUpdate"
-          @update-board-info="onBoardUpdate" />
+          @create-task="board.update"
+          @update-board-info="board.update" />
       </div>
 
       <div class="dark-mode-toggle">
@@ -251,7 +173,7 @@ provide(isDarkKey, isDark);
     </header>
 
     <main>
-      <FlowBoard @update="onBoardUpdate" @delete="onDelete"/>
+      <FlowBoard @update="board.update" @delete="board.delete"/>
     </main>
 
     <footer>
