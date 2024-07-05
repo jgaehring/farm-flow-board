@@ -88,7 +88,15 @@ export interface LogResource extends Resource {
   notes: string,
 }
 
-export interface BoardInfo extends Resource {
+export interface PlanResource extends Resource {
+  type: Plan,
+}
+
+export interface PlanIdentifier extends ResourceIdentifier {
+  type: Plan,
+}
+
+export interface BoardInfo extends PlanResource {
   type: Plan.FarmFlow,
   dateRange: [Date, Date],
 }
