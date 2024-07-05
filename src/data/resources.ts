@@ -1,3 +1,10 @@
+export enum EntityType {
+  Asset = 'asset',
+  Log = 'log',
+  Plan = 'plan',
+  TaxonomyTerm = 'taxonomy_term',
+}
+
 export enum Asset {
   Land = 'asset--land',
   Plant = 'asset--plant',
