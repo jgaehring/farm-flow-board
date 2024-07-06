@@ -14,6 +14,7 @@ import useBoardData from '@/composables/useBoardData';
 import FlowBoard from '@/components/FlowBoard.vue';
 import FlowBoardOperations from '@/components/FlowBoardOperations.vue';
 import FlowBoardMenubar from '@/components/FlowBoardMenubar.vue';
+import FlowBoardNoBoard from '@/components/FlowBoardNoBoard.vue';
 import LogoType from '@/assets/logotype_color.svg?component';
 import IconMoon from '@/assets/radix-icons/moon.svg?component';
 import IconPencil2 from '@/assets/radix-icons/pencil-2.svg?component';
@@ -175,7 +176,8 @@ provide(isDarkKey, isDark);
     </header>
 
     <main>
-      <FlowBoard @update="board.update" @delete="board.delete"/>
+      <FlowBoard v-if="board.info.value" @update="board.update" @delete="board.delete"/>
+      <FlowBoardNoBoard v-else @import-board="importBoard" />
     </main>
 
     <footer>
