@@ -5,7 +5,7 @@ import FlowBoardDialogEditBoardInfo from '@/components/FlowBoardDialogEditBoardI
 import FlowBoardDialogEditTask from '@/components/FlowBoardDialogEditTask.vue';
 import FlowBoardDialogImportBoard from '@/components/FlowBoardDialogImportBoard.vue';
 import { boardInfoKey, boardsKey, locationsKey, operationsKey, plantsKey } from '@/components/providerKeys';
-import type { CreateValue } from '@/components/providerKeys';
+import type { CreateValue } from '@/composables/useBoardData';
 import type { BoardInfo, LogResource, PartialResource } from '@/data/resources';
 import type { BoardData } from '@/data/deserialize';
 import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';

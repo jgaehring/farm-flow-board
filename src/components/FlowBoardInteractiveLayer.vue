@@ -10,7 +10,7 @@ import {
   indexPositionKey, isDarkKey,
   locationsKey, matrixKey, operationsKey,
 } from '@/components/providerKeys';
-import type { DeleteValue } from '@/components/providerKeys';
+import type { DeleteValue } from '@/composables/useBoardData';
 import { sameDate } from '@/utils/date';
 import FlowBoardDialogEditTask from './FlowBoardDialogEditTask.vue';
 import IconCross2 from '@/assets/radix-icons/cross-2.svg?component';

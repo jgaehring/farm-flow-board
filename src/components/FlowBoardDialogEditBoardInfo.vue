@@ -6,7 +6,7 @@ import { VisuallyHidden } from 'radix-vue';
 import { Plan } from '@/data/resources';
 import type { BoardInfo, PartialResource } from '@/data/resources';
 import { defaultSeason, fallbackRange } from '@/utils/date';
-import type { DeleteValue } from './providerKeys';
+import type { DeleteValue } from '@/composables/useBoardData';
 import FFDatePicker from '@/components/FFDatePicker.vue';
 
 const props = defineProps<{
