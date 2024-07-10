@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { validate } from 'uuid';
-import { computed, onMounted, provide, ref } from 'vue';
+import { computed, onMounted, provide, ref, watch } from 'vue';
 import { useDark, useToggle } from '@vueuse/core'
 import { Editable, Switch } from 'radix-vue/namespaced';
 import {
@@ -23,6 +23,9 @@ import IconSun from '@/assets/radix-icons/sun.svg?component';
 const board = useBoardData();
 
 const editableName = ref<string>(board.info.value?.name || '');
+watch(() => board.info.value?.name, (name) => {
+  if (name !== editableName.value) editableName.value = name || '';
+});
 function submitBoardName(name: string|undefined) {
   if (board.info.value && typeof name === 'string') {
     const { id, type } = board.info.value;
@@ -38,20 +41,19 @@ const dateSeq = computed<Date[]>(() => board.date.value.sequence);
 const boards = ref<BoardInfo[]>([]);
 
 function selectBoard(id: string) {
-  if (!validate(id)) return;
   const info = boards.value.find(b => b.id === id);
-  if (info) board.load(info);
-  if (info?.name !== editableName.value) {
-    editableName.value = info?.name || '';
+  if (info && validate(info.id)) {
+    board.load(info);
   }
 }
 
 function importBoard(data: BoardData) {
   if (!validate(data.board.id)) return;
-  const json = serialize(data);
-  sessionStorage.setItem(data.board.id, json);
-  boards.value.push(data.board);
-  selectBoard(data.board.id);
+  board.import(data).then(() => {
+    const i = boards.value.findIndex(b => b.id === data.board.id);
+    if (i < 0) boards.value.push(data.board);
+    else boards.value[i] = data.board;
+  });
 }
 
 function exportBoard() {
@@ -90,10 +92,12 @@ const isDark = useDark({
 });
 const toggleDark = useToggle(isDark);
 
-onMounted(async () => {
-  const all = await board.getAllBoardInfo();
-  all.forEach((board: BoardInfo) => { boards.value.push(board); });
-  if (all.length > 0) board.load(all[0]);
+onMounted(() => {
+  board.load();
+  board.getAllBoardInfo().then((all: BoardInfo[]) => {
+    all.forEach((board: BoardInfo) => { boards.value.push(board); });
+    if (!board.info.value && all.length > 0)  board.load(all[0]);
+  });
 });
 
 provide(tasksKey, board.tasks);

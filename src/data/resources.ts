@@ -35,7 +35,7 @@ export interface ResourceIdentifier {
 export interface Resource extends ResourceIdentifier {
   name: string,
 }
-export type PartialResource<R> = ResourceIdentifier & R;
+export type PartialResource<R> = ResourceIdentifier & Partial<R>;
 
 export type PartialLog = PartialResource<LogResource>;
 export type PartialAsset = PartialResource<AssetResource>;

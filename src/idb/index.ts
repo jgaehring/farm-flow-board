@@ -1,9 +1,12 @@
 import databases from '@/idb/databases';
 import runUpgrades from '@/idb/runUpgrades';
+import type { Resource } from '@/data/resources';
 
 type StoreLike = IDBObjectStore | IDBIndex;
+type IDBQueryFunc<R> = ((resource: R) => boolean);
+type IDBQuery<R> = IDBQueryFunc<R>|string[]|string;
 
-function openDatabase(dbName: keyof typeof databases): Promise<IDBDatabase> {
+function openDatabase(dbName: string): Promise<IDBDatabase> {
   const config = databases[dbName];
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(config.name, config.version);
@@ -13,24 +16,27 @@ function openDatabase(dbName: keyof typeof databases): Promise<IDBDatabase> {
   });
 }
 
-function getOneByPrimaryKey(store: StoreLike, key: string): Promise<any> {
-  return new Promise((resolve, reject) => {
-    const request: IDBRequest<IDBTransaction> = store.get(key);
-    request.onsuccess = request.result ? () => resolve([key, request.result]) : reject;
+function getOneByPrimaryKey<R>(store: StoreLike, key: string): Promise<R> {
+  return new Promise<R>((resolve, reject) => {
+    const request = store.get(key);
+    request.onsuccess = () => resolve(request.result as R);
     request.onerror = () => reject(request.error);
   });
 }
 
-function getManyByPrimaryKeys(store: StoreLike, keys: string[], results = {}): Promise<any> {
+export function getManyByPrimaryKeys<R>(
+  store: StoreLike,
+  keys: string[],
+  results: R[] = [],
+): Promise<R[]> {
   if (keys.length === 0) return Promise.resolve(results);
   const [head, ...tail] = keys;
-  const mergeResults = ([key, val]: [string, any]) => ({ ...results, [key]: val });
-  const request = getOneByPrimaryKey(store, head);
-  if (tail.length <= 0) return request.then(mergeResults);
-  return request.then(r => getManyByPrimaryKeys(store, tail, mergeResults(r)));
+  const request = getOneByPrimaryKey<R>(store, head);
+  if (tail.length <= 0) return request.then((val: R) => [...results, val]);
+  return request.then((r: R) => getManyByPrimaryKeys<R>(store, tail, [...results, r]));
 }
 
-function getAllRecords(store: StoreLike) {
+function getAllRecords<R>(store: StoreLike): Promise<R[]> {
   return new Promise((resolve, reject) => {
     const request = store.getAll();
     request.onsuccess = () => resolve(request.result);
@@ -38,10 +44,10 @@ function getAllRecords(store: StoreLike) {
   });
 }
 
-function cursorQuery(store: StoreLike, query: Function) {
+export function cursorQuery<R>(store: StoreLike, query: IDBQueryFunc<R>): Promise<R[]> {
   return new Promise((resolve, reject) => {
     const request = store.openCursor();
-    const results: any[] = [];
+    const results: R[] = [];
     request.onsuccess = () => {
       const cursor = request.result;
       if (cursor) {
@@ -57,36 +63,39 @@ function cursorQuery(store: StoreLike, query: Function) {
   });
 }
 
-function getter(storeOrIndex: IDBObjectStore|IDBIndex, query: Function) {
-  if (!query) {
-    return getAllRecords(storeOrIndex);
+function getter<R>(
+  storeOrIndex: StoreLike,
+  query?: IDBQueryFunc<R>|string[]|string,
+): Promise<R|R[]> {
+  if (typeof query === 'string') {
+    return getOneByPrimaryKey<R>(storeOrIndex, query);
   }
   if (Array.isArray(query)) {
-    return getManyByPrimaryKeys(storeOrIndex, query);
+    return getManyByPrimaryKeys<R>(storeOrIndex, query);
   }
   if (typeof query === 'function') {
-    return cursorQuery(storeOrIndex, query);
+    return cursorQuery<R>(storeOrIndex, query);
   }
-  return getOneByPrimaryKey(storeOrIndex, query).then(([, data]) => data);
+  return getAllRecords(storeOrIndex);
 }
 
-export function getRecords(
-  dbName: keyof typeof databases,
-  storeName: keyof typeof dbName,
-  query: Function,
-) {
+export function getRecords<R>(
+  dbName: string,
+  storeName: string,
+  query?: IDBQueryFunc<R>|string[]|string,
+): Promise<R|R[]> {
   return openDatabase(dbName).then((db) => {
     const store = db.transaction(storeName, 'readonly')
       .objectStore(storeName);
-    return getter(store, query);
+    return getter<R>(store, query);
   });
 }
 
-export function getRecordsFromIndex(
-  dbName: keyof typeof databases,
-  storeName: keyof typeof dbName,
+export function getRecordsFromIndex<R>(
+  dbName: string,
+  storeName: string,
   indexName: string,
-  query: Function,
+  query?: IDBQuery<R>,
 ) {
   return openDatabase(dbName).then((db) => {
     const index = db.transaction(storeName, 'readonly')
@@ -97,8 +106,8 @@ export function getRecordsFromIndex(
 }
 
 export function count(
-  dbName: keyof typeof databases,
-  storeName: keyof typeof dbName,
+  dbName: string,
+  storeName: string,
   key: IDBValidKey | IDBKeyRange | undefined,
 ) {
   return openDatabase(dbName).then(db => new Promise((resolve, reject) => {
@@ -110,29 +119,28 @@ export function count(
 }
 
 export function saveRecord(
-  dbName: keyof typeof databases,
-  storeName: keyof typeof dbName,
-  record: any,
-  key: IDBValidKey | undefined,
-) {
+  dbName: string,
+  storeName: string,
+  record: Resource,
+): Promise<string> {
   return openDatabase(dbName).then(db => new Promise((resolve, reject) => {
     const store = db.transaction(storeName, 'readwrite').objectStore(storeName);
-    const request = store.put(record, key);
-    request.onsuccess = () => resolve(request.result);
+    const request = store.put(record);
+    request.onsuccess = () => resolve(request.result as string);
     request.onerror = () => reject(request.error);
   }));
 }
 
-export function deleteRecord(
-  dbName: keyof typeof databases,
-  storeName: keyof typeof dbName,
-  query: Function,
-) {
+export function deleteRecord<R>(
+  dbName: string,
+  storeName: string,
+  query: IDBQuery<R>|string,
+): Promise<{ deleted: R|R[] }|typeof query> {
   return openDatabase(dbName).then(db => new Promise((resolve, reject) => {
     const store = db.transaction(storeName, 'readwrite').objectStore(storeName);
     if (typeof query === 'function') {
       const request = store.openCursor();
-      const results = { deleted: [] as any[] };
+      const results = { deleted: [] as R[] };
       request.onsuccess = () => {
         const cursor = request.result;
         if (cursor) {
@@ -148,7 +156,7 @@ export function deleteRecord(
       request.onerror = event => reject(event);
     } else {
       const request = store.delete(query);
-      request.onsuccess = () => resolve(request.result);
+      request.onsuccess = () => resolve(query);
       request.onerror = () => reject(request.error);
     }
   }));

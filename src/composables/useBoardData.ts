@@ -1,13 +1,11 @@
-import { mergeRight, omit, pick } from 'ramda';
+import { clone, keys, map, mergeRight, omit, pick } from 'ramda';
 import { validate } from 'uuid';
 import { computed, ref } from 'vue';
 import type { Ref } from 'vue';
-import {
-  boardInfo2023, crops2023, deserialize, locations2023, operations2023,
-  plants2023, tasks2023,
-} from '@/data/deserialize';
-import { boardInfoRandom, generateEntities } from '@/data/random';
-import { Asset, Log, Plan } from '@/data/resources';
+import { deleteRecord, getRecords, saveRecord } from '@/idb';
+import { fmtBeforeSerialize, objectifyBoardInfo, objectifyLogs, stringifyBoardInfo } from '@/data/deserialize';
+import type { BoardData, BoardInfoSerialized, LogResourceSerialized } from '@/data/deserialize';
+import { Asset, EntityType, Plan } from '@/data/resources';
 import type {
   BoardInfo,
   CropTerm,
@@ -25,7 +23,6 @@ import type {
   PlanIdentifier,
   PlanResource,
   Resource,
-  ResourceIdentifier,
 } from '@/data/resources';
 import { createDateSequence, defaultSeason, fallbackRange } from '@/utils/date';
 
@@ -38,12 +35,15 @@ export type UpdateValue =
   | PartialResource<BoardInfo>;
 export type DeleteValue = LogIdentifier | PlantIdentifier | PlanIdentifier;
 
-function updater<T>(orig: T & ResourceIdentifier, changes: PartialResource<T>): T {
-  type K = keyof T & keyof Resource;
-  const keys = Object.keys(orig) as K[];
-  const valid = pick(keys, changes);
-  const fields = omit(['id', 'type'] as K[], valid);
-  return mergeRight(orig, fields) as T & Resource;
+const safeIncludes = <T>(arr: T[], item: T|null|undefined) =>
+  (!item ? false : arr.includes(item));
+
+function updater(orig: Resource, changes: Partial<typeof orig>): typeof orig {
+  const merged = mergeRight(orig, changes);
+  const valid = pick(keys(orig), merged);
+  const fields = omit(['id', 'type'], valid);
+  const next = mergeRight(orig, fields);
+  return next
 }
 
 export default function useBoardData(initInfo?: BoardInfo) {
@@ -69,76 +69,131 @@ export default function useBoardData(initInfo?: BoardInfo) {
   if (initInfo) load(initInfo);
 
   // Mock retrieving the task & plant entities from a database, API, file, etc.
-  function load(boardInfo: BoardInfo): void {
-    if (!validate(boardInfo.id)) return;
-    const { id } = boardInfo;
+  async function load(boardInfo?: BoardInfo): Promise<void> {
+    if (!boardInfo || !validate(boardInfo.id)) {
+      return getAllBoardInfo().then(([b]) => b ? load(b) : Promise.resolve());
+    }
+
+    const plantIds = boardInfo.crops.map(c => c.id);
+    const cachedPlants = await getRecords(
+      'entities',
+      EntityType.Asset,
+      plantIds,
+    ) as PlantResource[];
+    const [cropIds, locIds] = cachedPlants.reduce((
+      ids: [string[], string[]],
+      p: PlantResource,
+    ): [string[], string[]] => {
+      const [cids, lids] = ids;
+      const nextCropIds = cids.includes(p.crop.id)
+        ? cids
+        : [...cids, p.crop.id];
+      const nextLocIds = cids.includes(p.location.id)
+        ? lids
+        : [...lids, p.location.id];
+      return [nextCropIds, nextLocIds];
+    }, [[], []]);
+    const logQuery = (log: LogResourceSerialized) =>
+      safeIncludes(locIds, log.location?.id)
+      || safeIncludes(cropIds, log.plant?.id);
+    const [cachedCrops, cachedLocs, cachedOps, cachedTasks] = await Promise.allSettled([
+      getRecords('entities', EntityType.TaxonomyTerm, cropIds),
+      getRecords('entities', EntityType.Asset, locIds),
+      getRecords('entities', EntityType.TaxonomyTerm),
+      getRecords('entities', EntityType.Log, logQuery).then(objectifyLogs),
+    ]);
+    function onSettled<T>(result: PromiseSettledResult<T>, state: Ref<T>) {
+      if (result.status === 'fulfilled') state.value = result.value;
+    }
     info.value = boardInfo;
-    if (id === boardInfo2023.id) {
-      crops.value = crops2023;
-      locations.value = locations2023;
-      operations.value = operations2023;
-      tasks.value = tasks2023;
-      plants.value = plants2023;
-    }
-    else if (id === boardInfoRandom.id) {
-      // Generate a random scatter of tasks for the grid.
-      const frequency = 6; // coefficient to adjust total tasks below
-      const count = frequency * Math.floor(
-        // Correlate total # of tasks to the 2 main parameters, fields & dates.
-        Math.sqrt(locations.value.length * date.value.sequence.length)
-      );
-      const random = generateEntities(
-        count,
-        locations.value,
-        operations.value,
-        crops.value,
-        [boardInfoRandom.dateRange[0], boardInfoRandom.dateRange[1]],
-      );
-      crops.value = crops2023;
-      locations.value = locations2023;
-      operations.value = operations2023;
-      tasks.value = random[0];
-      plants.value = random[1];
-    } else if (id in sessionStorage && typeof sessionStorage[id] === 'string') {
-      const data = deserialize(sessionStorage[id]);
-      crops.value = data.crops;
-      locations.value = data.locations;
-      operations.value = data.operations;
-      tasks.value = data.tasks;
-      plants.value = data.plants;
-    }
+    plants.value = (cachedPlants);
+    onSettled(cachedCrops, crops);
+    onSettled(cachedLocs, locations);
+    onSettled(cachedOps, operations);
+    onSettled(cachedTasks, tasks);
   }
 
-  async function getAllBoardInfo() {
-    return [
-      boardInfo2023,
-      boardInfoRandom,
-    ];
+  function importBoard(data: BoardData) {
+    if (!validate(data.board.id)) {
+      throw new Error(`Invalid ID for board "${data.board.name}": ${data.board.id}`);
+    }
+
+    info.value = data.board;
+    crops.value = data.crops;
+    locations.value = data.locations;
+    operations.value = data.operations;
+    tasks.value = data.tasks;
+    plants.value = data.plants;
+
+    const fmtedData = fmtBeforeSerialize(clone(data));
+    return Promise.allSettled([
+      saveRecord('entities', EntityType.Plan, fmtedData.board),
+      Promise.allSettled(fmtedData.crops.map((record) =>
+        saveRecord('entities', EntityType.TaxonomyTerm, record))),
+      Promise.allSettled(fmtedData.locations.map((record) =>
+        saveRecord('entities', EntityType.Asset, record))),
+      Promise.allSettled(fmtedData.operations.map((record) =>
+        saveRecord('entities', EntityType.TaxonomyTerm, record))),
+      Promise.allSettled(fmtedData.tasks.map((record) =>
+        saveRecord('entities', EntityType.Log, record))),
+      Promise.allSettled(fmtedData.plants.map((record) =>
+        saveRecord('entities', EntityType.Asset, record))),
+    ]).then((results) => {
+        const [
+          infoResults, cropResults, locResults, opResults, taskResults, plantResults,
+        ] = results;
+        return {
+          info: infoResults,
+          crops: cropResults,
+          locations: locResults,
+          operations: opResults,
+          tasks: taskResults,
+          plants: plantResults,
+        }
+    });
   }
 
-  type CollectionValue = (UpdateValue | DeleteValue) & ResourceIdentifier;
-  type Collection = Ref<CollectionValue[]>;
-  function idCollection(value: CollectionValue): Collection | false {
-    if (value.type in Log) return tasks;
+  function getAllBoardInfo(): Promise<BoardInfo[]> {
+    const results = (getRecords(
+      'entities',
+      EntityType.Plan,
+      (p: PlanResource) => p.type === Plan.FarmFlow,
+    ) as Promise<BoardInfoSerialized[]>);
+    return results.then(map(objectifyBoardInfo));
+  }
+
+  function findCollection<R>(value: PartialResource<R>): Ref<((LogResource|PlantResource) & R)[]>| false {
+    if (value.type.startsWith(EntityType.Log)) return tasks;
     if (value.type === Asset.Plant) return plants;
     return false;
   }
 
-  function update(value: UpdateValue): void {
-    const collection = idCollection(value);
-  
-    if (collection) {
-      const i = collection.value.findIndex(item => item.id === value.id);
-      if (i < 0) collection.value.push(value);
-      else collection.value[i] = updater(collection.value[i], value);
-    } else if (value.type === Plan.FarmFlow && info.value !== null) {
-      if (info.value === null) info.value = value as BoardInfo;
-      else info.value = updater(info.value, value as BoardInfo);
+  function update<R>(value: PartialResource<R>|BoardInfo) {
+    const collection = findCollection(value);
+    const [storeName] = value.type.split('--');
+
+    if (collection && storeName) {
+      let i = collection.value.findIndex(item => item.id === value.id);
+      if (i < 0) i = (collection as Ref<R[]>).value.push(value as R) - 1;
+      else {
+        const state = updater(collection.value[i], value) as R;
+        (collection as Ref<R[]>).value[i] = state;
+      }
+      return saveRecord('entities', storeName, collection.value[i]);
     }
+    if (value.type === Plan.FarmFlow && info.value !== null && storeName) {
+      const state = updater(info.value, value) as BoardInfo;
+      info.value = state;
+      const nonReactive = clone(state);
+      const serialized = stringifyBoardInfo(nonReactive);
+      return saveRecord('entities', storeName, serialized);
+    }
+    const errMsg = `Invalid update value for resource with UUID ${value.id} of type "${value.type}".`;
+    return Promise.reject(new Error(errMsg));
   }
 
-  function onDelete(idfier: DeleteValue) {
-    const collection = idCollection(idfier);
+  function onDelete<R>(idfier: PartialResource<R>) {
+    const collection = findCollection(idfier);
 
     if (collection) {
       const i = collection.value.findIndex(r =>
@@ -152,6 +207,9 @@ export default function useBoardData(initInfo?: BoardInfo) {
       operations.value = [];
       crops.value = [];
     }
+    const [storeName] = idfier.type.split('--');
+    if (storeName) return deleteRecord('entities', storeName, idfier.id);
+    return Promise.reject(idfier.id);
   }
 
   return {
@@ -172,6 +230,7 @@ export default function useBoardData(initInfo?: BoardInfo) {
     // For modifying the board state & data collections.
     delete: onDelete,
     getAllBoardInfo,
+    import: importBoard,
     load,
     update,
   }
