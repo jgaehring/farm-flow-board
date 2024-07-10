@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { BoardData } from '@/data/deserialize';
+import type { BoardData } from '@/data/serialize';
 import FlowBoardDialogImportBoard from './FlowBoardDialogImportBoard.vue';
 
 const emit = defineEmits<{

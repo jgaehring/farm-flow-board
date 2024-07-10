@@ -3,8 +3,8 @@ import { validate } from 'uuid';
 import { computed, ref } from 'vue';
 import type { Ref } from 'vue';
 import { deleteRecord, getRecords, saveRecord } from '@/idb';
-import { fmtBeforeSerialize, objectifyBoardInfo, objectifyLogs, stringifyBoardInfo } from '@/data/deserialize';
-import type { BoardData, BoardInfoSerialized, LogResourceSerialized } from '@/data/deserialize';
+import { fmtBeforeSerialize, objectifyBoardInfo, objectifyLogs, stringifyBoardInfo } from '@/data/serialize';
+import type { BoardData, BoardInfoSerialized, LogResourceSerialized } from '@/data/serialize';
 import { Asset, EntityType, Plan } from '@/data/resources';
 import type {
   BoardInfo,

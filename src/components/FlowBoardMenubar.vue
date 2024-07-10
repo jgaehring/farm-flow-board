@@ -7,7 +7,7 @@ import FlowBoardDialogImportBoard from '@/components/FlowBoardDialogImportBoard.
 import { boardInfoKey, boardsKey, locationsKey, operationsKey, plantsKey } from '@/components/providerKeys';
 import type { CreateValue } from '@/composables/useBoardData';
 import type { BoardInfo, LogResource, PartialResource } from '@/data/resources';
-import type { BoardData } from '@/data/deserialize';
+import type { BoardData } from '@/data/serialize';
 import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
 import IconCheck from '@/assets/radix-icons/check.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';

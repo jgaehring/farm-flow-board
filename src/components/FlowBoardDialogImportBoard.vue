@@ -2,8 +2,8 @@
 import { ref } from 'vue';
 import { useFileDialog } from '@vueuse/core';
 import { Dialog, Label } from 'radix-vue/namespaced';
-import { deserialize } from '@/data/deserialize';
-import type { BoardData } from '@/data/deserialize';
+import { deserialize } from '@/data/serialize';
+import type { BoardData } from '@/data/serialize';
 import { defaultSeason, fallbackRange } from '@/utils/date';
 import FFDatePicker from '@/components/FFDatePicker.vue';
 

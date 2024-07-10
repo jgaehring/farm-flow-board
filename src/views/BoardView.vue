@@ -7,8 +7,8 @@ import {
   boardInfoKey, boardsKey, cropsKey, dateRangeKey, dateSequenceKey, isDarkKey,
   locationsKey, operationsKey, plantsKey, tasksKey,
 } from '@/components/providerKeys';
-import { serialize } from '@/data/deserialize';
-import type { BoardData } from '@/data/deserialize';
+import { serialize } from '@/data/serialize';
+import type { BoardData } from '@/data/serialize';
 import type { BoardInfo } from '@/data/resources';
 import useBoardData from '@/composables/useBoardData';
 import FlowBoard from '@/components/FlowBoard.vue';
