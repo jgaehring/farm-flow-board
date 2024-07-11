@@ -42,7 +42,7 @@ export type PartialAsset = PartialResource<AssetResource>;
 export type PartialPlan = PartialResource<PlanResource>;
 export type PartialTerm = PartialResource<TaxonomyTerm>;
 
-interface TaxonomyTerm extends Resource {
+export interface TaxonomyTerm extends Resource {
   type: Term,
   name: string,
 }

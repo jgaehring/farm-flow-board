@@ -5,7 +5,7 @@ import type { Ref } from 'vue';
 import { deleteRecord, getRecords, saveRecord } from '@/idb';
 import { fmtBeforeSerialize, objectifyBoardInfo, objectifyLogs, stringifyBoardInfo } from '@/data/serialize';
 import type { BoardData, BoardInfoSerialized, LogResourceSerialized } from '@/data/serialize';
-import { Asset, EntityType, Plan } from '@/data/resources';
+import { Asset, EntityType, Plan, Term } from '@/data/resources';
 import type {
   BoardInfo,
   CropTerm,
@@ -23,6 +23,7 @@ import type {
   PlanIdentifier,
   PlanResource,
   Resource,
+  TaxonomyTerm,
 } from '@/data/resources';
 import { createDateSequence, defaultSeason, fallbackRange } from '@/utils/date';
 
@@ -93,13 +94,15 @@ export default function useBoardData(initInfo?: BoardInfo) {
         : [...lids, p.location.id];
       return [nextCropIds, nextLocIds];
     }, [[], []]);
+    const opQuery = (term: TaxonomyTerm) =>
+      term.type === Term.StandardOperatingProcedure;
     const logQuery = (log: LogResourceSerialized) =>
       safeIncludes(locIds, log.location?.id)
       || safeIncludes(cropIds, log.plant?.id);
     const [cachedCrops, cachedLocs, cachedOps, cachedTasks] = await Promise.allSettled([
       getRecords('entities', EntityType.TaxonomyTerm, cropIds),
       getRecords('entities', EntityType.Asset, locIds),
-      getRecords('entities', EntityType.TaxonomyTerm),
+      getRecords('entities', EntityType.TaxonomyTerm, opQuery),
       getRecords('entities', EntityType.Log, logQuery).then(objectifyLogs),
     ]);
     function onSettled<T>(result: PromiseSettledResult<T>, state: Ref<T>) {
