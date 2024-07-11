@@ -208,9 +208,10 @@ header {
   align-items: center;
   row-gap: .125rem;
   padding: .125rem 0;
+  margin-bottom: .375rem;
   justify-content: flex-start;
   line-height: 1.5;
-  height: 5.5rem;
+  height: 6rem;
 }
 
 .logotype {
@@ -342,7 +343,7 @@ h1 {
 }
 
 main {
-  flex: 4 1 calc(100vh - 12rem);
+  max-height: calc(100vh - 12rem);
   width: 100%;
   padding: 0 3rem;
 }

@@ -324,6 +324,9 @@ export function drawBoard(
   style: StyleOptions,
 ): BoardProperties {
   const board = computeBoardProperties(ctx.canvas, values, index, style);
+  if (ctx.canvas.height - board.height > board.grid.unit) {
+    ctx.canvas.height = board.height + .5 * board.grid.unit;
+  }
   const { axes, grid } = board;
   // Clear the canvas & apply a fill so previous paints don't show through.
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
