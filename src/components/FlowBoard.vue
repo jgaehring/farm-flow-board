@@ -5,7 +5,7 @@ import {
   cropsKey, emitBoardDeleteKey, emitBoardUpdateKey, indexPositionKey,
   locationsKey, matrixKey, operationsKey, plantsKey, tasksKey,
 } from '@/components/providerKeys';
-import type { DeleteValue, UpdateValue } from '@/components/providerKeys';
+import type { DeleteValue, UpdateValue } from '@/composables/useBoardData';
 import { sameDate } from '@/utils/date';
 import FlowBoardCanvas from '@/components/FlowBoardCanvas.vue';
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '@/components/FlowBoardCanvas.vue';

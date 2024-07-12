@@ -35,14 +35,14 @@ export interface ResourceIdentifier {
 export interface Resource extends ResourceIdentifier {
   name: string,
 }
-export type PartialResource<R> = ResourceIdentifier & R;
+export type PartialResource<R> = ResourceIdentifier & Partial<R>;
 
 export type PartialLog = PartialResource<LogResource>;
 export type PartialAsset = PartialResource<AssetResource>;
 export type PartialPlan = PartialResource<PlanResource>;
 export type PartialTerm = PartialResource<TaxonomyTerm>;
 
-interface TaxonomyTerm extends Resource {
+export interface TaxonomyTerm extends Resource {
   type: Term,
   name: string,
 }

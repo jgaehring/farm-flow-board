@@ -10,7 +10,7 @@ import type {
 } from '@/data/resources';
 import { toOptionalIdfier } from '@/utils/idfier';
 import { dateRangeKey } from './providerKeys';
-import type { DeleteValue } from './providerKeys';
+import type { DeleteValue } from '@/composables/useBoardData';
 import FFDatePicker from '@/components/FFDatePicker.vue';
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
