@@ -6,7 +6,6 @@ import type {
   BoardInfo, CropTerm, LocationIdentifier, LocationResource, Log, LogResource,
   OperationIdentifier, OperationTerm, Plan, PlanResource, PlantIdentifier, PlantResource, Resource,
 } from '@/data/resources';
-import entities2023 from './test-data.json';
 
 export interface BoardData {
   board: BoardInfo,
@@ -104,12 +103,3 @@ export function deserialize(
   const data = JSON.parse(json, reviver);
   return fmtAfterDeserialize(data);
 }
-
-export const {
-  crops: crops2023,
-  locations: locations2023,
-  operations: operations2023,
-  plants: plants2023,
-  tasks: tasks2023,
-  board: boardInfo2023,
-} = fmtAfterDeserialize(entities2023 as unknown as BoardDataSerialized);
