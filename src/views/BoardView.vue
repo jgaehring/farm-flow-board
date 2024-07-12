@@ -15,12 +15,14 @@ import FlowBoard from '@/components/FlowBoard.vue';
 import FlowBoardOperations from '@/components/FlowBoardOperations.vue';
 import FlowBoardMenubar from '@/components/FlowBoardMenubar.vue';
 import FlowBoardNoBoard from '@/components/FlowBoardNoBoard.vue';
+import FlowBoardDialogLoading from '@/components/FlowBoardDialogLoading.vue';
 import LogoType from '@/assets/logotype_color.svg?component';
 import IconMoon from '@/assets/radix-icons/moon.svg?component';
 import IconPencil2 from '@/assets/radix-icons/pencil-2.svg?component';
 import IconSun from '@/assets/radix-icons/sun.svg?component';
 
 const board = useBoardData();
+const loading = ref(false);
 
 const editableName = ref<string>(board.info.value?.name || '');
 watch(() => board.info.value?.name, (name) => {
@@ -43,13 +45,16 @@ const boards = ref<BoardInfo[]>([]);
 function selectBoard(id: string) {
   const info = boards.value.find(b => b.id === id);
   if (info && validate(info.id)) {
-    board.load(info);
+    loading.value = true;
+    board.load(info).then(() => { loading.value = false; });
   }
 }
 
 function importBoard(data: BoardData) {
   if (!validate(data.board.id)) return;
+  loading.value = true;
   board.import(data).then(() => {
+    loading.value = false;
     const i = boards.value.findIndex(b => b.id === data.board.id);
     if (i < 0) boards.value.push(data.board);
     else boards.value[i] = data.board;
@@ -93,10 +98,14 @@ const isDark = useDark({
 const toggleDark = useToggle(isDark);
 
 onMounted(() => {
-  board.load();
+  loading.value = true;
   board.getAllBoardInfo().then((all: BoardInfo[]) => {
     all.forEach((board: BoardInfo) => { boards.value.push(board); });
-    if (!board.info.value && all.length > 0)  board.load(all[0]);
+    if (!board.info.value && all.length > 0) {
+      board.load(all[0]).then(() => { loading.value = false; });
+    } else {
+      loading.value = false;
+    }
   });
 });
 
@@ -180,8 +189,14 @@ provide(isDarkKey, isDark);
     </header>
 
     <main>
-      <FlowBoard v-if="board.info.value" @update="board.update" @delete="board.delete"/>
-      <FlowBoardNoBoard v-else @import-board="importBoard" />
+      <FlowBoard
+        v-if="board.info.value"
+        @update="board.update"
+        @delete="board.delete"/>
+      <FlowBoardNoBoard
+        v-if="!board.info.value && !loading"
+        @import-board="importBoard" />
+      <FlowBoardDialogLoading :open="loading" />
     </main>
 
     <footer>
