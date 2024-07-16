@@ -80,11 +80,13 @@ function cancelChanges() {
         <FFDatePicker
           @change="dateRange[0] = $event"
           :value="dateRange[0]"
+          label="Start Date"
           class="edit-dialog-date-picker" />
 
         <FFDatePicker
           @change="dateRange[1] = $event"
           :value="dateRange[1]"
+          label="End Date"
           class="edit-dialog-date-picker" />
 
         <div class="edit-dialog-btns">

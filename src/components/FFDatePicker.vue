@@ -11,6 +11,7 @@ export interface Props {
   value?: Date,
   minValue?: Date,
   maxValue?: Date,
+  label?: string,
 }
 const props = defineProps<Props>();
 const emit = defineEmits<{
@@ -29,7 +30,7 @@ const dateTime = ref(defaultDateTime);
 <template>
   <div class="ff-date-picker-wrapper">
     <Label class="ff-date-picker-field-label" for="ff-date-picker-root">
-      Date
+      {{ label || 'Date' }}
     </Label>
 
     <DatePicker.Root
