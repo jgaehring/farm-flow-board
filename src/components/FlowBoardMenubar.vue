@@ -12,9 +12,7 @@ import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
 import IconCheck from '@/assets/radix-icons/check.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
 
-const currentMenu = ref('')
-const checkboxOne = ref(false)
-const checkboxTwo = ref(false)
+const currentMenu = ref('');
 const locations = inject(locationsKey, ref([]));
 const operations = inject(operationsKey, ref([]));
 const plants = inject(plantsKey, ref([]));
@@ -91,8 +89,6 @@ function cancelEdits() {
                 @select.prevent="openNewBoardDialog = true"
                 class="MenubarItem" >
                 New Board
-                <!-- TODO: Implement key bindings. -->
-                <!-- <div class="RightSlot">⌘ N</div> -->
               </Menubar.Item>
             </template>
           </FlowBoardDialogEditBoardInfo>
@@ -210,8 +206,6 @@ function cancelEdits() {
                 :disabled="!boardInfo"
                 class="MenubarItem" >
                 New Task
-                <!-- TODO: Implement key bindings. -->
-                <!-- <div class="RightSlot">⌘ T</div> -->
               </Menubar.Item>
             </template>
           </FlowBoardDialogEditTask>
@@ -257,7 +251,6 @@ function cancelEdits() {
           :side-offset="5"
           :align-offset="-14">
           <Menubar.CheckboxItem
-            v-model:checked="checkboxOne"
             disabled
             class="MenubarCheckboxItem inset">
             <Menubar.ItemIndicator class="MenubarItemIndicator">
@@ -266,7 +259,6 @@ function cancelEdits() {
             Show Months
           </Menubar.CheckboxItem>
           <Menubar.CheckboxItem
-            v-model:checked="checkboxTwo"
             disabled
             class="MenubarCheckboxItem inset">
             <Menubar.ItemIndicator class="MenubarItemIndicator">
