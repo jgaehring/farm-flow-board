@@ -9,7 +9,22 @@ import svgLoader from 'vite-svg-loader'
 export default defineConfig({
   plugins: [
     vue(),
-    svgLoader(),
+    svgLoader({
+      svgoConfig: {
+        multipass: true,
+        plugins: [
+          {
+            name: 'preset-default',
+            params: {
+              overrides: {
+                // @see https://github.com/svg/svgo/issues/1128
+                removeViewBox: false,
+              },
+            },
+          },
+        ],
+      },
+    }),
     VueDevTools(),
   ],
   resolve: {
