@@ -5,7 +5,7 @@ import { useEventListener, useParentElement } from '@vueuse/core';
 import { Popover } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { computeBoardProperties } from '@/canvas/board';
-import type { LogProperties, LogResource, OperationTerm, PartialLog } from '@/data/resources';
+import type { LocationResource, LogProperties, LogResource, OperationTerm, PartialLog } from '@/data/resources';
 import {
   dateSequenceKey, emitBoardDeleteKey, emitBoardUpdateKey,
   indexPositionKey, isDarkKey,
@@ -16,6 +16,7 @@ import { sameDate } from '@/utils/date';
 import { toOptionalIdfier } from '@/utils/idfier';
 import FlowBoardDialogEditTask from './FlowBoardDialogEditTask.vue';
 import IconCross2 from '@/assets/radix-icons/cross-2.svg?component';
+import IconPlusCircled from '@/assets/radix-icons/plus-circled.svg?component';
 
 interface FlowBoardCursorGridProps {
   width: number,
@@ -54,7 +55,7 @@ const board = computed(() => computeBoardProperties(
 ));
 
 interface GridCell {
-  location: { id: string, name: string },
+  location: LocationResource,
   date: Date,
   tasks: LogResource[],
   operations: OperationTerm[],
@@ -63,10 +64,9 @@ interface GridCell {
   ref: Ref<HTMLDivElement|null>
 }
 
-const gridRefs = computed(() => board.value.axes.y.values.flatMap((loc, y) => {
-  const location = { id: loc.id, name: loc.name };
+const gridRefs = computed(() => board.value.axes.y.values.flatMap((location, y) => {
   const { grid } = board.value;
-  const records = matrix.value.find(l => l.id === loc.id)?.dates || [];
+  const records = matrix.value.find(l => l.id === location.id)?.dates || [];
   return board.value.axes.x.values.reduce((cells, date, x) => {
     const {
       operations: ops = [], tasks: tasksByDate = [],
@@ -190,6 +190,12 @@ function deleteTask(idfier: DeleteValue) {
                   </button>
                 </template>
               </FlowBoardDialogEditTask>
+              <button
+                class="create-task-btn"
+                type="button"
+                @click="initTask = { date: cell.date, location: cell.location }" >
+                <IconPlusCircled />
+              </button>
             </div>
             <Popover.Close class="popover-close" aria-label="Close">
               <IconCross2 />
@@ -253,8 +259,23 @@ button, input {
   border-radius: 4px;
   cursor: pointer;
 }
+:deep(.popover-content-operation) button.create-task-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1.5rem;
+  background-color: var(--color-neutral-inverse-transparent-2);
+  border-radius: 9999px;
+  padding: .375rem;
+  color: var(--color-neutral-inverse);
+}
+:deep(.popover-content-operation) button.create-task-btn svg {
+  width: 20px;
+  height: 20px;
+}
 :deep(.popover-content-operation) button:hover {
   background-color: var(--ff-c-green-transparent-3);
+  color: var(--ff-c-green);
 }
 :deep(.popover-content-date-time) {
   text-align: center;
