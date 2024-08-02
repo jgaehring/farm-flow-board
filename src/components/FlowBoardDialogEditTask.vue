@@ -72,9 +72,12 @@ function confirmChanges() {
   if (!props.task || !validate(props.task.id || '') || !props.task.type) {
     // If no task was passed as props, or it had no valid ID or log type, it's a
     // new log; assign its type based on the operation's log_type field.
+    const opName = selectedOp.value?.name;
+    const locName = plantAtLocation?.name || selectedLoc.value?.name;
+    const name = [opName, locName].filter(n => !!n).join(', ');
     const task: LogResource = {
       id: uuid(), type: logType,
-      name: '', notes: '',
+      name, notes: '',
       date, location, operation, plant,
     };
     emit('update:save', task);
