@@ -86,6 +86,14 @@ export interface PlantResource extends AssetResource {
 export interface LogIdentifier extends ResourceIdentifier {
   type: Log,
 }
+export interface LogProperties extends Resource {
+  name: string,
+  date: Date,
+  location: LocationIdentifier | null,
+  operation: OperationIdentifier | null,
+  plant: PlantIdentifier | null,
+  notes: string,
+}
 export interface LogResource extends Resource {
   type: Log,
   date: Date,

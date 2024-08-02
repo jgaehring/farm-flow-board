@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import type { Ref } from 'vue';
 import { computed, inject, ref, unref } from 'vue';
+import { useEventListener, useParentElement } from '@vueuse/core';
 import { Popover } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { computeBoardProperties } from '@/canvas/board';
-import type { LogResource, OperationTerm, PartialLog } from '@/data/resources';
+import type { LogProperties, LogResource, OperationTerm, PartialLog } from '@/data/resources';
 import {
   dateSequenceKey, emitBoardDeleteKey, emitBoardUpdateKey,
   indexPositionKey, isDarkKey,
-  locationsKey, matrixKey, operationsKey,
+  locationsKey, matrixKey, operationsKey, plantsKey,
 } from '@/components/providerKeys';
 import type { DeleteValue } from '@/composables/useBoardData';
 import { sameDate } from '@/utils/date';
+import { toOptionalIdfier } from '@/utils/idfier';
 import FlowBoardDialogEditTask from './FlowBoardDialogEditTask.vue';
 import IconCross2 from '@/assets/radix-icons/cross-2.svg?component';
 
@@ -23,6 +25,7 @@ const props = defineProps<FlowBoardCursorGridProps>();
 
 const matrix = inject(matrixKey, ref([]));
 const locations = inject(locationsKey, ref([]));
+const plants = inject(plantsKey, ref([]));
 const operations = inject(operationsKey, ref([]));
 const dateSeq = inject(dateSequenceKey, ref([]));
 const boardIndex = inject(indexPositionKey, ref({ x: 0, y: 0 }));
@@ -86,6 +89,22 @@ const gridRefs = computed(() => board.value.axes.y.values.flatMap((loc, y) => {
 enum IndexOf { Cell, Task, Operation, Location }
 const selected = ref<{ [I in IndexOf]: number }>([-1, -1, -1, -1]);
 
+const initTask = ref<Partial<LogProperties>|null>(null);
+const fig = useParentElement() as Ref<HTMLElement | null>;
+useEventListener(fig, 'click', (event: MouseEvent) => {
+  const x = event.offsetX - style.value.axes.yAxisWidth;
+  const y = event.offsetY - style.value.axes.xAxisHeight;
+  if (x <= 0 || y <= 0) return;
+  const gridX = Math.floor(x / style.value.grid.unit);
+  const gridY = Math.floor(y / style.value.grid.unit);
+  const date = board.value.axes.x.values[gridX] || new Date();
+  const location = toOptionalIdfier(board.value.axes.y.values[gridY]);
+  const plant = toOptionalIdfier(plants.value.find(p => p.location.id === location?.id));
+  initTask.value = {
+    date, plant, location,
+  };
+});
+
 function selectCell(i: number, open?: boolean) {
   if (open === false) selected.value[IndexOf.Cell] = -1;
   else selected.value[IndexOf.Cell] = i;
@@ -106,10 +125,12 @@ function confirmChanges(changes: PartialLog) {
   update(changes);
   selectTask(-1);
   selectCell(-1);
+  initTask.value = null;
 }
 function cancelChanges() {
   selectTask(-1);
   selectCell(-1);
+  initTask.value = null;
 }
 function deleteTask(idfier: DeleteValue) {
   deleteResource(idfier);
@@ -121,6 +142,14 @@ function deleteTask(idfier: DeleteValue) {
 
 <template>
   <div class="cursor-grid">
+    <FlowBoardDialogEditTask
+      v-if="initTask"
+      @update:save="confirmChanges"
+      @update:cancel="cancelChanges"
+      :open="initTask !== null"
+      :task="initTask"
+      :operations="operations"
+      :locations="locations" />
     <div v-for="(cell, i) in gridRefs"
       class="cursor-grid-cell"
       :style="cell.style"

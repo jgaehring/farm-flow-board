@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid, validate } from 'uuid';
 import { computed, inject, ref } from 'vue';
 import { Combobox, Dialog, Label } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { Log } from '@/data/resources';
 import type {
-  LocationIdentifier, LocationResource, LogResource,
+  LocationIdentifier, LocationResource, LogProperties, LogResource,
   OperationIdentifier, OperationTerm, PartialLog, PlantResource,
 } from '@/data/resources';
 import { toOptionalIdfier } from '@/utils/idfier';
@@ -18,7 +18,7 @@ import IconTrash from '@/assets/radix-icons/trash.svg?component';
 
 const props = defineProps<{
   open: boolean,
-  task?: LogResource,
+  task?: LogResource | PartialLog | Partial<LogProperties>,
   operations?: OperationTerm[],
   locations?: LocationResource[],
   plants?: PlantResource[],
@@ -27,7 +27,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'close'): void,
   (e: 'update:save', value: PartialLog): void,
-  (e: 'update:cancel', value: PartialLog | undefined): void,
+  (e: 'update:cancel', value: PartialLog | Partial<LogProperties> | undefined): void,
   (e: 'update:delete', value: DeleteValue): void,
 }>();
 
@@ -62,20 +62,24 @@ function deleteTask() {
 }
 
 function confirmChanges() {
+  const logType = selectedOp.value?.log_type || Log.Activity;
   const location = toOptionalIdfier(selectedLoc.value);
   const operation = toOptionalIdfier(selectedOp.value);
   const date = selectedDateTime.value || new Date();
   const plantAtLocation = props.plants?.find(p =>
     p.location.id === selectedLoc.value?.id);
   const plant = toOptionalIdfier(plantAtLocation);
-  if (!props.task) {
+  if (!props.task || !validate(props.task.id || '') || !props.task.type) {
+    // If no task was passed as props, or it had no valid ID or log type, it's a
+    // new log; assign its type based on the operation's log_type field.
     const task: LogResource = {
-      id: uuid(), type: Log.Activity,
+      id: uuid(), type: logType,
       name: '', notes: '',
       date, location, operation, plant,
     };
     emit('update:save', task);
   } else {
+    // Otherwise the id and type must be preserved.
     const { id, type } = props.task;
     const log = { id, type, date, location, operation, plant } as PartialLog;
     emit('update:save', log);
