@@ -3,7 +3,10 @@ import { validate } from 'uuid';
 import { computed, ref } from 'vue';
 import type { Ref } from 'vue';
 import { deleteRecord, getRecords, saveRecord } from '@/idb';
-import { fmtBeforeSerialize, objectifyBoardInfo, objectifyLogs, stringifyBoardInfo } from '@/data/serialize';
+import {
+  fmtBeforeSerialize, objectifyBoardInfo, objectifyDateTimeProps,
+  stringifyBoardInfo, stringifyDateTimeProps,
+} from '@/data/serialize';
 import type { BoardData, BoardInfoSerialized, LogResourceSerialized } from '@/data/serialize';
 import { Asset, EntityType, Plan, Term } from '@/data/resources';
 import type {
@@ -103,7 +106,7 @@ export default function useBoardData(initInfo?: BoardInfo) {
       getRecords('entities', EntityType.TaxonomyTerm, cropIds),
       getRecords('entities', EntityType.Asset, locIds),
       getRecords('entities', EntityType.TaxonomyTerm, opQuery),
-      getRecords('entities', EntityType.Log, logQuery).then(objectifyLogs),
+      getRecords('entities', EntityType.Log, logQuery).then(objectifyDateTimeProps),
     ]);
     function onSettled<T>(result: PromiseSettledResult<T>, state: Ref<T>) {
       if (result.status === 'fulfilled') state.value = result.value;
@@ -165,7 +168,8 @@ export default function useBoardData(initInfo?: BoardInfo) {
     return results.then(map(objectifyBoardInfo));
   }
 
-  function findCollection<R>(value: PartialResource<R>): Ref<((LogResource|PlantResource) & R)[]>| false {
+  type CollectionItem = LogResource|PlantResource;
+  function findCollection<R>(value: PartialResource<R>): Ref<(CollectionItem & R)[]>| false {
     if (value.type.startsWith(EntityType.Log)) return tasks;
     if (value.type === Asset.Plant) return plants;
     return false;
@@ -174,15 +178,21 @@ export default function useBoardData(initInfo?: BoardInfo) {
   function update<R>(value: PartialResource<R>|BoardInfo) {
     const collection = findCollection(value);
     const [storeName] = value.type.split('--');
-
+    
     if (collection && storeName) {
+      type FullResource = CollectionItem & R;
+      let state: FullResource;
       let i = collection.value.findIndex(item => item.id === value.id);
-      if (i < 0) i = (collection as Ref<R[]>).value.push(value as R) - 1;
-      else {
-        const state = updater(collection.value[i], value) as R;
-        (collection as Ref<R[]>).value[i] = state;
+      if (i < 0) {
+        state = value as FullResource;
+        i = collection.value.push(state) - 1;
+      } else {
+        state = updater(collection.value[i], value) as FullResource;
+        collection.value[i] = state;
       }
-      return saveRecord('entities', storeName, collection.value[i]);
+      const nonReactive = clone(state);
+      const serialized = stringifyDateTimeProps(nonReactive) as FullResource;
+      return saveRecord('entities', storeName, serialized);
     }
     if (value.type === Plan.FarmFlow && info.value !== null && storeName) {
       const state = updater(info.value, value) as BoardInfo;

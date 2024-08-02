@@ -1,4 +1,4 @@
-import { clone, compose, evolve } from 'ramda';
+import { clone, compose, evolve, is, when } from 'ramda';
 import {
   fromDate, getLocalTimeZone, parseDate, parseZonedDateTime, toCalendarDate,
 } from '@internationalized/date';
@@ -47,19 +47,17 @@ const stringifyDateTime = (d: Date) =>
 const stringifyDateRange = ([d1, d2]: [Date, Date]): [string, string] =>
   [stringifyDate(d1), stringifyDate(d2)];
 type stringifyBoardInfo = (board: BoardInfo) => BoardInfoSerialized;
-// export const stringifyBoardInfo: stringifyBoardInfo = evolve({ dateRange: stringifyDateRange });
-// export const serializeBoardInfo = (b: BoardInfo) => stringifyBoardInfo(clone(b));
 export const stringifyBoardInfo: stringifyBoardInfo = compose(
   evolve({ dateRange: stringifyDateRange }) as stringifyBoardInfo,
   clone,
 );
 
-const stringifyLog = evolve({ date: stringifyDateTime })
-const stringifyLogs = (t: LogResource|LogResource[]) =>
-  (Array.isArray(t) ? t.map(stringifyLog) : stringifyLog(t));
+const stringifyDateProp = evolve({ date: when(is(Object), stringifyDateTime) })
+export const stringifyDateTimeProps = (t: Object|Object[]) =>
+  (Array.isArray(t) ? t.map(stringifyDateProp) : stringifyDateProp(t)) as Resource|Resource[];
 
 export const fmtBeforeSerialize = evolve({
-  tasks: stringifyLogs,
+  tasks: stringifyDateTimeProps,
   board: stringifyBoardInfo,
 }) as (data: BoardData) => BoardDataSerialized;
 
@@ -87,12 +85,12 @@ const objectifyDateRange = ([d1, d2]: [string, string]): [Date, Date] =>
   [objectifyDate(d1), objectifyDate(d2)];
 export const objectifyBoardInfo = evolve({ dateRange: objectifyDateRange });
 
-const objectifyLog = evolve({ date: objectifyDateTime })
-export const objectifyLogs = (t: LogResourceSerialized|LogResourceSerialized[]) =>
-  (Array.isArray(t) ? t.map(objectifyLog) : objectifyLog(t));
+const objectifyDateProp = evolve({ date: when(is(String), objectifyDateTime) })
+export const objectifyDateTimeProps = (t: LogResourceSerialized|LogResourceSerialized[]) =>
+  (Array.isArray(t) ? t.map(objectifyDateProp) : objectifyDateProp(t));
 
 export const fmtAfterDeserialize = evolve({
-  tasks: objectifyLogs,
+  tasks: objectifyDateTimeProps,
   board: objectifyBoardInfo,
 }) as (json: BoardDataSerialized) => BoardData;
 
