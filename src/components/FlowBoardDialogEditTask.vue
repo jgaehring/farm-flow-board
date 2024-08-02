@@ -182,20 +182,24 @@ function cancelChanges() {
             class="edit-dialog-btn btn-delete" >
             <IconTrash />
           </button>
-          <button
-            type="button"
-            @click="cancelChanges"
-            aria-label="Close"
-            class="edit-dialog-btn btn-cancel">
-            Cancel
-          </button>
-          <button
-            type="button"
-            @click="confirmChanges"
-            aria-label="Save"
-            class="edit-dialog-btn btn-save">
-            Save
-          </button>
+          <Dialog.Close as-child >
+            <button
+              type="button"
+              @click="cancelChanges"
+              aria-label="Close"
+              class="edit-dialog-btn btn-cancel">
+              Cancel
+            </button>
+          </Dialog.Close>
+          <Dialog.Close as-child >
+            <button
+              type="button"
+              @click="confirmChanges"
+              aria-label="Save"
+              class="edit-dialog-btn btn-save">
+              Save
+            </button>
+          </Dialog.Close>
         </div>
 
       </Dialog.Content>
@@ -272,19 +276,30 @@ button, input {
   border-radius: 4px;
   cursor: pointer;
 }
+
+.edit-dialog-btns button.edit-dialog-btn:focus-visible {
+  border: 1px solid var(--color-text);
+}
+
 .edit-dialog-btns button.edit-dialog-btn.btn-save,
-.edit-dialog-btns button.edit-dialog-btn.btn-cancel:hover {
+.edit-dialog-btns button.edit-dialog-btn.btn-cancel:hover,
+.edit-dialog-btns button.edit-dialog-btn.btn-cancel:focus {
   color: var(--ff-c-green);
   background-color: var(--color-background);
 }
-.edit-dialog-btns button.edit-dialog-btn.btn-save:hover {
+
+.edit-dialog-btns button.edit-dialog-btn.btn-save:hover,
+.edit-dialog-btns button.edit-dialog-btn.btn-save:focus {
   background-color: var(--ff-c-green-transparent-3);
 }
+
 .edit-dialog-btns button.edit-dialog-btn.btn-delete {
   border: none;
   color: var(--vt-c-red);
 }
-.edit-dialog-btns button.edit-dialog-btn.btn-delete:hover {
+
+.edit-dialog-btns button.edit-dialog-btn.btn-delete:hover,
+.edit-dialog-btns button.edit-dialog-btn.btn-delete:focus {
   box-shadow: 0 0 2px 1px var(--vt-c-red);
   background-color: var(--color-background);
 }
