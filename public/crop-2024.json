@@ -1,0 +1,3190 @@
+{
+  "board": {
+    "name": "Crop 2024",
+    "dateRange": [
+      "2024-04-23",
+      "2024-11-15"
+    ],
+    "crops": [
+      {
+        "id": "3c29d408-0ba2-4c7a-8ddf-b9413bd035a1",
+        "type": "asset--plant"
+      },
+      {
+        "id": "1e6e3b6e-7206-47e8-9de1-f0916bb81a07",
+        "type": "asset--plant"
+      },
+      {
+        "id": "d53f2800-5927-4061-a5b4-1a87c0cd5689",
+        "type": "asset--plant"
+      },
+      {
+        "id": "867e18c8-f202-4735-b378-5754f613d59e",
+        "type": "asset--plant"
+      },
+      {
+        "id": "08d3750d-fefa-4892-a7d2-d96da5239b4a",
+        "type": "asset--plant"
+      },
+      {
+        "id": "789c6b85-b5a8-4257-a3f2-3cb7ee1ba35a",
+        "type": "asset--plant"
+      },
+      {
+        "id": "ed2c9414-e387-4af1-9beb-23e3a8b2484c",
+        "type": "asset--plant"
+      },
+      {
+        "id": "163e5c93-a4a3-434b-93b7-a79f08c3d868",
+        "type": "asset--plant"
+      },
+      {
+        "id": "123aeac8-69c8-41ac-adcb-448430327785",
+        "type": "asset--plant"
+      },
+      {
+        "id": "3244d790-3480-462c-97c3-0cf592e691a7",
+        "type": "asset--plant"
+      },
+      {
+        "id": "0464e1cc-7bea-4f99-b4dc-8267a9f76b03",
+        "type": "asset--plant"
+      },
+      {
+        "id": "8f0fdea0-f619-4b4b-b93f-c0a3e107b1c9",
+        "type": "asset--plant"
+      },
+      {
+        "id": "5655eb64-c53b-4173-9ffd-0f8e9cb6c4d1",
+        "type": "asset--plant"
+      },
+      {
+        "id": "30c92382-43e8-472f-a6a0-7fa05678378d",
+        "type": "asset--plant"
+      },
+      {
+        "id": "48bc85d6-9c6a-4802-8f81-fde40edefd1d",
+        "type": "asset--plant"
+      },
+      {
+        "id": "3da4a165-6a1d-43ad-b42d-a4a6c27ee667",
+        "type": "asset--plant"
+      },
+      {
+        "id": "ee39d4bf-0b3c-466f-86e3-20e768f25497",
+        "type": "asset--plant"
+      }
+    ],
+    "id": "b478c9a1-bc97-475d-9587-d85576a9fedf",
+    "type": "plan--farm_flow_board"
+  },
+  "crops": [
+    {
+      "id": "aff648a6-116d-425e-af82-d4e4eb2d8be4",
+      "type": "taxonomy_term--plant",
+      "name": "Corn",
+      "color": "royalblue"
+    },
+    {
+      "id": "1c3b151a-b657-45c6-970a-9965ca84ea13",
+      "type": "taxonomy_term--plant",
+      "name": "Soy",
+      "color": "orangered"
+    }
+  ],
+  "locations": [
+    {
+      "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
+      "type": "asset--land",
+      "name": "Home"
+    },
+    {
+      "id": "2ea23b15-f496-4b20-b664-0facc101714b",
+      "type": "asset--land",
+      "name": "Johnson"
+    },
+    {
+      "id": "42885dab-6193-46e9-b0b5-c887a199a50f",
+      "type": "asset--land",
+      "name": "Heatwole"
+    },
+    {
+      "id": "ede2c654-0d0f-4fa8-9d12-51c37068240b",
+      "type": "asset--land",
+      "name": "Cotter"
+    },
+    {
+      "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
+      "type": "asset--land",
+      "name": "Lake"
+    },
+    {
+      "id": "323452ac-0cb4-4b9d-b1d9-fb5e1b2ec472",
+      "type": "asset--land",
+      "name": "Wendorff 218"
+    },
+    {
+      "id": "37ddf7e7-8267-4215-a19c-26c84004f437",
+      "type": "asset--land",
+      "name": "Wendorff 60"
+    },
+    {
+      "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
+      "type": "asset--land",
+      "name": "Boonie"
+    },
+    {
+      "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
+      "type": "asset--land",
+      "name": "Yak"
+    },
+    {
+      "id": "9f0b1320-9485-4617-9950-920518a54ed6",
+      "type": "asset--land",
+      "name": "Lilly 1"
+    },
+    {
+      "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+      "type": "asset--land",
+      "name": "Lilly 2"
+    },
+    {
+      "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
+      "type": "asset--land",
+      "name": "Lilly 3"
+    },
+    {
+      "id": "cf5c4074-3809-4807-8436-48eb25446c37",
+      "type": "asset--land",
+      "name": "Lilly 4"
+    },
+    {
+      "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
+      "type": "asset--land",
+      "name": "Stockholm Home"
+    },
+    {
+      "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
+      "type": "asset--land",
+      "name": "Stockholm East"
+    },
+    {
+      "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
+      "type": "asset--land",
+      "name": "Carlson"
+    },
+    {
+      "id": "ddec63c6-a853-4c0c-9fb1-6911b9953047",
+      "type": "asset--land",
+      "name": "KB"
+    }
+  ],
+  "operations": [
+    {
+      "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+      "type": "taxonomy_term--standard_operating_procedure",
+      "name": "Tillage",
+      "color": "midnightblue",
+      "log_type": "log--activity"
+    },
+    {
+      "id": "65948cc7-67f4-4083-9d2d-7256e476372d",
+      "type": "taxonomy_term--standard_operating_procedure",
+      "name": "Plant",
+      "color": "seagreen",
+      "log_type": "log--seeding"
+    },
+    {
+      "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+      "type": "taxonomy_term--standard_operating_procedure",
+      "name": "Tine Weed",
+      "color": "dodgerblue",
+      "log_type": "log--activity"
+    },
+    {
+      "id": "c406c894-cec2-4356-852d-0a777fed938a",
+      "type": "taxonomy_term--standard_operating_procedure",
+      "name": "Cultivation",
+      "color": "crimson",
+      "log_type": "log--activity"
+    },
+    {
+      "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+      "type": "taxonomy_term--standard_operating_procedure",
+      "name": "Rotary Hoe",
+      "color": "coral",
+      "log_type": "log--activity"
+    },
+    {
+      "id": "d8940c6f-9865-46ae-af6e-2acfdc1dfa44",
+      "type": "taxonomy_term--standard_operating_procedure",
+      "name": "Flame Weed",
+      "color": "gold",
+      "log_type": "log--activity"
+    },
+    {
+      "id": "e72c8622-25d2-4673-bc43-92f9a5e3fe25",
+      "type": "taxonomy_term--standard_operating_procedure",
+      "name": "Rock Picking",
+      "color": "rebeccapurple",
+      "log_type": "log--activity"
+    },
+    {
+      "id": "a5397d37-269d-41de-8211-497d289b250e",
+      "type": "taxonomy_term--standard_operating_procedure",
+      "name": "Mow",
+      "color": "orchid",
+      "log_type": "log--activity"
+    },
+    {
+      "id": "9d2982b9-6ee9-473d-a984-efcc77088c78",
+      "type": "taxonomy_term--standard_operating_procedure",
+      "name": "Zap",
+      "color": "darkslategray",
+      "log_type": "log--activity"
+    },
+    {
+      "id": "7a68784b-885d-42ff-b140-a386bbdc77ef",
+      "type": "taxonomy_term--standard_operating_procedure",
+      "name": "Harvest",
+      "color": "wheat",
+      "log_type": "log--harvest"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "031364ac-d971-4a98-856e-b73060126883",
+      "type": "log--activity",
+      "name": "Tillage, Corn, Lake",
+      "date": "2024-05-12T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "073a1dd0-2400-47f3-9881-7928bb925304",
+      "type": "log--activity",
+      "name": "Tine Weed, Soy, Stockholm Home",
+      "date": "2024-05-30T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "07c084bc-bfe3-46c1-869e-a02171ab9f88",
+      "type": "log--activity",
+      "name": "Tillage, Corn, Heatwole",
+      "date": "2024-05-13T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "42885dab-6193-46e9-b0b5-c887a199a50f",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "098f4b4f-3865-4285-95d3-0d145cc554d0",
+      "type": "log--activity",
+      "name": "Flame Weed, Soy, Lilly 3",
+      "date": "2024-06-09T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "d8940c6f-9865-46ae-af6e-2acfdc1dfa44",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "0b448ba7-6096-4218-a047-fb310fee5440",
+      "type": "log--seeding",
+      "name": "Plant, Wendorff 60",
+      "notes": "",
+      "date": "2024-06-26T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "37ddf7e7-8267-4215-a19c-26c84004f437",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "65948cc7-67f4-4083-9d2d-7256e476372d",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "0c361e78-46d0-4dfb-b7d5-4bdaff6d71a5",
+      "type": "log--activity",
+      "name": "Tillage, Corn, Johnson",
+      "date": "2024-05-14T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "2ea23b15-f496-4b20-b664-0facc101714b",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "12ae9eb9-21f4-4c1a-ac03-29733eb77c62",
+      "type": "log--activity",
+      "name": "Tine Weed, Wendorff 218",
+      "notes": "",
+      "date": "2024-06-27T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "323452ac-0cb4-4b9d-b1d9-fb5e1b2ec472",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "1475bc6c-40d6-4870-9f7f-74e29a701e24",
+      "type": "log--seeding",
+      "name": "Plant, Corn, Home",
+      "date": "2024-06-14T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "65948cc7-67f4-4083-9d2d-7256e476372d",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "167931f7-bc68-46d2-96c9-80733eb5a126",
+      "type": "log--activity",
+      "name": "Tillage, Corn, Wendorff 218",
+      "date": "2024-05-12T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "323452ac-0cb4-4b9d-b1d9-fb5e1b2ec472",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "16f0e62c-1926-4826-a1e0-b74599b517a4",
+      "type": "log--activity",
+      "name": "Flame Weed, Soy, Lilly 1",
+      "date": "2024-06-07T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0b1320-9485-4617-9950-920518a54ed6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "19aec105-c069-42bd-81f3-1aa883de6048",
+      "type": "log--activity",
+      "name": "Tine Weed, Corn, Boonie",
+      "date": "2024-07-18T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "1b722134-2782-4d0e-8ef6-c39c00777fd8",
+      "type": "log--seeding",
+      "name": "Plant, Soy, Lilly 2",
+      "date": "2024-05-18T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "65948cc7-67f4-4083-9d2d-7256e476372d",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "21df0e49-9c6f-44f9-9c66-8afefa8f5741",
+      "type": "log--activity",
+      "name": "Tillage, Soy, Lilly 4",
+      "date": "2024-05-11T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "cf5c4074-3809-4807-8436-48eb25446c37",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "24bea4ed-ce4d-4a69-88fa-f426db5e9f78",
+      "type": "log--activity",
+      "name": "Tillage, Soy, Lilly 3",
+      "notes": "",
+      "date": "2024-05-18T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": {
+        "id": "8f0fdea0-f619-4b4b-b93f-c0a3e107b1c9",
+        "type": "asset--plant"
+      }
+    },
+    {
+      "id": "25f47428-bc82-4e5c-beeb-868da9e9b610",
+      "type": "log--activity",
+      "name": "Tillage, Corn, Home",
+      "date": "2024-05-14T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "2ca5e4ea-116f-442a-9760-55c25d43db22",
+      "type": "log--activity",
+      "name": "Flame Weed, Soy, Lilly 2",
+      "date": "2024-06-07T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "d8940c6f-9865-46ae-af6e-2acfdc1dfa44",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "2eb53ed3-999a-4e62-aa54-fd13119015ef",
+      "type": "log--seeding",
+      "name": "Plant, Soy, Stockholm East",
+      "date": "2024-05-30T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "65948cc7-67f4-4083-9d2d-7256e476372d",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "33a266cd-8a03-493e-b64e-a2b2d3f13c25",
+      "type": "log--activity",
+      "name": "Tillage, Soy, Lilly 3",
+      "date": "2024-05-11T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "38ccce6b-ce26-4c19-b5ce-8554254a8b98",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Corn, Home",
+      "date": "2024-06-26T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "3d942b64-5dd8-4fe7-8cfd-1ac9727ba3d5",
+      "type": "log--seeding",
+      "name": "Plant, Soy, Stockholm Home",
+      "date": "2024-05-29T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "65948cc7-67f4-4083-9d2d-7256e476372d",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "3e4fb771-83d0-4c48-8554-fcf7a65425de",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Corn, Johnson",
+      "date": "2024-06-26T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "2ea23b15-f496-4b20-b664-0facc101714b",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "3f61bd86-81c6-41a8-a2dc-a938c4efa61b",
+      "type": "log--activity",
+      "name": "Tine Weed, Soy, Lilly 4",
+      "notes": "",
+      "date": "2024-05-29T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "cf5c4074-3809-4807-8436-48eb25446c37",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": {
+        "id": "5655eb64-c53b-4173-9ffd-0f8e9cb6c4d1",
+        "type": "asset--plant"
+      }
+    },
+    {
+      "id": "4bd5680a-225d-4ce8-906c-8130effa8330",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Soy, Stockholm East",
+      "date": "2024-06-11T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "4cda425c-af68-4986-b2f5-d43167f4c555",
+      "type": "log--activity",
+      "name": "Tine Weed, Corn, Home",
+      "date": "2024-06-09T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "4d4445e7-6032-4719-82cf-355f6a22e69b",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Soy, Stockholm Home",
+      "date": "2024-06-11T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "563a37d7-b26b-49db-9f2f-c707915e600e",
+      "type": "log--activity",
+      "name": "Tine Weed, Lake",
+      "notes": "",
+      "date": "2024-06-27T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "5aa9cede-22fe-48cd-bd15-ef7820a64e8e",
+      "type": "log--activity",
+      "name": "Tillage, Corn, Cotter",
+      "date": "2024-05-12T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "ede2c654-0d0f-4fa8-9d12-51c37068240b",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "5b422d8f-ce8f-4051-b241-d2c80c13e24b",
+      "type": "log--activity",
+      "name": "Tillage, Soy, Carlson",
+      "date": "2024-05-14T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "5ec791d7-8606-4e83-aa53-724a8f7ec4e6",
+      "type": "log--activity",
+      "name": "",
+      "notes": "",
+      "date": "2024-06-09T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0b1320-9485-4617-9950-920518a54ed6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "9d2982b9-6ee9-473d-a984-efcc77088c78",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": {
+        "id": "3244d790-3480-462c-97c3-0cf592e691a7",
+        "type": "asset--plant"
+      }
+    },
+    {
+      "id": "5fcb7473-6393-4928-a343-7601ae898742",
+      "type": "log--activity",
+      "name": "Tillage, Soy, Lilly 2",
+      "date": "2024-05-11T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "6480abb0-087b-48c2-884d-7fd0b430c6f3",
+      "type": "log--seeding",
+      "name": "Plant, Soy, Lilly 4",
+      "date": "2024-05-29T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "cf5c4074-3809-4807-8436-48eb25446c37",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "65948cc7-67f4-4083-9d2d-7256e476372d",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "67482d8f-4f3e-47ec-bb57-22825174e414",
+      "type": "log--activity",
+      "name": "Tillage, Lake",
+      "notes": "",
+      "date": "2024-06-09T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "69356e9d-265d-4b16-9633-4a038a1cdd4f",
+      "type": "log--activity",
+      "name": "Tine Weed, Corn, Johnson",
+      "date": "2024-06-08T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "2ea23b15-f496-4b20-b664-0facc101714b",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "6b5b25c6-5a06-4942-878c-f75a7940b7d4",
+      "type": "log--seeding",
+      "name": "Plant, Corn, Heatwole",
+      "date": "2024-06-17T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "42885dab-6193-46e9-b0b5-c887a199a50f",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "65948cc7-67f4-4083-9d2d-7256e476372d",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "6cb99b08-3cca-41b3-836b-32b0d9877f4a",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Wendorff 218",
+      "notes": "",
+      "date": "2024-06-26T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "323452ac-0cb4-4b9d-b1d9-fb5e1b2ec472",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "7545c6b3-9046-4b87-a089-92ace134e590",
+      "type": "log--activity",
+      "name": "",
+      "notes": "",
+      "date": "2024-06-09T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "d8940c6f-9865-46ae-af6e-2acfdc1dfa44",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": {
+        "id": "0464e1cc-7bea-4f99-b4dc-8267a9f76b03",
+        "type": "asset--plant"
+      }
+    },
+    {
+      "id": "79f26c49-c9f4-4e23-8892-af0061bb7d2c",
+      "type": "log--activity",
+      "name": "Tillage, Wendorff 218",
+      "notes": "",
+      "date": "2024-06-10T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "323452ac-0cb4-4b9d-b1d9-fb5e1b2ec472",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "7ab14e25-595e-4368-8267-fc8155b8c692",
+      "type": "log--activity",
+      "name": "",
+      "notes": "",
+      "date": "2024-06-08T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0b1320-9485-4617-9950-920518a54ed6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "9d2982b9-6ee9-473d-a984-efcc77088c78",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": {
+        "id": "3244d790-3480-462c-97c3-0cf592e691a7",
+        "type": "asset--plant"
+      }
+    },
+    {
+      "id": "7e00a209-43d2-4044-9517-df7b0cf32924",
+      "type": "log--activity",
+      "name": "Tillage, Soy, Stockholm East",
+      "date": "2024-05-13T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "7e0705c2-ef2f-4ef7-8629-c9cfed39a782",
+      "type": "log--activity",
+      "name": "Tillage, Soy, Carlson",
+      "notes": "",
+      "date": "2024-05-30T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": {
+        "id": "3da4a165-6a1d-43ad-b42d-a4a6c27ee667",
+        "type": "asset--plant"
+      }
+    },
+    {
+      "id": "7f98ab5f-7f30-4f2d-90d6-7ae9bdeb3e7b",
+      "type": "log--seeding",
+      "name": "Plant, Corn, Boonie",
+      "date": "2024-06-26T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "65948cc7-67f4-4083-9d2d-7256e476372d",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "82d1413b-6186-440d-969f-5ee4e94be263",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Soy, Lilly 2",
+      "date": "2024-05-30T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "8aae12ea-27f0-410f-82d6-ed1d3202183a",
+      "type": "log--activity",
+      "name": "",
+      "notes": "",
+      "date": "2024-06-08T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "cf5c4074-3809-4807-8436-48eb25446c37",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": {
+        "id": "5655eb64-c53b-4173-9ffd-0f8e9cb6c4d1",
+        "type": "asset--plant"
+      }
+    },
+    {
+      "id": "8ac9419c-63d3-4a94-b543-fac6101c134b",
+      "type": "log--activity",
+      "name": "",
+      "notes": "",
+      "date": "2024-06-08T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": {
+        "id": "8f0fdea0-f619-4b4b-b93f-c0a3e107b1c9",
+        "type": "asset--plant"
+      }
+    },
+    {
+      "id": "8b4e820b-a698-406e-aa06-cd34b909d17f",
+      "type": "log--activity",
+      "name": "Tine Weed, Corn, Yak",
+      "date": "2024-06-14T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "92b2ba00-c20d-453f-b3a0-aad3766a0307",
+      "type": "log--seeding",
+      "name": "Plant, Soy, Lilly 3",
+      "date": "2024-05-19T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "65948cc7-67f4-4083-9d2d-7256e476372d",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "93850e44-6166-48ad-abc3-191a3119fd93",
+      "type": "log--activity",
+      "name": "Tillage, Cotter",
+      "notes": "",
+      "date": "2024-06-12T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "ede2c654-0d0f-4fa8-9d12-51c37068240b",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "95968e6e-2dbb-4b55-aa06-c0f8aab8e2e6",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Soy, Carlson",
+      "date": "2024-06-11T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "9770c147-550f-4750-8fb5-14b677100a18",
+      "type": "log--seeding",
+      "name": "Plant, Corn, Johnson",
+      "date": "2024-06-14T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "2ea23b15-f496-4b20-b664-0facc101714b",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "65948cc7-67f4-4083-9d2d-7256e476372d",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "98597860-4504-4645-81f5-e5d44934afae",
+      "type": "log--activity",
+      "name": "Tillage, Lilly 4",
+      "notes": "",
+      "date": "2024-05-28T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "cf5c4074-3809-4807-8436-48eb25446c37",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "98df53c7-0467-4cfe-b74f-e802d90993e7",
+      "type": "log--seeding",
+      "name": "Plant, Soy, Lilly 1",
+      "date": "2024-05-18T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0b1320-9485-4617-9950-920518a54ed6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "65948cc7-67f4-4083-9d2d-7256e476372d",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "a0de3aba-b422-4877-9fdc-dc3e479c8b32",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Soy, Lilly 1",
+      "date": "2024-05-29T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0b1320-9485-4617-9950-920518a54ed6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "a11c47e0-6923-40b8-8af0-df326ba5908a",
+      "type": "log--seeding",
+      "name": "Plant, Corn, Yak",
+      "date": "2024-06-12T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "65948cc7-67f4-4083-9d2d-7256e476372d",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "aa6f11d6-e53e-4b78-9356-75895db0ccb7",
+      "type": "log--activity",
+      "name": "Tillage, Corn, Wendorff 60",
+      "date": "2024-05-12T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "37ddf7e7-8267-4215-a19c-26c84004f437",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "b45e27ac-de43-475b-a7c4-cd4cd92535cd",
+      "type": "log--activity",
+      "name": "Tillage, Soy, Stockholm Home",
+      "notes": "",
+      "date": "2024-05-29T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": {
+        "id": "30c92382-43e8-472f-a6a0-7fa05678378d",
+        "type": "asset--plant"
+      }
+    },
+    {
+      "id": "bbff110d-4363-4259-b1dc-7bcc79a52b45",
+      "type": "log--seeding",
+      "name": "Plant, Corn, KB",
+      "date": "2024-04-23T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "ddec63c6-a853-4c0c-9fb1-6911b9953047",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "65948cc7-67f4-4083-9d2d-7256e476372d",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "bdc35216-6895-4ec7-9915-a967cef8868f",
+      "type": "log--activity",
+      "name": "",
+      "notes": "",
+      "date": "2024-06-13T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "c83ea769-91df-4195-a110-975d5e057a74",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Lake",
+      "notes": "",
+      "date": "2024-06-26T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "d0193a40-2ca1-4e4a-9633-b5e3f4eb9c56",
+      "type": "log--activity",
+      "name": "Tillage, Soy, Lilly 1",
+      "notes": "",
+      "date": "2024-05-16T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0b1320-9485-4617-9950-920518a54ed6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": {
+        "id": "3244d790-3480-462c-97c3-0cf592e691a7",
+        "type": "asset--plant"
+      }
+    },
+    {
+      "id": "d7a0c73c-3d20-4628-9239-ed97cb74fe39",
+      "type": "log--activity",
+      "name": "Tine Weed, Corn, Heatwole",
+      "date": "2024-06-17T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "42885dab-6193-46e9-b0b5-c887a199a50f",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "d9d79ad8-4b3b-408e-8837-fdadf09e9d4a",
+      "type": "log--activity",
+      "name": "Tillage, Soy, Lilly 1",
+      "date": "2024-05-10T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0b1320-9485-4617-9950-920518a54ed6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "dad4fea5-5392-47c0-8861-8994003e995b",
+      "type": "log--seeding",
+      "name": "Plant, Corn, Lake",
+      "date": "2024-06-11T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "65948cc7-67f4-4083-9d2d-7256e476372d",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "db7b4e59-e138-4078-ad8b-03b9a2c604c1",
+      "type": "log--activity",
+      "name": "Tillage, Soy, Lilly 2",
+      "notes": "",
+      "date": "2024-05-17T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": {
+        "id": "0464e1cc-7bea-4f99-b4dc-8267a9f76b03",
+        "type": "asset--plant"
+      }
+    },
+    {
+      "id": "dc1b81bf-bb86-4c2e-b8a4-f56f49d423f9",
+      "type": "log--seeding",
+      "name": "Plant, Soy, Carlson",
+      "date": "2024-05-30T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "65948cc7-67f4-4083-9d2d-7256e476372d",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "e07557da-48b7-4fd4-b4d5-98bb46ca70dc",
+      "type": "log--activity",
+      "name": "",
+      "notes": "",
+      "date": "2024-06-08T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "d8940c6f-9865-46ae-af6e-2acfdc1dfa44",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": {
+        "id": "0464e1cc-7bea-4f99-b4dc-8267a9f76b03",
+        "type": "asset--plant"
+      }
+    },
+    {
+      "id": "e321aed2-7d07-4097-a83b-f04d5c1be08a",
+      "type": "log--activity",
+      "name": "Tillage, Wendorff 218",
+      "notes": "",
+      "date": "2024-06-09T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "323452ac-0cb4-4b9d-b1d9-fb5e1b2ec472",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "e33a0d77-35c7-48be-8974-daf5a737c610",
+      "type": "log--activity",
+      "name": "Tillage, Corn, Boonie",
+      "date": "2024-05-12T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "e5e23775-07b5-4a16-ad28-545f729d5767",
+      "type": "log--activity",
+      "name": "Tillage, Corn, Yak",
+      "date": "2024-05-13T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "e76c7c50-b502-4218-9156-b15d17a5c243",
+      "type": "log--activity",
+      "name": "Tine Weed, Soy, Stockholm East",
+      "notes": "",
+      "date": "2024-05-30T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": {
+        "id": "48bc85d6-9c6a-4802-8f81-fde40edefd1d",
+        "type": "asset--plant"
+      }
+    },
+    {
+      "id": "e800630c-ddde-48bb-868d-56ced88d55af",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Corn, Cotter",
+      "date": "2024-06-17T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "ede2c654-0d0f-4fa8-9d12-51c37068240b",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "ef19aab8-1a76-4af6-904a-9570fa140171",
+      "type": "log--activity",
+      "name": "Tillage, Soy, Stockholm Home",
+      "date": "2024-05-13T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "f389c58e-24f7-4e66-b9c5-bab7347bd248",
+      "type": "log--activity",
+      "name": "Tillage, Lake",
+      "notes": "",
+      "date": "2024-06-10T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "f82c0b1f-70bc-412a-b09b-51ba87c8140a",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Soy, Lilly 3",
+      "date": "2024-05-30T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "faa80e52-7afb-40be-8942-bec1c0e9d38e",
+      "type": "log--activity",
+      "name": "Tine Weed, Corn, Wendorff 60",
+      "date": "2024-07-17T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "37ddf7e7-8267-4215-a19c-26c84004f437",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "fadef3d3-0d6b-4333-b694-734724cb8414",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Soy, Lilly 4",
+      "date": "2024-06-09T07:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "cf5c4074-3809-4807-8436-48eb25446c37",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null,
+      "notes": ""
+    },
+    {
+      "id": "b0a5851d-b55a-4980-b1c7-9609554fc68a",
+      "type": "log--seeding",
+      "name": "Plant, Yak",
+      "notes": "",
+      "date": "2024-06-14T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "65948cc7-67f4-4083-9d2d-7256e476372d",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "ce70eeae-00e8-4bc8-8e56-3771421aae01",
+      "type": "log--activity",
+      "name": "Tillage, Wendorff 60",
+      "notes": "",
+      "date": "2024-06-11T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "37ddf7e7-8267-4215-a19c-26c84004f437",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "7136f2ac-0dd3-4977-9073-21fa2e587bc5",
+      "type": "log--activity",
+      "name": "Tillage, Wendorff 60",
+      "notes": "",
+      "date": "2024-06-12T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "37ddf7e7-8267-4215-a19c-26c84004f437",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "38f143ac-36e7-4ed7-aabd-16a7d37c8ab4",
+      "type": "log--activity",
+      "name": "Tillage, Boonie",
+      "notes": "",
+      "date": "2024-06-14T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "686f3642-a785-4e0e-a9fe-746a2ce09544",
+      "type": "log--activity",
+      "name": "Mow, Yak",
+      "notes": "",
+      "date": "2024-06-19T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "a5397d37-269d-41de-8211-497d289b250e",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "36cef068-4bea-4bd1-83c8-399313ad3d25",
+      "type": "log--activity",
+      "name": "Flame Weed, KB",
+      "notes": "",
+      "date": "2024-06-20T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0b1320-9485-4617-9950-920518a54ed6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "d8940c6f-9865-46ae-af6e-2acfdc1dfa44",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "6689f5d2-03e3-4154-9f22-9662af859e61",
+      "type": "log--activity",
+      "name": "Tine Weed, Lilly 4",
+      "notes": "",
+      "date": "2024-06-10T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "cf5c4074-3809-4807-8436-48eb25446c37",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "4fb5ab90-8e10-48cb-bb8a-d57296e56bb1",
+      "type": "log--activity",
+      "name": "Tine Weed, Lilly 4",
+      "notes": "",
+      "date": "2024-06-11T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "cf5c4074-3809-4807-8436-48eb25446c37",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "235b35d2-71d8-4e25-b119-89bbb8725f82",
+      "type": "log--activity",
+      "name": "Cultivation, Lilly 3",
+      "notes": "",
+      "date": "2024-06-10T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "b2726ba4-64e9-4f3e-8dd0-e88d06c55702",
+      "type": "log--activity",
+      "name": "Cultivation, Lilly 3",
+      "notes": "",
+      "date": "2024-06-11T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "460a359c-0f99-4097-aec8-0fb9cc4cb01f",
+      "type": "log--activity",
+      "name": "Cultivation, Lilly 2",
+      "notes": "",
+      "date": "2024-06-11T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "1858b5f4-8654-4be9-b178-691aafe93158",
+      "type": "log--activity",
+      "name": "Cultivation, Lilly 2",
+      "notes": "",
+      "date": "2024-06-12T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "d0f5b825-efc3-4eaa-a7b1-76f97f590caa",
+      "type": "log--activity",
+      "name": "Tillage, Yak",
+      "notes": "",
+      "date": "2024-06-11T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "5630597d-e992-4285-bf61-14d69f381147",
+      "type": "log--seeding",
+      "name": "Plant, Home",
+      "notes": "",
+      "date": "2024-06-27T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "65948cc7-67f4-4083-9d2d-7256e476372d",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "c1dbdbc8-4c04-4046-81b4-f6a8db900ed1",
+      "type": "log--activity",
+      "name": "Cultivation, Johnson",
+      "notes": "",
+      "date": "2024-07-02T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "2ea23b15-f496-4b20-b664-0facc101714b",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "c6cc790f-3d62-4fd1-b2b8-3f0de9c34ee5",
+      "type": "log--activity",
+      "name": "Cultivation, Home",
+      "notes": "",
+      "date": "2024-07-03T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "8637eeaf-5036-4331-9325-e76f0aaded34",
+      "type": "log--activity",
+      "name": "Mow, Johnson",
+      "notes": "",
+      "date": "2024-07-03T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "2ea23b15-f496-4b20-b664-0facc101714b",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "a5397d37-269d-41de-8211-497d289b250e",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "f291a11b-614b-408a-b27e-347ba7fcdf67",
+      "type": "log--activity",
+      "name": "Tine Weed, Home",
+      "notes": "",
+      "date": "2024-07-02T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "ea2c53ae-136c-4a9c-b6a6-84cf3dd47c49",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Home",
+      "notes": "",
+      "date": "2024-07-01T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "f975e96f-24cd-4ebb-9dec-08a221130415",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Johnson",
+      "notes": "",
+      "date": "2024-07-01T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "2ea23b15-f496-4b20-b664-0facc101714b",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "ed45de93-259e-40ab-86ec-43a06043a353",
+      "type": "log--activity",
+      "name": "Tillage, Wendorff 60",
+      "notes": "",
+      "date": "2024-06-25T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "37ddf7e7-8267-4215-a19c-26c84004f437",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "cc1c8bff-e268-46f7-970b-2c15db5430a0",
+      "type": "log--activity",
+      "name": "Tillage, Boonie",
+      "notes": "",
+      "date": "2024-06-25T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "46e45fab-00a6-4454-9fc4-71ba3d7808b9",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "a2e16d68-64ec-4c9d-aee8-fb4a65cd7947",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Yak",
+      "notes": "",
+      "date": "2024-06-27T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "41e72d70-3ed9-4ffc-ae86-ee45c3731b28",
+      "type": "log--activity",
+      "name": "Cultivation, KB",
+      "notes": "",
+      "date": "2024-06-27T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0b1320-9485-4617-9950-920518a54ed6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "bb3a35cf-30a8-469a-9579-7e49914b4d8d",
+      "type": "log--activity",
+      "name": "Cultivation, Lilly 2",
+      "notes": "",
+      "date": "2024-06-26T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "1bbf2e5f-1f05-4da9-b24e-4fb5908c4b92",
+      "type": "log--activity",
+      "name": "Flame Weed, Lilly 2",
+      "notes": "",
+      "date": "2024-06-25T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "d8940c6f-9865-46ae-af6e-2acfdc1dfa44",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "98dda39b-e82b-41d1-acde-edd7fd2c8190",
+      "type": "log--activity",
+      "name": "Flame Weed, Lilly 3",
+      "notes": "",
+      "date": "2024-06-24T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "d8940c6f-9865-46ae-af6e-2acfdc1dfa44",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "3a9b1558-8151-431b-9d93-104c07744939",
+      "type": "log--activity",
+      "name": "Flame Weed, Lilly 4",
+      "notes": "",
+      "date": "2024-06-25T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "cf5c4074-3809-4807-8436-48eb25446c37",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "d8940c6f-9865-46ae-af6e-2acfdc1dfa44",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "75a97692-d6c6-4562-b7a7-658880d91e7f",
+      "type": "log--activity",
+      "name": "Flame Weed, Stockholm Home",
+      "notes": "",
+      "date": "2024-06-24T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "d8940c6f-9865-46ae-af6e-2acfdc1dfa44",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "283831bd-3b62-4a58-aed6-6f58ce00408c",
+      "type": "log--activity",
+      "name": "Flame Weed, Stockholm East",
+      "notes": "",
+      "date": "2024-06-25T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "d8940c6f-9865-46ae-af6e-2acfdc1dfa44",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "64fd2b0f-5532-4432-90fb-b302bdc92414",
+      "type": "log--activity",
+      "name": "Flame Weed, Carlson",
+      "notes": "",
+      "date": "2024-06-26T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "d8940c6f-9865-46ae-af6e-2acfdc1dfa44",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "aad23d10-fb3b-4f23-9438-f9334814dcde",
+      "type": "log--activity",
+      "name": "Cultivation, Lilly 1",
+      "notes": "",
+      "date": "2024-06-30T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0b1320-9485-4617-9950-920518a54ed6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "1b751a87-9039-4599-b692-1248c1552a5f",
+      "type": "log--activity",
+      "name": "Cultivation, Lilly 2",
+      "notes": "",
+      "date": "2024-07-01T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "4ee5afec-6201-4996-9e66-24c887379a75",
+      "type": "log--activity",
+      "name": "Cultivation, Lilly 3",
+      "notes": "",
+      "date": "2024-07-02T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "6fcecf07-ef38-4767-a43f-75bd94d22583",
+      "type": "log--activity",
+      "name": "Cultivation, Lilly 4",
+      "notes": "",
+      "date": "2024-07-02T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "cf5c4074-3809-4807-8436-48eb25446c37",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "3c63dd2e-8aec-48d2-be9f-324c7098037d",
+      "type": "log--activity",
+      "name": "Cultivation, Lilly 4",
+      "notes": "",
+      "date": "2024-07-03T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "cf5c4074-3809-4807-8436-48eb25446c37",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "7d9e242a-5122-4279-93b5-b562e204791e",
+      "type": "log--activity",
+      "name": "Cultivation, Stockholm Home",
+      "notes": "",
+      "date": "2024-07-01T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "e5111979-5bc9-44d4-bf94-dc93eaa1c095",
+      "type": "log--activity",
+      "name": "Cultivation, Stockholm East",
+      "notes": "",
+      "date": "2024-07-02T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "31a83c41-bb96-4869-83de-23db123d04b2",
+      "type": "log--activity",
+      "name": "Cultivation, Carlson",
+      "notes": "",
+      "date": "2024-07-03T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "79798bed-f6ac-479f-b571-7090fdb9ef1b",
+      "type": "log--activity",
+      "name": "Mow, Lilly 2",
+      "notes": "",
+      "date": "2024-07-02T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "a5397d37-269d-41de-8211-497d289b250e",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "cde8403a-4bd9-4a35-87f2-e3dfbe7f0426",
+      "type": "log--activity",
+      "name": "Mow, Lilly 1",
+      "notes": "",
+      "date": "2024-07-03T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0b1320-9485-4617-9950-920518a54ed6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "a5397d37-269d-41de-8211-497d289b250e",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "29820243-2f20-4068-9d72-7b7a507b9e29",
+      "type": "log--activity",
+      "name": "Flame Weed, Lilly 2",
+      "notes": "",
+      "date": "2024-07-03T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "d8940c6f-9865-46ae-af6e-2acfdc1dfa44",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "cf89fc2e-98bc-4dd0-8b7a-1f64259ded4d",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Yak",
+      "notes": "",
+      "date": "2024-07-01T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "1cdfda7e-3329-40ee-aada-a1ef3a6a1b72",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Boonie",
+      "notes": "",
+      "date": "2024-07-03T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "62d7cfba-8c8a-4328-9078-d2489988851f",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Wendorff 60",
+      "notes": "",
+      "date": "2024-07-03T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "37ddf7e7-8267-4215-a19c-26c84004f437",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "cd4fa2b9-5360-449c-91c9-ea75ecc5cc25",
+      "type": "log--activity",
+      "name": "Mow, Wendorff 218",
+      "notes": "",
+      "date": "2024-07-03T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "323452ac-0cb4-4b9d-b1d9-fb5e1b2ec472",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "a5397d37-269d-41de-8211-497d289b250e",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "ad94a2e8-8e37-4f3b-a5b6-61f586cf78e6",
+      "type": "log--activity",
+      "name": "Mow, Wendorff 60",
+      "notes": "",
+      "date": "2024-07-04T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "37ddf7e7-8267-4215-a19c-26c84004f437",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "a5397d37-269d-41de-8211-497d289b250e",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "c7a62786-baed-4db1-ab18-b412edc0fb0a",
+      "type": "log--activity",
+      "name": "Tine Weed, Wendorff 218",
+      "notes": "",
+      "date": "2024-07-01T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "323452ac-0cb4-4b9d-b1d9-fb5e1b2ec472",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "8f81e0c8-640c-4104-a078-4392f48f6b71",
+      "type": "log--activity",
+      "name": "Tine Weed, Wendorff 218",
+      "notes": "",
+      "date": "2024-07-02T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "323452ac-0cb4-4b9d-b1d9-fb5e1b2ec472",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "b69cd290-f771-4815-be38-a11a1c4c99b1",
+      "type": "log--activity",
+      "name": "Tine Weed, Lake",
+      "notes": "",
+      "date": "2024-07-03T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "de221096-6654-4a0e-b456-a5f6aa694403",
+      "type": "log--activity",
+      "name": "Tine Weed, Yak",
+      "notes": "",
+      "date": "2024-07-09T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "7b7018c9-0767-4ff8-99b3-ea7968e0f35a",
+      "type": "log--activity",
+      "name": "Tine Weed, Yak",
+      "notes": "",
+      "date": "2024-07-10T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "02515d5f-9e14-47c4-873e-72f697eda15d",
+      "type": "log--activity",
+      "name": "Flame Weed, Lilly 2",
+      "notes": "",
+      "date": "2024-07-09T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "d8940c6f-9865-46ae-af6e-2acfdc1dfa44",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "97689d0d-7ae8-4584-829e-9a430a5852b3",
+      "type": "log--activity",
+      "name": "Flame Weed, Lilly 2",
+      "notes": "",
+      "date": "2024-07-10T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "d8940c6f-9865-46ae-af6e-2acfdc1dfa44",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "d2c7eb69-18a9-45cb-81fc-2881a0e8b427",
+      "type": "log--activity",
+      "name": "Cultivation, Lilly 2",
+      "notes": "",
+      "date": "2024-07-11T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "255898ee-6877-4fe4-b565-0b46313e1c90",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Boonie",
+      "notes": "",
+      "date": "2024-07-11T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "a869f232-83d7-4d72-acf1-7ca646615ac3",
+      "type": "log--activity",
+      "name": "Rotary Hoe, Wendorff 60",
+      "notes": "",
+      "date": "2024-07-11T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "37ddf7e7-8267-4215-a19c-26c84004f437",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "023ff634-aba3-4d32-bb13-ea2f3b672558",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "f66a314f-815a-416e-949d-a08f6d90d597",
+      "type": "log--activity",
+      "name": "Tine Weed, Wendorff 218",
+      "notes": "",
+      "date": "2024-07-10T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "323452ac-0cb4-4b9d-b1d9-fb5e1b2ec472",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "a6bfbde9-a2f0-4839-8fd8-dc7f7efd29fc",
+      "type": "log--activity",
+      "name": "Cultivation, Lake",
+      "notes": "",
+      "date": "2024-07-10T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "6bece4ed-bf50-4a2c-b981-b28db53fdd7e",
+      "type": "log--activity",
+      "name": "Cultivation, Wendorff 218",
+      "notes": "",
+      "date": "2024-07-11T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "323452ac-0cb4-4b9d-b1d9-fb5e1b2ec472",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "47478505-a48d-4837-aa17-e217844cb735",
+      "type": "log--activity",
+      "name": "Rock Picking, Lake",
+      "notes": "",
+      "date": "2024-07-11T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "e72c8622-25d2-4673-bc43-92f9a5e3fe25",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "f5eaa825-460d-451f-9235-851d6114bea6",
+      "type": "log--activity",
+      "name": "Rock Picking, Wendorff 218",
+      "notes": "",
+      "date": "2024-07-12T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "323452ac-0cb4-4b9d-b1d9-fb5e1b2ec472",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "e72c8622-25d2-4673-bc43-92f9a5e3fe25",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "1ce96c56-6da8-45f2-8b7a-2b43962da78c",
+      "type": "log--activity",
+      "name": "Rock Picking, Home",
+      "notes": "",
+      "date": "2024-07-11T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "e72c8622-25d2-4673-bc43-92f9a5e3fe25",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "36f8ce6e-0311-4f8c-9e82-515be1e1010e",
+      "type": "log--activity",
+      "name": "Rock Picking, Johnson",
+      "notes": "",
+      "date": "2024-07-11T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "2ea23b15-f496-4b20-b664-0facc101714b",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "e72c8622-25d2-4673-bc43-92f9a5e3fe25",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "1592a1ae-fdca-455b-96cc-5364d39468c9",
+      "type": "log--activity",
+      "name": "Mow, Home",
+      "notes": "",
+      "date": "2024-07-12T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "a5397d37-269d-41de-8211-497d289b250e",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "edcc4270-6048-4ac2-a3d0-3248c2a0c456",
+      "type": "log--activity",
+      "name": "Rock Picking, Wendorff 60",
+      "notes": "",
+      "date": "2024-07-12T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "37ddf7e7-8267-4215-a19c-26c84004f437",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "e72c8622-25d2-4673-bc43-92f9a5e3fe25",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "9e8d6754-d3f2-4ebe-9a9a-bf95ea06ee7c",
+      "type": "log--activity",
+      "name": "Rock Picking, Boonie",
+      "notes": "",
+      "date": "2024-07-12T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "e72c8622-25d2-4673-bc43-92f9a5e3fe25",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "c1ae6125-83af-40a8-b111-9c1a572f94b2",
+      "type": "log--activity",
+      "name": "Cultivation, Yak",
+      "notes": "",
+      "date": "2024-07-12T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "43fdb8c8-ff5d-47b9-ba32-b21d7c27a450",
+      "type": "log--activity",
+      "name": "Mow, Lilly 1",
+      "notes": "",
+      "date": "2024-07-13T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0b1320-9485-4617-9950-920518a54ed6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "a5397d37-269d-41de-8211-497d289b250e",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "3406e553-612d-4687-b89c-fb58311d5399",
+      "type": "log--activity",
+      "name": "Mow, Lilly 2",
+      "notes": "",
+      "date": "2024-07-13T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "a5397d37-269d-41de-8211-497d289b250e",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "0f578c80-a656-45f9-aefd-38bc02b1695c",
+      "type": "log--activity",
+      "name": "Mow, Lilly 3",
+      "notes": "",
+      "date": "2024-07-13T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "a5397d37-269d-41de-8211-497d289b250e",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "f639a27b-c604-4abf-93d2-b26cddab9551",
+      "type": "log--activity",
+      "name": "Mow, Lilly 4",
+      "notes": "",
+      "date": "2024-07-13T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "cf5c4074-3809-4807-8436-48eb25446c37",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "a5397d37-269d-41de-8211-497d289b250e",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "ea308553-4dbd-4bf5-b052-9ed57cc0b925",
+      "type": "log--activity",
+      "name": "Rock Picking, Stockholm Home",
+      "notes": "",
+      "date": "2024-07-12T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "e72c8622-25d2-4673-bc43-92f9a5e3fe25",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "368e6e71-dba6-4c6d-b99d-7a3e1290197d",
+      "type": "log--activity",
+      "name": "Rock Picking, Stockholm East",
+      "notes": "",
+      "date": "2024-07-12T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "e72c8622-25d2-4673-bc43-92f9a5e3fe25",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "4eea9a82-527d-4e8a-9a4f-e5c2f6ce4810",
+      "type": "log--activity",
+      "name": "Cultivation, Stockholm East",
+      "notes": "",
+      "date": "2024-07-10T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "1656f0a6-a73b-4f76-80a7-aa1b8558e8e2",
+      "type": "log--activity",
+      "name": "Cultivation, Carlson",
+      "notes": "",
+      "date": "2024-07-11T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "63b0f25c-307e-4f84-8e08-9d44f8dfe764",
+      "type": "log--activity",
+      "name": "Cultivation, Stockholm Home",
+      "notes": "",
+      "date": "2024-07-09T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "a8bf4df6-892c-4d9b-b354-2754b3a269bc",
+      "type": "log--activity",
+      "name": "Cultivation, Stockholm East",
+      "notes": "",
+      "date": "2024-07-09T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "0956d09f-b25f-4c71-8dfe-1f155066eacc",
+      "type": "log--activity",
+      "name": "Mow, Stockholm Home",
+      "notes": "",
+      "date": "2024-07-09T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "a5397d37-269d-41de-8211-497d289b250e",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "06397294-b88e-4f54-8282-5525ee28574a",
+      "type": "log--activity",
+      "name": "Mow, Stockholm East",
+      "notes": "",
+      "date": "2024-07-09T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "a5397d37-269d-41de-8211-497d289b250e",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "737150b2-9931-4d9d-98ff-52ee254681c0",
+      "type": "log--activity",
+      "name": "Mow, Carlson",
+      "notes": "",
+      "date": "2024-07-10T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "a5397d37-269d-41de-8211-497d289b250e",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "90763423-02da-465d-bc6d-56504163133a",
+      "type": "log--activity",
+      "name": "Mow, Lilly 3",
+      "notes": "",
+      "date": "2024-07-16T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "a5397d37-269d-41de-8211-497d289b250e",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "82b3fd99-78c8-4b61-a227-d60fe89344ab",
+      "type": "log--activity",
+      "name": "Mow, Lilly 4",
+      "notes": "",
+      "date": "2024-07-16T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "cf5c4074-3809-4807-8436-48eb25446c37",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "a5397d37-269d-41de-8211-497d289b250e",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "056803e7-db1e-42c0-8b6f-51bf09b56e69",
+      "type": "log--activity",
+      "name": "Cultivation, Yak",
+      "notes": "",
+      "date": "2024-07-17T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "1e67edcc-e0f2-45f6-9979-766741884df8",
+      "type": "log--activity",
+      "name": "Cultivation, Wendorff 218",
+      "notes": "",
+      "date": "2024-07-17T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "323452ac-0cb4-4b9d-b1d9-fb5e1b2ec472",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "3bd64f6e-8c8d-4d3e-ad5b-d726f764547e",
+      "type": "log--activity",
+      "name": "Tine Weed, Yak",
+      "notes": "",
+      "date": "2024-07-18T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c7619224-112c-45d2-a150-258d4c497ccb",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "eb027b22-b619-41d4-a108-7bde6983da64",
+      "type": "log--activity",
+      "name": "Mow, Boonie",
+      "notes": "",
+      "date": "2024-07-19T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "a5397d37-269d-41de-8211-497d289b250e",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "e120255e-f2d3-447f-bbe3-bf2caf928c05",
+      "type": "log--activity",
+      "name": "Cultivation, Wendorff 218",
+      "notes": "",
+      "date": "2024-07-19T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "323452ac-0cb4-4b9d-b1d9-fb5e1b2ec472",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "bc8c9aa2-c847-4a21-ae9b-da3134957014",
+      "type": "log--activity",
+      "name": "Cultivation, Lake",
+      "notes": "",
+      "date": "2024-07-19T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "e1371eab-605a-484d-b4ba-930535b6ce6f",
+      "type": "log--activity",
+      "name": "Mow, Heatwole",
+      "notes": "",
+      "date": "2024-07-19T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "42885dab-6193-46e9-b0b5-c887a199a50f",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "a5397d37-269d-41de-8211-497d289b250e",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "4a70a147-6c3d-4a59-b11e-6957aaa710ef",
+      "type": "log--activity",
+      "name": "Cultivation, Johnson",
+      "notes": "",
+      "date": "2024-07-17T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "2ea23b15-f496-4b20-b664-0facc101714b",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    },
+    {
+      "id": "b2b72ba8-ccb6-48ac-b1c5-c23b5debc5a6",
+      "type": "log--activity",
+      "name": "Cultivation, Home",
+      "notes": "",
+      "date": "2024-07-17T00:00:00-04:00[America/New_York]",
+      "location": {
+        "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
+        "type": "asset--land"
+      },
+      "operation": {
+        "id": "c406c894-cec2-4356-852d-0a777fed938a",
+        "type": "taxonomy_term--standard_operating_procedure"
+      },
+      "plant": null
+    }
+  ],
+  "plants": [
+    {
+      "type": "asset--plant",
+      "name": "Corn, Home",
+      "crop": {
+        "id": "aff648a6-116d-425e-af82-d4e4eb2d8be4",
+        "type": "taxonomy_term--plant"
+      },
+      "location": {
+        "id": "58478a54-76c6-485f-a5c8-c05181bb784a",
+        "type": "asset--land"
+      },
+      "id": "3c29d408-0ba2-4c7a-8ddf-b9413bd035a1"
+    },
+    {
+      "type": "asset--plant",
+      "name": "Corn, Johnson",
+      "crop": {
+        "id": "aff648a6-116d-425e-af82-d4e4eb2d8be4",
+        "type": "taxonomy_term--plant"
+      },
+      "location": {
+        "id": "2ea23b15-f496-4b20-b664-0facc101714b",
+        "type": "asset--land"
+      },
+      "id": "1e6e3b6e-7206-47e8-9de1-f0916bb81a07"
+    },
+    {
+      "type": "asset--plant",
+      "name": "Corn, Heatwole",
+      "crop": {
+        "id": "aff648a6-116d-425e-af82-d4e4eb2d8be4",
+        "type": "taxonomy_term--plant"
+      },
+      "location": {
+        "id": "42885dab-6193-46e9-b0b5-c887a199a50f",
+        "type": "asset--land"
+      },
+      "id": "d53f2800-5927-4061-a5b4-1a87c0cd5689"
+    },
+    {
+      "type": "asset--plant",
+      "name": "Corn, Cotter",
+      "crop": {
+        "id": "aff648a6-116d-425e-af82-d4e4eb2d8be4",
+        "type": "taxonomy_term--plant"
+      },
+      "location": {
+        "id": "ede2c654-0d0f-4fa8-9d12-51c37068240b",
+        "type": "asset--land"
+      },
+      "id": "867e18c8-f202-4735-b378-5754f613d59e"
+    },
+    {
+      "type": "asset--plant",
+      "name": "Corn, Lake",
+      "crop": {
+        "id": "aff648a6-116d-425e-af82-d4e4eb2d8be4",
+        "type": "taxonomy_term--plant"
+      },
+      "location": {
+        "id": "fa118901-372e-4217-9ca9-0bc1dda423b2",
+        "type": "asset--land"
+      },
+      "id": "08d3750d-fefa-4892-a7d2-d96da5239b4a"
+    },
+    {
+      "type": "asset--plant",
+      "name": "Corn, Wendorff 218",
+      "crop": {
+        "id": "aff648a6-116d-425e-af82-d4e4eb2d8be4",
+        "type": "taxonomy_term--plant"
+      },
+      "location": {
+        "id": "323452ac-0cb4-4b9d-b1d9-fb5e1b2ec472",
+        "type": "asset--land"
+      },
+      "id": "789c6b85-b5a8-4257-a3f2-3cb7ee1ba35a"
+    },
+    {
+      "type": "asset--plant",
+      "name": "Corn, Wendorff 60",
+      "crop": {
+        "id": "aff648a6-116d-425e-af82-d4e4eb2d8be4",
+        "type": "taxonomy_term--plant"
+      },
+      "location": {
+        "id": "37ddf7e7-8267-4215-a19c-26c84004f437",
+        "type": "asset--land"
+      },
+      "id": "ed2c9414-e387-4af1-9beb-23e3a8b2484c"
+    },
+    {
+      "type": "asset--plant",
+      "name": "Corn, Boonie",
+      "crop": {
+        "id": "aff648a6-116d-425e-af82-d4e4eb2d8be4",
+        "type": "taxonomy_term--plant"
+      },
+      "location": {
+        "id": "e64bb3ee-8df3-466e-a068-8315072a7fa7",
+        "type": "asset--land"
+      },
+      "id": "163e5c93-a4a3-434b-93b7-a79f08c3d868"
+    },
+    {
+      "type": "asset--plant",
+      "name": "Corn, Yak",
+      "crop": {
+        "id": "aff648a6-116d-425e-af82-d4e4eb2d8be4",
+        "type": "taxonomy_term--plant"
+      },
+      "location": {
+        "id": "9f0d3495-8017-49ba-bfa5-1a4cad527ec1",
+        "type": "asset--land"
+      },
+      "id": "123aeac8-69c8-41ac-adcb-448430327785"
+    },
+    {
+      "type": "asset--plant",
+      "name": "Soy, Lilly 1",
+      "crop": {
+        "id": "1c3b151a-b657-45c6-970a-9965ca84ea13",
+        "type": "taxonomy_term--plant"
+      },
+      "location": {
+        "id": "9f0b1320-9485-4617-9950-920518a54ed6",
+        "type": "asset--land"
+      },
+      "id": "3244d790-3480-462c-97c3-0cf592e691a7"
+    },
+    {
+      "type": "asset--plant",
+      "name": "Soy, Lilly 2",
+      "crop": {
+        "id": "1c3b151a-b657-45c6-970a-9965ca84ea13",
+        "type": "taxonomy_term--plant"
+      },
+      "location": {
+        "id": "fa6b4e2a-05d1-400d-8f21-9dd74fd44be1",
+        "type": "asset--land"
+      },
+      "id": "0464e1cc-7bea-4f99-b4dc-8267a9f76b03"
+    },
+    {
+      "type": "asset--plant",
+      "name": "Soy, Lilly 3",
+      "crop": {
+        "id": "1c3b151a-b657-45c6-970a-9965ca84ea13",
+        "type": "taxonomy_term--plant"
+      },
+      "location": {
+        "id": "575efd9a-cf0e-4bd1-9067-7f76c1a78c4a",
+        "type": "asset--land"
+      },
+      "id": "8f0fdea0-f619-4b4b-b93f-c0a3e107b1c9"
+    },
+    {
+      "type": "asset--plant",
+      "name": "Soy, Lilly 4",
+      "crop": {
+        "id": "1c3b151a-b657-45c6-970a-9965ca84ea13",
+        "type": "taxonomy_term--plant"
+      },
+      "location": {
+        "id": "cf5c4074-3809-4807-8436-48eb25446c37",
+        "type": "asset--land"
+      },
+      "id": "5655eb64-c53b-4173-9ffd-0f8e9cb6c4d1"
+    },
+    {
+      "type": "asset--plant",
+      "name": "Soy, Stockholm Home",
+      "crop": {
+        "id": "1c3b151a-b657-45c6-970a-9965ca84ea13",
+        "type": "taxonomy_term--plant"
+      },
+      "location": {
+        "id": "7769fa03-f180-4212-9b54-66545b5d43a6",
+        "type": "asset--land"
+      },
+      "id": "30c92382-43e8-472f-a6a0-7fa05678378d"
+    },
+    {
+      "type": "asset--plant",
+      "name": "Soy, Stockholm East",
+      "crop": {
+        "id": "1c3b151a-b657-45c6-970a-9965ca84ea13",
+        "type": "taxonomy_term--plant"
+      },
+      "location": {
+        "id": "261bc2cf-766e-417d-abbd-76d2268b7725",
+        "type": "asset--land"
+      },
+      "id": "48bc85d6-9c6a-4802-8f81-fde40edefd1d"
+    },
+    {
+      "type": "asset--plant",
+      "name": "Soy, Carlson",
+      "crop": {
+        "id": "1c3b151a-b657-45c6-970a-9965ca84ea13",
+        "type": "taxonomy_term--plant"
+      },
+      "location": {
+        "id": "23442926-507b-4dc1-93eb-1ec1a70672a1",
+        "type": "asset--land"
+      },
+      "id": "3da4a165-6a1d-43ad-b42d-a4a6c27ee667"
+    },
+    {
+      "type": "asset--plant",
+      "name": "Corn, KB",
+      "crop": {
+        "id": "aff648a6-116d-425e-af82-d4e4eb2d8be4",
+        "type": "taxonomy_term--plant"
+      },
+      "location": {
+        "id": "ddec63c6-a853-4c0c-9fb1-6911b9953047",
+        "type": "asset--land"
+      },
+      "id": "ee39d4bf-0b3c-466f-86e3-20e768f25497"
+    }
+  ]
+}
