@@ -16,7 +16,7 @@ import { sameDate } from '@/utils/date';
 import { toOptionalIdfier } from '@/utils/idfier';
 import FlowBoardDialogEditTask from './FlowBoardDialogEditTask.vue';
 import IconCross2 from '@/assets/radix-icons/cross-2.svg?component';
-import IconPlusCircled from '@/assets/radix-icons/plus-circled.svg?component';
+import IconPlus from '@/assets/radix-icons/plus.svg?component';
 
 interface FlowBoardCursorGridProps {
   width: number,
@@ -194,7 +194,7 @@ function deleteTask(idfier: DeleteValue) {
                 class="create-task-btn"
                 type="button"
                 @click="initTask = { date: cell.date, location: cell.location }" >
-                <IconPlusCircled />
+                <IconPlus />
               </button>
             </div>
             <Popover.Close class="popover-close" aria-label="Close">
@@ -246,6 +246,7 @@ button, input {
   display: flex;
   flex-flow: row wrap;
 }
+
 :deep(.popover-content-operation) button {
   font-size: 16px;
   font-weight: 500;
@@ -257,6 +258,7 @@ button, input {
   margin-right: .375rem;
   margin-bottom: .375rem;
   border-radius: 4px;
+  border: 1px solid var(--color-border);
   cursor: pointer;
 }
 :deep(.popover-content-operation) button.create-task-btn {
@@ -264,19 +266,23 @@ button, input {
   justify-content: center;
   align-items: center;
   width: 1.5rem;
+  padding: .375rem;
   background-color: var(--color-neutral-inverse-transparent-2);
   border-radius: 9999px;
-  padding: .375rem;
-  color: var(--color-neutral-inverse);
+  color: var(--color-border-hover);
 }
 :deep(.popover-content-operation) button.create-task-btn svg {
   width: 20px;
   height: 20px;
 }
-:deep(.popover-content-operation) button:hover {
+
+:deep(.popover-content-operation) button:hover,
+:deep(.popover-content-operation) button:focus {
   background-color: var(--ff-c-green-transparent-3);
+  border: 1px solid var(--ff-c-green-transparent-2);
   color: var(--ff-c-green);
 }
+
 :deep(.popover-content-date-time) {
   text-align: center;
   margin-bottom: .375rem;
@@ -291,6 +297,8 @@ button, input {
 .popover-close {
   font-family: inherit;
   border-radius: 100%;
+  border: 1px solid transparent;
+  padding: .1875rem;
   height: 15px;
   width: 15px;
   display: inline-flex;
@@ -306,6 +314,6 @@ button, input {
   background-color: var(--ff-c-green-transparent-2);
 }
 .popover-close:focus {
-  box-shadow: 0 0 0 2px var(--ff-c-green-transparent-2);
+  border: 1px solid var(--ff-c-green-transparent-2);
 }
 </style>
