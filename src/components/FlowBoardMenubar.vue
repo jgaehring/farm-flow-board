@@ -4,7 +4,9 @@ import { Menubar } from 'radix-vue/namespaced';
 import FlowBoardDialogEditBoardInfo from '@/components/FlowBoardDialogEditBoardInfo.vue';
 import FlowBoardDialogEditTask from '@/components/FlowBoardDialogEditTask.vue';
 import FlowBoardDialogImportBoard from '@/components/FlowBoardDialogImportBoard.vue';
-import { boardInfoKey, boardsKey, locationsKey, operationsKey, plantsKey } from '@/components/providerKeys';
+import {
+  boardInfoKey, boardsKey, cropsKey, locationsKey, operationsKey, plantsKey,
+} from '@/components/providerKeys';
 import type { CreateValue } from '@/composables/useBoardData';
 import type { BoardInfo, LogResource, PartialResource } from '@/data/resources';
 import type { BoardData } from '@/data/serialize';
@@ -13,6 +15,7 @@ import IconCheck from '@/assets/radix-icons/check.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
 
 const currentMenu = ref('');
+const crops = inject(cropsKey, ref([]));
 const locations = inject(locationsKey, ref([]));
 const operations = inject(operationsKey, ref([]));
 const plants = inject(plantsKey, ref([]));
@@ -36,7 +39,6 @@ const openNewBoardDialog = ref(false);
 function saveBoardInfo(info: PartialResource<BoardInfo>) {
   emit('update-board-info', info);
   currentMenu.value = '';
-  openNewBoardDialog.value = false;
   openEditBoardDialog.value = false;
 }
 
@@ -45,6 +47,7 @@ function importBoard(data: BoardData) {
   emit('import-board', data);
   currentMenu.value = '';
   openImportBoardDialog.value = false;
+  openNewBoardDialog.value = false;
 }
 function exportBoard() {
   emit('export-board');
@@ -81,8 +84,13 @@ function cancelEdits() {
           :side-offset="5"
           :align-offset="-3">
           <FlowBoardDialogEditBoardInfo
-            @update:save="saveBoardInfo"
+            @update:new="importBoard"
             @update:cancel="cancelEdits"
+            :board-info="null"
+            :crops="crops"
+            :locations="locations"
+            :operations="operations"
+            :plants="plants"
             :open="openNewBoardDialog" >
             <template #trigger >
               <Menubar.Item
