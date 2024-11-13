@@ -38,12 +38,17 @@ interface BoardAxes<XData, YData> {
   x: AxisProperties<XData>,
   y: AxisProperties<YData>,
 }
+interface HighlightProperties {
+  column: BoxCoordinates,
+  row: BoxCoordinates,
+  fill: string,
+}
 interface BoardProperties {
   width: number,
   height: number,
   axes: BoardAxes<Date, LocationResource>,
   grid: GridProperties,
-  highlight: GridStyles,
+  highlight: HighlightProperties,
   index: { x: number, y: number },
   style: {
     fill: string,
@@ -71,17 +76,16 @@ interface LabelOptions {
   xAxisHeight?: number,
   font?: FontOptions,
 }
-interface HighlightOptions {
-  fill?: string,
-  stroke?: string,
-  lineWidth?: number,
-}
 interface StyleOptions {
   fill?: string,
   stroke?: string,
   isDark?: boolean,
   grid?: GridOptions,
-  highlight?: HighlightOptions,
+  highlight?: {
+    column: number,
+    row: number,
+    fill?: string,
+  },
   axes?: LabelOptions,
   markers?: {
     shadowColor?: string,
@@ -107,7 +111,11 @@ interface StyleProperties {
     fill: string,
     stroke: string,
   },
-  highlight: GridStyles,
+  highlight: {
+    column: number,
+    row: number,
+    fill: string,
+  },
   axes: {
     yAxisWidth: number,
     xAxisHeight: number,
@@ -180,6 +188,14 @@ const getColorVar = (cssVar: string, isDark: boolean|undefined|null|'') =>
     ? colorVars.dark.get(cssVar)
     : colorVars.root.get(cssVar));
 
+const gridStylesFallback = (style: StyleOptions): GridStyles => ({
+  fill: getColorVar('--color-background-soft', style.isDark)
+    || lightDark('#f4f4f4', '#222222'),
+  stroke: getColorVar('--ff-c-green-transparent-2', style.isDark)
+    || 'rgba(0, 189, 126, 0.3)',
+  lineWidth: style.grid?.lineWidth || 1.5,
+})
+
 // Fallbacks for Style Options
 const applyStyleFallbacks = (style: StyleOptions): StyleProperties => mergeDeepRight({
   fill: getColorVar('--color-background', style.isDark)
@@ -202,18 +218,13 @@ const applyStyleFallbacks = (style: StyleOptions): StyleProperties => mergeDeepR
     unit: 40,
     yAxisWidth: 240,
     xAxisHeight: 60,
-    lineWidth: 1.5,
-    fill: getColorVar('--color-background-soft', style.isDark)
-      || lightDark('#f4f4f4', '#222222'),
-    stroke: getColorVar('--ff-c-green-transparent-2', style.isDark)
-      || 'rgba(0, 189, 126, 0.3)',
+    ...gridStylesFallback(style),
   },
   highlight: {
     fill: getColorVar('--color-background-mute', style.isDark)
       || lightDark('#eaeaea','#323232'),
-    stroke: getColorVar('--ff-c-green-transparent-2', style.isDark)
-      || 'rgba(0, 189, 126, 0.3)',
-    lineWidth: 1.5,
+    column: -1,
+    row: -1,
   },
   markers: {
     shadowColor: getColorVar('--color-box-shadow-3', style.isDark)
@@ -235,7 +246,7 @@ export function computeBoardProperties(
   style?: StyleOptions,
 ): BoardProperties {
   const sureStyle = applyStyleFallbacks(style || {});
-  const { axes: { yAxisWidth, xAxisHeight }, grid, highlight, markers, } = sureStyle;
+  const { axes: { yAxisWidth, xAxisHeight }, grid, markers, } = sureStyle;
   const dates = fitToGrid(
     canvas.width,
     yAxisWidth,
@@ -256,6 +267,34 @@ export function computeBoardProperties(
   const gridHeight = rows * grid.unit;
   const boardWidth = yAxisWidth + gridWidth;
   const boardHeight = xAxisHeight + gridHeight;
+  const { column: hlColIndex, row: hlRowIndex, fill } = sureStyle.highlight;
+  const hlColOriginX = yAxisWidth + hlColIndex * grid.unit;
+  const hlColTerminusX = hlColOriginX + grid.unit;
+  const hlRowOriginY = xAxisHeight + hlRowIndex * grid.unit;
+  const hlRowTerminusY = hlRowOriginY + grid.unit;
+  const highlight = {
+    fill,
+    column: {
+      origin: {
+        x: hlColOriginX,
+        y: xAxisHeight,
+      },
+      terminus: {
+        x: hlColTerminusX,
+        y: boardHeight,
+      },
+    },
+    row: {
+      origin: {
+        x: yAxisWidth,
+        y: hlRowOriginY,
+      },
+      terminus: {
+        x: boardWidth,
+        y: hlRowTerminusY,
+      },
+    },
+  };
   const axes: BoardAxes<Date, LocationResource> = {
     x: {
       origin: { x: yAxisWidth, y: 0 },
@@ -332,7 +371,7 @@ export function drawBoard(
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   ctx.fillStyle = board.style.fill;
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  drawGrid(ctx, grid);
+  drawGrid(ctx, grid, board.highlight);
   labelAxisX(ctx, grid, axes.x);
   labelAxisY(ctx, grid, axes.y);
   plotTasks(ctx, board, matrix);
@@ -534,6 +573,7 @@ export function translateBoard(
 function drawGrid(
   ctx: CanvasContext,
   grid: GridProperties,
+  highlight?: HighlightProperties,
 ) {
   // The x + y coordinates where each line will start (origin) & end (terminus).
   const {
@@ -543,7 +583,7 @@ function drawGrid(
   // Before drawing, always save the context's state.
   ctx.save();
 
-  // Draw the grid's background & gridlines.
+  // Draw the grid's background & exterior gridlines.
   ctx.fillStyle = grid.fill;
   ctx.fillRect(originX, originY, grid.width, grid.height);
   ctx.strokeStyle = grid.stroke;
@@ -557,7 +597,30 @@ function drawGrid(
   );
   ctx.lineWidth = grid.lineWidth;
 
-  // First loop through the horizontal gridlines...
+  // Draw the horizontal highlight if the cursor is within the canvas and falls
+  // between the top and bottom edge of the grid area.
+  const highlightRow = highlight
+    && highlight.row.origin.y >= originY
+    && highlight.row.terminus.y <= terminusY;
+  if (highlightRow) {
+    const { fill, row: { origin: { x, y } } } = highlight;
+    ctx.fillStyle = fill;
+    ctx.fillRect(x, y, grid.width, grid.unit);
+  }
+
+  // Draw the vertical highlight if the cursor is within the canvas and falls
+  // between the left and right side of the grid area.
+  const highlightColumn = highlight
+    && highlight.column.origin.x >= originX
+    && highlight.column.terminus.x <= terminusX;
+  if (highlightColumn) {
+    const { fill, column: { origin: { x, y } } } = highlight;
+    ctx.fillStyle = fill;
+    ctx.fillRect(x, y, grid.unit, grid.height);
+  }
+
+  // Finally, draw the gridlines:
+  // First by looping through the horizontal gridlines...
   for (
     // ...starting from the top...
     let y = originY + grid.unit;
@@ -714,117 +777,6 @@ function plotTasksByLocation(
   });
 }
 
-export type HighlightGenerator = Generator<void, void, [number, number, number?, number?]>;
-export function* addHighlighter(
-  ctx: CanvasContext,
-  values: AxisValues<Date, LocationResource>,
-  matrix: TaskMatrix,
-  origin: { x: number, y: number },
-  style?: StyleOptions,
-): Generator<void, void, [number, number, number?, number?]> {
-  const board = computeBoardProperties(ctx.canvas, values, origin, style);
-  const { grid, axes } = board;
-  const gridHL = { ...grid, ...board.highlight };
-  function refresh(vector: [[curX: number, curY: number], [prevX: number, prevY: number]]): void {
-    const [position, prevPosition] = vector;
-    const curX = Math.floor((position[0] - axes.y.width) / grid.unit);
-    const prevX = Math.floor((prevPosition[0] - axes.y.width) / grid.unit);
-    const curY = Math.floor((position[1] - axes.x.height) / grid.unit);
-    const prevY = Math.floor((prevPosition[1] - axes.x.height) / grid.unit);
-
-    if (curX !== prevX || curY !== prevY) {
-      const { x: { values: dateLabels } } = axes;
-      const { y: { values: locLabels } } = axes;
-
-      // A list of tuples for the rows and columns which must be repainted,
-      // containing the x or y coordinate for columns or rows, respectively, and
-      // the grid properties to use to paint it, with highlight styles for the
-      // current row/col, and base styles for repainting the previous.
-      type RowsAndColumns = [x: number|null, y: number|null, g: GridProperties][];
-      const rowsAndCols: RowsAndColumns = [
-        [prevX, null, grid],
-        [null, prevY, grid],
-        [curX, null, gridHL],
-        [null, curY, gridHL],
-      ];
-      // Redraw the grid backgrounds for the previous column & row first,
-      // restoring the default colors, before the currently highlighted col/row.
-      // Doing both before plotting any operations requires looping through the
-      // dates and locations many more times, but prevents the previous cells
-      // from painting over any newly highlighted cells.
-      rowsAndCols.forEach(([x, y, g]) => {
-        if (x && dateLabels[x]) locLabels.forEach((_, i) => drawCellGrid(ctx, g, x, i));
-        if (y && locLabels[y]) dateLabels.forEach((_, i) => drawCellGrid(ctx, g, i, y));
-      });
-
-      // Compute the column immediately in front of the current col (lookahead)
-      // and the one behind the previous (lookbehind).
-      const directionX = curX - prevX
-      const lookaheadX = curX + directionX
-      const lookbehindX = prevX - directionX
-
-      // Don't use shadows to repaint the operations in the lookahead/lookbehind
-      // columns, because their grid cell's background is not being repainted,
-      // and the shadows are transparent and will darken cumulatively.
-      const markerStyles = {
-        shadowColor: 'transparent',
-        shadowBlur: 0,
-        shadowOffsetX: 0,
-        shadowOffsetY: 0,
-      };
-      const gridLALB: GridProperties = { ...grid, markers: markerStyles };
-
-      // Add lookahead and lookbehind to the start of the list before plotting
-      // the operations again. This will prevent any overflowing markers for dates
-      // with multiple operations from being painted over.
-      const rowsAndColsPlusLookaheads: RowsAndColumns = [
-        [lookaheadX, null, gridLALB],
-        [lookbehindX, null, gridLALB],
-        ...rowsAndCols,
-      ];
-      // Re-plot the operations in the effected rows/cols.
-      rowsAndColsPlusLookaheads.forEach(([x, y, g]) => {
-        // COLUMNS.
-        if (typeof x === 'number') {
-          const columnDate = dateLabels[x];
-          locLabels.forEach((eachLoc, iOfY) => {
-            const records = matrix.find((loc: DatesByLocation) =>
-              loc.id === eachLoc.id)?.dates || [];
-            const rec = records.find((ops: OperationsByDate) =>
-              sameDate(ops.date, columnDate));
-            if (rec) plotTasksByDate(ctx, g, rec.operations, x, iOfY);
-          })
-        }
-        // ROWS.
-        if (typeof y === 'number') {
-          const rowLocation = locLabels[y];
-          const records = matrix.find((loc: DatesByLocation) =>
-            loc.id === rowLocation?.id)?.dates || [];
-          dateLabels.forEach((eachDate, iOfX) => {
-            const rec = records.find((ops: OperationsByDate) =>
-              sameDate(ops.date, eachDate));
-            if (rec) plotTasksByDate(ctx, g, rec.operations, iOfX, y);
-          });
-        }
-      });
-    }
-  }
-  const previous = [-1, -1];
-  while (true) {
-    let [prevX, prevY] = previous;
-    const position = yield;
-    const [x, y, ...prev] = position;
-    if (typeof prev[0] === 'number' && typeof prev[1] === 'number') {
-      prevX = prev[0];
-      prevY = prev[1];
-    }
-    previous[x] = x;
-    previous[y] = y;
-    refresh([[x, y], [prevX, prevY]]);
-  }
-
-}
-
 function plotTasksByDate(
   ctx: CanvasContext,
   grid: GridProperties,
@@ -877,22 +829,4 @@ function plotTasksByDate(
   });
 
   ctx.restore(); // Now that drawing has finished, restore the context state.
-}
-
-// Draw the background & gridlines for a single grid cell.
-function drawCellGrid(
-  ctx: CanvasContext,
-  grid: GridProperties,
-  indexX: number,
-  indexY: number,
-) {
-  const originX = grid.origin.x + (indexX) * grid.unit;
-  const originY = grid.origin.y + (indexY) * grid.unit;
-  ctx.clearRect(originX, originY, grid.unit, grid.unit);
-  const innerLineW = grid.lineWidth / 2;
-  ctx.lineWidth = innerLineW;
-  ctx.fillStyle = grid.fill;
-  ctx.fillRect(originX - innerLineW, originY - innerLineW, grid.unit, grid.unit);
-  ctx.strokeStyle = grid.stroke;
-  ctx.strokeRect(originX - innerLineW / 2, originY - innerLineW / 2, grid.unit, grid.unit);
 }

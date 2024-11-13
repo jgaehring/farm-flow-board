@@ -1,14 +1,23 @@
 <script lang="ts">
 export const DEFAULT_CANVAS_WIDTH: 300 = 300; // <-- default width for any <canvas> element.
 export const DEFAULT_CANVAS_HEIGHT: 150 = 150; // <-- default height for any <canvas> element.
+
+// Constants for laying out the grid and label margins along each axis.
+export const DEFAULT_GRID = {
+  unit: 40,
+  lineWidth: 1.5,
+};
+export const DEFAULT_AXES = {
+  yAxisWidth: 240,
+  xAxisHeight: 60,
+};
 </script>
 
 <script setup lang="ts">
 import { computed, inject, ref, unref, watch } from 'vue';
 import { useMouseInElement } from '@vueuse/core';
 import useResizableCanvas from '@/composables/useResizableCanvas';
-import { addHighlighter, drawBoard, translateBoard } from '@/canvas/board';
-import type { HighlightGenerator } from '@/canvas/board';
+import { drawBoard, translateBoard } from '@/canvas/board';
 import {
   dateSequenceKey, indexPositionKey, isDarkKey, locationsKey, matrixKey,
 } from '@/components/providerKeys';  
@@ -23,19 +32,6 @@ const locations = inject(locationsKey, ref([]));
 const dateSeq = inject(dateSequenceKey, ref([]));
 const isDark = inject(isDarkKey);
 
-// Constants for laying out the grid.
-const style = computed(() => ({
-  isDark: isDark?.value,
-  grid: {
-    unit: 40,
-    lineWidth: 1.5,
-  },
-  axes: {
-    yAxisWidth: 240,
-    xAxisHeight: 60,
-  },
-}));
-
 // The position of the board along x and y axes. The x coordinate corresponds to
 // the index of the date in the date sequence that will occupy the first
 // column space. The y coordinate corresponds to the index of the location in
@@ -44,8 +40,21 @@ const style = computed(() => ({
 const currentIndex = inject(indexPositionKey, ref({ x: 0, y: 0 }));
 
 // For highlighting the row & column on hover.
-const highlighter = ref<HighlightGenerator|null>(null);
+const mouse = useMouseInElement(canvas);
 
+const highlight = computed(() => {
+  const { xAxisHeight, yAxisWidth } = DEFAULT_AXES;
+  const { unit } = DEFAULT_GRID;
+  const { elementX, elementY, isOutside } = mouse;
+  const column = Math.floor((elementX.value - yAxisWidth) / unit);
+  const row = Math.floor((elementY.value - xAxisHeight) / unit);
+  return { column, row };
+});
+
+// Prevent redrawing the canvas while a board transition is underway.
+const preventRedraw = ref(false);
+
+// Draw or redraw the board to the canvas; also used as a watcher, so no args.
 const drawToCanvas = () => {
   const ctx = canvas.value?.getContext('2d');
   if (!ctx) {
@@ -53,12 +62,15 @@ const drawToCanvas = () => {
       'Aborted drawing the board because the canvas\'s rendering '
       + 'context could not be found.',
     );
-  } else {
+  } else if (!preventRedraw.value) {
     const range = { x: unref(dateSeq), y: locations.value };
-    drawBoard(ctx, range, unref(matrix.value), currentIndex.value, style.value);
-    highlighter.value = addHighlighter(
-      ctx, range, unref(matrix), currentIndex.value, style.value,
-    );
+    const style = {
+      isDark: isDark?.value,
+      grid: DEFAULT_GRID,
+      axes: DEFAULT_AXES,
+      highlight: highlight.value,
+    };
+    drawBoard(ctx, range, unref(matrix.value), currentIndex.value, style);
   }
 }
 
@@ -71,10 +83,10 @@ watch([matrix, dateSeq, isDark], drawToCanvas);
 const maxi = computed<{ x: number, y: number }>(() => {
   const totalValuesX = unref(dateSeq).length;
   const totalValuesY = locations.value.length;
-  const maxGridW = maxWidth.value - style.value.axes.yAxisWidth;
-  const maxGridH = maxHeight.value - style.value.axes.xAxisHeight;
-  const maxValuesX = Math.floor(maxGridW / style.value.grid.unit);
-  const maxValuesY = Math.floor(maxGridH / style.value.grid.unit);
+  const maxGridW = maxWidth.value - DEFAULT_AXES.yAxisWidth;
+  const maxGridH = maxHeight.value - DEFAULT_AXES.xAxisHeight;
+  const maxValuesX = Math.floor(maxGridW / DEFAULT_GRID.unit);
+  const maxValuesY = Math.floor(maxGridH / DEFAULT_GRID.unit);
   return {
     x: totalValuesX - maxValuesX,
     y: totalValuesY - maxValuesY,
@@ -92,6 +104,8 @@ const scrollTo = (x: number, y: number) => {
   const positionChanged = xChanged || yChanged;
   const ctx = canvas.value?.getContext('2d');
   if (positionChanged && ctx) {
+    // Prevent the transition from being interrupted before it completes.
+    preventRedraw.value = true;
     const range = { x: unref(dateSeq), y: locations.value };
     const translation = {
       from: { x: currentIndex.value.x, y: currentIndex.value.y },
@@ -99,12 +113,16 @@ const scrollTo = (x: number, y: number) => {
       afterAll() {
         currentIndex.value.x = nextX;
         currentIndex.value.y = nextY;
-        highlighter.value = addHighlighter(
-          ctx, range, unref(matrix), currentIndex.value, style.value,
-        );
+        preventRedraw.value = false;
       },
     };
-    translateBoard(ctx, range, unref(matrix), translation, style.value);
+    const style = {
+      isDark: isDark?.value,
+      grid: DEFAULT_GRID,
+      axes: DEFAULT_AXES,
+      highlight: highlight.value,
+    };
+    translateBoard(ctx, range, unref(matrix), translation, style);
   }
 };
 
@@ -116,10 +134,24 @@ useResizableCanvas(canvas, (width, height) => {
   drawToCanvas();
 });
 
-const mouse = useMouseInElement(canvas);
-watch([mouse.elementX, mouse.elementY], (position, prevPosition) => {
-  if (!highlighter.value) return;
-  highlighter.value.next([...position, ...prevPosition]);
+watch([mouse.elementX, mouse.elementY, mouse.isOutside], (position, prevPosition) => {
+  const { xAxisHeight, yAxisWidth } = DEFAULT_AXES;
+  const { unit } = DEFAULT_GRID;
+  const [curX, curY, isOutside] = position;
+  const [prevX, prevY, wasOutside] = prevPosition;
+
+  // Derive integer values that can be compared to show change. Each integer
+  // represents a column or row the mouse is in currently or was in previously.
+  const curCol = Math.floor((curX - yAxisWidth) / unit);
+  const prevCol = Math.floor((prevX - yAxisWidth) / unit);
+  const curRow = Math.floor((curY - xAxisHeight) / unit);
+  const prevRow = Math.floor((prevY - xAxisHeight) / unit);
+
+  // If the mouse moved from one column or row to another, or if it moved into
+  // or out of the canvas' bounding box, redraw the canvas.
+  if (isOutside !== wasOutside || curCol !== prevCol || curRow !== prevRow) {
+    drawToCanvas();
+  }
 });
 
 defineExpose({
