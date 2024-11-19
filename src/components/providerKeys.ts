@@ -1,8 +1,8 @@
 import type { InjectionKey, Ref, WritableComputedRef } from "vue";
 import type {
-  BoardInfo, CropTerm, LocationResource, LogResource, OperationTerm, PlantResource,
+  BoardInfo, CropTerm, LocationResource, LogResource, OperationTerm,
+  PartialResource, PlantResource,
 } from '@/data/resources';
-import type { DeleteValue, UpdateValue } from '@/composables/useBoardData';
 import type { TaskMatrix } from '@/canvas/board';
 
 export const matrixKey = Symbol() as InjectionKey<Ref<TaskMatrix>>;
@@ -17,5 +17,5 @@ export const boardInfoKey = Symbol() as InjectionKey<Ref<BoardInfo|null>>;
 export const boardsKey = Symbol() as InjectionKey<Ref<BoardInfo[]>>;
 export const indexPositionKey = Symbol() as InjectionKey<Ref<{ x: number, y: number}>>;
 export const isDarkKey = Symbol() as InjectionKey<WritableComputedRef<boolean>>;
-export const emitBoardUpdateKey = Symbol() as InjectionKey<(value: UpdateValue) => void>;
-export const emitBoardDeleteKey = Symbol() as InjectionKey<(value: DeleteValue) => void>;
+export const emitBoardUpdateKey = Symbol() as InjectionKey<(value: PartialResource) => void>;
+export const emitBoardDeleteKey = Symbol() as InjectionKey<(value: PartialResource) => void>;

@@ -8,36 +8,11 @@ import {
   stringifyBoardInfo, stringifyDateTimeProps,
 } from '@/data/serialize';
 import type { BoardData, BoardInfoSerialized, LogResourceSerialized } from '@/data/serialize';
-import { Asset, EntityType, Plan, Term } from '@/data/resources';
 import type {
-  BoardInfo,
-  CropTerm,
-  LocationResource, 
-  LogIdentifier,
-  LogResource,
-  PlantResource,
-  OperationTerm,
-  PartialAsset,
-  PartialLog,
-  PartialPlan,
-  PartialTerm,
-  PartialResource,
-  PlantIdentifier,
-  PlanIdentifier,
-  PlanResource,
-  Resource,
-  TaxonomyTerm,
+  BoardInfo, CropTerm, LocationResource,  LogResource, PlantResource,
+  OperationTerm, PartialResource, PlanResource, Resource, TaxonomyTerm,
 } from '@/data/resources';
 import { createDateSequence, defaultSeason, fallbackRange } from '@/utils/date';
-
-export type CreateValue = LogResource | PlantResource | PlanResource;
-export type UpdateValue =
-  | PartialAsset
-  | PartialLog
-  | PartialPlan
-  | PartialTerm
-  | PartialResource<BoardInfo>;
-export type DeleteValue = LogIdentifier | PlantIdentifier | PlanIdentifier;
 
 const safeIncludes = <T>(arr: T[], item: T|null|undefined) =>
   (!item ? false : arr.includes(item));
@@ -81,7 +56,7 @@ export default function useBoardData(initInfo?: BoardInfo) {
     const plantIds = boardInfo.crops.map(c => c.id);
     const cachedPlants = await getRecords(
       'entities',
-      EntityType.Asset,
+      'asset',
       plantIds,
     ) as PlantResource[];
     const [cropIds, locIds] = cachedPlants.reduce((
@@ -98,15 +73,15 @@ export default function useBoardData(initInfo?: BoardInfo) {
       return [nextCropIds, nextLocIds];
     }, [[], []]);
     const opQuery = (term: TaxonomyTerm) =>
-      term.type === Term.StandardOperatingProcedure;
+      term.type === 'taxonomy_term--standard_operating_procedure';
     const logQuery = (log: LogResourceSerialized) =>
       safeIncludes(locIds, log.location?.id)
       || safeIncludes(cropIds, log.plant?.id);
     const [cachedCrops, cachedLocs, cachedOps, cachedTasks] = await Promise.allSettled([
-      getRecords('entities', EntityType.TaxonomyTerm, cropIds),
-      getRecords('entities', EntityType.Asset, locIds),
-      getRecords('entities', EntityType.TaxonomyTerm, opQuery),
-      getRecords('entities', EntityType.Log, logQuery).then(objectifyDateTimeProps),
+      getRecords('entities', 'taxonomy_term', cropIds),
+      getRecords('entities', 'asset', locIds),
+      getRecords('entities', 'taxonomy_term', opQuery),
+      getRecords('entities', 'log', logQuery).then(objectifyDateTimeProps),
     ]);
     function onSettled<T>(result: PromiseSettledResult<T>, state: Ref<T>) {
       if (result.status === 'fulfilled') state.value = result.value;
@@ -133,17 +108,17 @@ export default function useBoardData(initInfo?: BoardInfo) {
 
     const fmtedData = fmtBeforeSerialize(clone(data));
     return Promise.allSettled([
-      saveRecord('entities', EntityType.Plan, fmtedData.board),
+      saveRecord('entities', 'plan', fmtedData.board),
       Promise.allSettled(fmtedData.crops.map((record) =>
-        saveRecord('entities', EntityType.TaxonomyTerm, record))),
+        saveRecord('entities', 'taxonomy_term', record))),
       Promise.allSettled(fmtedData.locations.map((record) =>
-        saveRecord('entities', EntityType.Asset, record))),
+        saveRecord('entities', 'asset', record))),
       Promise.allSettled(fmtedData.operations.map((record) =>
-        saveRecord('entities', EntityType.TaxonomyTerm, record))),
+        saveRecord('entities', 'taxonomy_term', record))),
       Promise.allSettled(fmtedData.tasks.map((record) =>
-        saveRecord('entities', EntityType.Log, record))),
+        saveRecord('entities', 'log', record))),
       Promise.allSettled(fmtedData.plants.map((record) =>
-        saveRecord('entities', EntityType.Asset, record))),
+        saveRecord('entities', 'asset', record))),
     ]).then((results) => {
         const [
           infoResults, cropResults, locResults, opResults, taskResults, plantResults,
@@ -162,39 +137,38 @@ export default function useBoardData(initInfo?: BoardInfo) {
   function getAllBoardInfo(): Promise<BoardInfo[]> {
     const results = (getRecords(
       'entities',
-      EntityType.Plan,
-      (p: PlanResource) => p.type === Plan.FarmFlow,
+      'plan',
+      (p: PlanResource) => p.type === 'plan--farm_flow_board',
     ) as Promise<BoardInfoSerialized[]>);
     return results.then(map(objectifyBoardInfo));
   }
 
   type CollectionItem = LogResource|PlantResource;
-  function findCollection<R>(value: PartialResource<R>): Ref<(CollectionItem & R)[]>| false {
-    if (value.type.startsWith(EntityType.Log)) return tasks;
-    if (value.type === Asset.Plant) return plants;
+  function findCollection<R>(value: PartialResource): Ref<(CollectionItem & R)[]>| false {
+    if (value.type.startsWith('log')) return tasks;
+    if (value.type === 'asset--plant') return plants;
     return false;
   }
 
-  function update<R>(value: PartialResource<R>|BoardInfo) {
+  function update(value: PartialResource) {
     const collection = findCollection(value);
     const [storeName] = value.type.split('--');
     
     if (collection && storeName) {
-      type FullResource = CollectionItem & R;
-      let state: FullResource;
+      let state: CollectionItem;
       let i = collection.value.findIndex(item => item.id === value.id);
       if (i < 0) {
-        state = value as FullResource;
+        state = value as CollectionItem;
         i = collection.value.push(state) - 1;
       } else {
-        state = updater(collection.value[i], value) as FullResource;
+        state = updater(collection.value[i], value) as CollectionItem;
         collection.value[i] = state;
       }
       const nonReactive = clone(state);
-      const serialized = stringifyDateTimeProps(nonReactive) as FullResource;
+      const serialized = stringifyDateTimeProps(nonReactive) as CollectionItem;
       return saveRecord('entities', storeName, serialized);
     }
-    if (value.type === Plan.FarmFlow && info.value !== null && storeName) {
+    if (value.type === 'plan--farm_flow_board' && info.value !== null && storeName) {
       const state = updater(info.value, value) as BoardInfo;
       info.value = state;
       const nonReactive = clone(state);
@@ -205,14 +179,14 @@ export default function useBoardData(initInfo?: BoardInfo) {
     return Promise.reject(new Error(errMsg));
   }
 
-  function onDelete<R>(idfier: PartialResource<R>) {
+  function onDelete(idfier: PartialResource) {
     const collection = findCollection(idfier);
 
     if (collection) {
       const i = collection.value.findIndex(r =>
         r.id === idfier.id && r.type === idfier.type);
       if (i >= 0) collection.value.splice(i, 1);
-    } else if (idfier.type === Plan.FarmFlow && info.value !== null) {
+    } else if (idfier.type === 'plan--farm_flow_board' && info.value !== null) {
       info.value = null;
       tasks.value = [];
       locations.value = [];

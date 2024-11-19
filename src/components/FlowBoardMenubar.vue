@@ -7,8 +7,7 @@ import FlowBoardDialogImportBoard from '@/components/FlowBoardDialogImportBoard.
 import {
   boardInfoKey, boardsKey, cropsKey, locationsKey, operationsKey, plantsKey,
 } from '@/components/providerKeys';
-import type { CreateValue } from '@/composables/useBoardData';
-import type { BoardInfo, LogResource, PartialResource } from '@/data/resources';
+import type { LogResource, PartialLog, BoardInfo } from '@/data/resources';
 import type { BoardData } from '@/data/serialize';
 import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
 import IconCheck from '@/assets/radix-icons/check.svg?component';
@@ -26,8 +25,8 @@ const emit = defineEmits<{
   (e: 'export-board'): void,
   (e: 'import-board', value: BoardData): void,
   (e: 'select-board', value: string): void,
-  (e: 'create-task', value: CreateValue): void,
-  (e: 'update-board-info', value: PartialResource<BoardInfo>): void,
+  (e: 'create-task', value: PartialLog): void,
+  (e: 'update-board-info', value: BoardInfo): void,
 }>();
 
 function handleSelectBoard(id: any) {
@@ -36,7 +35,7 @@ function handleSelectBoard(id: any) {
 
 const openEditBoardDialog = ref(false);
 const openNewBoardDialog = ref(false);
-function saveBoardInfo(info: PartialResource<BoardInfo>) {
+function saveBoardInfo(info: BoardInfo) {
   emit('update-board-info', info);
   currentMenu.value = '';
   openEditBoardDialog.value = false;

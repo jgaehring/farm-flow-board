@@ -9,7 +9,7 @@ import {
 } from '@/components/providerKeys';
 import { serialize } from '@/data/serialize';
 import type { BoardData } from '@/data/serialize';
-import type { BoardInfo, LogProperties } from '@/data/resources';
+import type { BoardInfo } from '@/data/resources';
 import useBoardData from '@/composables/useBoardData';
 import FlowBoard from '@/components/FlowBoard.vue';
 import FlowBoardOperations from '@/components/FlowBoardOperations.vue';
@@ -170,8 +170,8 @@ provide(isDarkKey, isDark);
           @select-board="selectBoard"
           @export-board="exportBoard"
           @import-board="importBoard"
-          @create-task="board.update<Partial<LogProperties>>"
-          @update-board-info="board.update<BoardInfo>" />
+          @create-task="board.update"
+          @update-board-info="board.update" />
       </div>
 
       <div class="dark-mode-toggle">
@@ -191,8 +191,8 @@ provide(isDarkKey, isDark);
     <main>
       <FlowBoard
         v-if="board.info.value"
-        @update="board.update<BoardInfo>"
-        @delete="board.delete<BoardInfo>"/>
+        @update="board.update"
+        @delete="board.delete"/>
       <FlowBoardNoBoard
         v-if="!board.info.value && !loading"
         @import-board="importBoard" />

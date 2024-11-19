@@ -4,14 +4,12 @@ import { evolve, pick } from 'ramda';
 import { ref } from 'vue';
 import { Dialog, Label } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
-import { Plan } from '@/data/resources';
 import type {
-  BoardInfo, CropTerm, LocationResource, OperationTerm, PartialResource,
-  PlantResource,
+  BoardInfo, CropTerm, LocationResource, OperationTerm, PlantIdentifier,
+  PlantResource, UUID,
 } from '@/data/resources';
 import type { BoardData } from '@/data/serialize';
 import { defaultSeason, fallbackRange } from '@/utils/date';
-import type { DeleteValue } from '@/composables/useBoardData';
 import FFDatePicker from '@/components/FFDatePicker.vue';
 
 const props = defineProps<{
@@ -25,10 +23,10 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'close'): void,
-  (e: 'update:save', value: PartialResource<BoardInfo> | BoardInfo): void,
+  (e: 'update:save', value: BoardInfo): void,
   (e: 'update:new', value: BoardData): void,
-  (e: 'update:cancel', value: PartialResource<BoardInfo> | null | undefined): void,
-  (e: 'update:delete', value: DeleteValue): void,
+  (e: 'update:cancel'): void,
+  (e: 'update:delete', value: BoardInfo): void,
 }>();
 
 const name = ref(props.boardInfo?.name || 'Untitled Board');
@@ -37,13 +35,13 @@ const dateRange = ref<[Date, Date]>(props.boardInfo?.dateRange || fallbackRange(
 function confirmChanges() {
   if (!props.boardInfo) {
     const { crops = [], locations = [], operations = [] } = props;
-    const plants = props.plants?.map(evolve({ id: () => uuid() })) || [];
+    const plants = props.plants?.map(evolve({ id: () => uuid() as UUID })) || [];
     const board: BoardInfo = {
-      id: uuid(),
-      type: Plan.FarmFlow,
+      id: uuid() as UUID,
+      type: 'plan--farm_flow_board',
       name: name.value,
       dateRange: dateRange.value,
-      crops: plants.map(pick(['id', 'type'])),
+      crops: plants.map(pick(['id', 'type'])) as PlantIdentifier[],
     };
     const data: BoardData = {
       board, crops, locations, operations, plants, tasks: [],
@@ -53,13 +51,13 @@ function confirmChanges() {
     const { id, type } = props.boardInfo;
     const info = {
       id, type, name: name.value, dateRange: dateRange.value,
-    } as PartialResource<BoardInfo>;
+    } as BoardInfo;
     emit('update:save', info);
   }
   emit('close');
 }
 function cancelChanges() {
-  emit('update:cancel', props.boardInfo);
+  emit('update:cancel');
   emit('close');
 }
 </script>

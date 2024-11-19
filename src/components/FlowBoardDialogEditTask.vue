@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import { v4 as uuid, validate } from 'uuid';
+import { v4 as uuid } from 'uuid';
 import { computed, inject, ref } from 'vue';
 import { Combobox, Dialog, Label } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
-import { Log } from '@/data/resources';
 import type {
-  LocationIdentifier, LocationResource, LogProperties, LogResource,
-  OperationIdentifier, OperationTerm, PartialLog, PlantResource,
+  LocationIdentifier, LocationResource, LogProperties, LogResource, LogType,
+  OperationIdentifier, OperationTerm, PartialLog, PlantResource, UUID,
 } from '@/data/resources';
 import { toOptionalIdfier } from '@/utils/idfier';
 import { dateRangeKey } from './providerKeys';
-import type { DeleteValue } from '@/composables/useBoardData';
 import FFDatePicker from '@/components/FFDatePicker.vue';
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
@@ -18,7 +16,7 @@ import IconTrash from '@/assets/radix-icons/trash.svg?component';
 
 const props = defineProps<{
   open: boolean,
-  task?: LogResource | PartialLog | Partial<LogProperties>,
+  task?: PartialLog|Partial<LogProperties>,
   operations?: OperationTerm[],
   locations?: LocationResource[],
   plants?: PlantResource[],
@@ -27,8 +25,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'close'): void,
   (e: 'update:save', value: PartialLog): void,
-  (e: 'update:cancel', value: PartialLog | Partial<LogProperties> | undefined): void,
-  (e: 'update:delete', value: DeleteValue): void,
+  (e: 'update:cancel'): void,
+  (e: 'update:delete', value: PartialLog): void,
 }>();
 
 const dateRange = inject(dateRangeKey, ref([new Date(0), new Date(Date.now() * 2)]));
@@ -62,35 +60,34 @@ function deleteTask() {
 }
 
 function confirmChanges() {
-  const logType = selectedOp.value?.log_type || Log.Activity;
   const location = toOptionalIdfier(selectedLoc.value);
   const operation = toOptionalIdfier(selectedOp.value);
   const date = selectedDateTime.value || new Date();
   const plantAtLocation = props.plants?.find(p =>
     p.location.id === selectedLoc.value?.id);
   const plant = toOptionalIdfier(plantAtLocation);
-  if (!props.task || !validate(props.task.id || '') || !props.task.type) {
-    // If no task was passed as props, or it had no valid ID or log type, it's a
-    // new log; assign its type based on the operation's log_type field.
+  if (props.task && 'id' in props.task && 'type' in props.task) {
+    // If a task w/ valid id & type was passed as props, they must be preserved.
+    const { id, type } = props.task as PartialLog;
+    const log = { id, type, date, location, operation, plant };
+    emit('update:save', log);
+  } else {
+    // Otherwise, it's a new log, so assign its type based on the operation's
+    // log_type field.
+    const id = uuid() as UUID;
+    const type: LogType = selectedOp.value?.log_type || 'log--activity';
     const opName = selectedOp.value?.name;
     const locName = plantAtLocation?.name || selectedLoc.value?.name;
     const name = [opName, locName].filter(n => !!n).join(', ');
     const task: LogResource = {
-      id: uuid(), type: logType,
-      name, notes: '',
-      date, location, operation, plant,
+      id, type, name, notes: '', date, location, operation, plant,
     };
     emit('update:save', task);
-  } else {
-    // Otherwise the id and type must be preserved.
-    const { id, type } = props.task;
-    const log = { id, type, date, location, operation, plant } as PartialLog;
-    emit('update:save', log);
   }
   emit('close');
 }
 function cancelChanges() {
-  emit('update:cancel', props.task);
+  emit('update:cancel');
   emit('close');
 }
 

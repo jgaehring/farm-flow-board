@@ -5,13 +5,14 @@ import { useEventListener, useParentElement } from '@vueuse/core';
 import { Popover } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
 import { computeBoardProperties } from '@/canvas/board';
-import type { LocationResource, LogProperties, LogResource, OperationTerm, PartialLog } from '@/data/resources';
+import type {
+  LocationResource, LogProperties, LogResource, OperationTerm, PartialLog,
+} from '@/data/resources';
 import {
   dateSequenceKey, emitBoardDeleteKey, emitBoardUpdateKey,
   indexPositionKey, isDarkKey,
   locationsKey, matrixKey, operationsKey, plantsKey,
 } from '@/components/providerKeys';
-import type { DeleteValue } from '@/composables/useBoardData';
 import { sameDate } from '@/utils/date';
 import { toOptionalIdfier } from '@/utils/idfier';
 import FlowBoardDialogEditTask from './FlowBoardDialogEditTask.vue';
@@ -132,7 +133,7 @@ function cancelChanges() {
   selectCell(-1);
   initTask.value = null;
 }
-function deleteTask(idfier: DeleteValue) {
+function deleteTask(idfier: PartialLog) {
   deleteResource(idfier);
   selectTask(-1);
   selectCell(-1);

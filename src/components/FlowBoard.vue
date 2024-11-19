@@ -5,8 +5,8 @@ import {
   cropsKey, emitBoardDeleteKey, emitBoardUpdateKey, indexPositionKey,
   locationsKey, matrixKey, operationsKey, plantsKey, tasksKey,
 } from '@/components/providerKeys';
-import type { DeleteValue, UpdateValue } from '@/composables/useBoardData';
 import { sameDate } from '@/utils/date';
+import type { PartialResource } from '@/data/resources';
 import FlowBoardCanvas from '@/components/FlowBoardCanvas.vue';
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '@/components/FlowBoardCanvas.vue';
 import FlowBoardInteractiveLayer from '@/components/FlowBoardInteractiveLayer.vue';
@@ -25,11 +25,11 @@ const operations = inject(operationsKey, ref([]));
 const crops = inject(cropsKey, ref([]));
 
 const emit = defineEmits<{
-  (e: 'update', value: UpdateValue): void,
-  (e: 'delete', value: DeleteValue): void,
+  (e: 'delete', value: PartialResource): void,
+  (e: 'update', value: PartialResource): void,
 }>();
-provide(emitBoardUpdateKey, (value: UpdateValue) => emit('update', value));
-provide(emitBoardDeleteKey, (value: DeleteValue) => emit('delete', value));
+provide(emitBoardDeleteKey, (value: PartialResource) => emit('delete', value));
+provide(emitBoardUpdateKey, (value: PartialResource) => emit('update', value));
 
 // The collection of all field operations, first sorted by location, then within
 // each location sorted by date. The locations will be created first, with empty

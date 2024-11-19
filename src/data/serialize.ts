@@ -3,8 +3,8 @@ import {
   fromDate, getLocalTimeZone, parseDate, parseZonedDateTime, toCalendarDate,
 } from '@internationalized/date';
 import type {
-  BoardInfo, CropTerm, LocationIdentifier, LocationResource, Log, LogResource,
-  OperationIdentifier, OperationTerm, Plan, PlanResource, PlantIdentifier, PlantResource, Resource,
+  BoardInfo, CropTerm, LocationResource, LogIdentifier, LogResource,
+  OperationTerm, PlanIdentifier, PlantResource, Resource,
 } from '@/data/resources';
 
 export interface BoardData {
@@ -16,27 +16,27 @@ export interface BoardData {
   tasks: LogResource[],
 }
 
-export interface LogResourceSerialized extends Resource {
-  type: Log,
-  date: string,
-  location: LocationIdentifier | null,
-  operation: OperationIdentifier | null,
-  plant: PlantIdentifier | null,
-  notes: string,
+export type LogResourceSerialized = LogIdentifier & {
+  name: string;
+  date: string;
+  location: LogResource['location'];
+  operation: LogResource['operation'];
+  plant: LogResource['plant'];
+  notes: LogResource['notes'];
 }
 
-export interface BoardInfoSerialized extends PlanResource {
-  type: Plan.FarmFlow,
-  dateRange: [string, string],
-  crops: PlantIdentifier[],
+export type BoardInfoSerialized = PlanIdentifier<'plan--farm_flow_board'> & {
+  name: string;
+  dateRange: [string, string];
+  crops: BoardInfo['crops'];
 }
 export interface BoardDataSerialized {
-  board: BoardInfoSerialized,
-  crops: CropTerm[],
-  locations: LocationResource[],
-  operations: OperationTerm[],
-  plants: PlantResource[],
-  tasks: LogResourceSerialized[],
+  board: BoardInfoSerialized;
+  crops: CropTerm[];
+  locations: LocationResource[];
+  operations: OperationTerm[];
+  plants: PlantResource[];
+  tasks: LogResourceSerialized[];
 }
 
 const stringifyDate = (d: Date) =>
