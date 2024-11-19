@@ -4,10 +4,10 @@
 Farm Flow is a system for team management and crop planning developed by Matthew
 Fitzgerald and [Fitzgerald Organics](https://fitzgeraldorganics.net). Originally
 designed as a physical whiteboard, the Farm Flow app is a digital adaptation of
-the Farm Flow whiteboard system, built in collaboration with
-[Runrig](https://runrig.org). The primary aim is to make bring the benefits of
-this methodology to more farms and to put realtime data and visualizations at
-the fingertips of every member of the team.
+the Farm Flow system, built in collaboration with [Runrig](https://runrig.org).
+The primary aim is to bring the benefits of this methodology to more farms and
+to put realtime data and visualizations at the fingertips of every member of the
+team.
 
 ![The original Farm Flow whiteboard](public/whiteboard_2024-06-09-a.jpg "The original Farm Flow whiteboard")
 
@@ -55,9 +55,9 @@ by [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API)
 and fully offline-first functionality could be introduced easily by dropping in
 [a "zero-config" plugin](https://vite-pwa-org.netlify.app/).
 
-[Vue](https://vuejs.org/) was chosen as the frontend framework, along with
+[Vue](https://vuejs.org/) was chosen as the frontend framework along with
 [Vite](https://vite.dev/) for tooling, partly out of preference and familiarity,
-but also because it provides first-class support for both consuming and
+but also because they provide first-class support for both consuming and
 generating [web components](https://vuejs.org/guide/extras/web-components.html).
 This affords an easy escape hatch to port Farm Flow to other applications as a
 component library without the need to manually port the Vue components and
@@ -123,8 +123,9 @@ resource.
 We're ignoring many of the other fields included in each of these bundles by
 default, since they're not needed in this application and can be derived from
 defaults at a later time, if at some point full integration with a
-farmOS-compliant system becomes desireable. Their equivalent type definitions in
-TypeScript are provide below.
+farmOS-compliant system becomes desirable. Their approximate type definitions
+are provide below in abbreviated form. For the most up-to-date and complete
+definitions, see [`/src/data/resources.ts`](./src/data/resources.ts).
 
 #### Assets: land (location) and plant
 
