@@ -53,7 +53,7 @@ export const stringifyBoardInfo: stringifyBoardInfo = compose(
 );
 
 const stringifyDateProp = evolve({ date: when(is(Object), stringifyDateTime) })
-export const stringifyDateTimeProps = (t: Object|Object[]) =>
+export const stringifyDateTimeProps = (t: object|object[]) =>
   (Array.isArray(t) ? t.map(stringifyDateProp) : stringifyDateProp(t)) as Resource|Resource[];
 
 export const fmtBeforeSerialize = evolve({
@@ -61,18 +61,17 @@ export const fmtBeforeSerialize = evolve({
   board: stringifyBoardInfo,
 }) as (data: BoardData) => BoardDataSerialized;
 
+type fnReplacer = (key: string, val: unknown) => typeof val|string;
 export function serialize(
   data: BoardData,
-  replacer?: ((key: string, val: any) => any) | (string | number)[] | null,
+  replacer?: (string | number)[] | fnReplacer | null,
   space?: string | number,
 ): string {
   const board = fmtBeforeSerialize(data);
   if (!replacer) return JSON.stringify(board, null, space);
   if (Array.isArray(replacer)) {
-    replacer as (string | number)[];
     return JSON.stringify(board, replacer, space);
   }
-  replacer as (key: string, val: any) => any;
   return JSON.stringify(board, replacer, space);
 }
 
@@ -96,7 +95,7 @@ export const fmtAfterDeserialize = evolve({
 
 export function deserialize(
   json: string,
-  reviver?: ((key: string, val: any) => any) | undefined,
+  reviver?: (fnReplacer) | undefined,
 ): BoardData {
   const data = JSON.parse(json, reviver);
   return fmtAfterDeserialize(data);

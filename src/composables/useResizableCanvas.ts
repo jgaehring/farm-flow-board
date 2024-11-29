@@ -1,8 +1,9 @@
-import { isRef, ref, type MaybeRefOrGetter, type Ref } from 'vue';
+import { isRef, ref } from 'vue';
+import type { Ref } from 'vue';
 import { tryOnMounted, useParentElement, useResizeObserver } from '@vueuse/core';
 
 declare type MaybeCanvas = HTMLCanvasElement|null;
-declare type TargetCanvas = string|MaybeRefOrGetter<MaybeCanvas>;
+declare type TargetCanvas = string|Ref<MaybeCanvas>;
 declare type ResizeCanvasCB = (width: number, height: number) => void;
 
 export default function useResizableCanvas(target: TargetCanvas, cb: ResizeCanvasCB) {

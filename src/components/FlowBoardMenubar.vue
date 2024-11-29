@@ -12,6 +12,7 @@ import type { BoardData } from '@/data/serialize';
 import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
 import IconCheck from '@/assets/radix-icons/check.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
+import { validate } from 'uuid';
 
 const currentMenu = ref('');
 const crops = inject(cropsKey, ref([]));
@@ -29,8 +30,10 @@ const emit = defineEmits<{
   (e: 'update-board-info', value: BoardInfo): void,
 }>();
 
-function handleSelectBoard(id: any) {
-  if (typeof id === 'string') emit('select-board', id);
+function handleSelectBoard(id: unknown) {
+  if (typeof id === 'string' && validate(id)) {
+    emit('select-board', id);
+  }
 }
 
 const openEditBoardDialog = ref(false);

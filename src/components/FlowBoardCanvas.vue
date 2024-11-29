@@ -1,6 +1,6 @@
 <script lang="ts">
-export const DEFAULT_CANVAS_WIDTH: 300 = 300; // <-- default width for any <canvas> element.
-export const DEFAULT_CANVAS_HEIGHT: 150 = 150; // <-- default height for any <canvas> element.
+export const DEFAULT_CANVAS_WIDTH: 300 = 300 as const; // <-- default width for any <canvas> element.
+export const DEFAULT_CANVAS_HEIGHT: 150 = 150 as const; // <-- default height for any <canvas> element.
 
 // Constants for laying out the grid and label margins along each axis.
 export const DEFAULT_GRID = {
