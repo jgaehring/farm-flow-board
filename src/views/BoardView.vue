@@ -245,34 +245,34 @@ h1 {
   margin-right: 1.5rem;
 }
 
-.editable-root {
+:deep(.editable-root) {
   grid-area: name;
   display: flex;
   flex-direction: row;
 }
 
-.editable-area {
+:deep(.editable-area) {
   color: var(--color-text);
   font-size: 30px;
   width: 180px;
   flex: auto;
 }
-.editable-preview {
+:deep(.editable-preview) {
   cursor: pointer;
 }
-.editable-input {
+:deep(.editable-input) {
   cursor: text;
 }
 
-.editable-trigger-wrapper {
+:deep(.editable-trigger-wrapper) {
   display: flex;
   align-items: baseline;
   gap: 1rem;
 }
 
-.editable-trigger-submit,
-.editable-trigger-cancel,
-.editable-trigger-edit {
+:deep(.editable-trigger-submit),
+:deep(.editable-trigger-cancel),
+:deep(.editable-trigger-edit) {
   align-items: flex-end;
   margin: .375rem 0 0 .375rem;
   padding: .125rem .75rem;
@@ -287,21 +287,21 @@ h1 {
   cursor: pointer;
 }
 
-.editable-trigger-submit,
-.editable-trigger-cancel:hover {
+:deep(.editable-trigger-submit),
+:deep(.editable-trigger-cancel):hover {
   color: var(--ff-c-green);
   background-color: var(--color-background);
 }
 
-.editable-trigger-submit:hover {
+:deep(.editable-trigger-submit):hover {
   background-color: var(--ff-c-green-transparent-3);
 }
 
-.editable-trigger-edit {
+:deep(.editable-trigger-edit) {
   cursor: pointer;
   border: none;
 }
-.editable-trigger-edit svg {
+:deep(.editable-trigger-edit) svg {
   width: 24px;
   height: 24px;
   color: var(--color-text);
