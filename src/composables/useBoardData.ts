@@ -1,4 +1,6 @@
-import { clone, keys, map, mergeRight, omit, pick } from 'ramda';
+import {
+  clone, keys, map, mergeRight, omit, pick,
+} from 'ramda';
 import { validate } from 'uuid';
 import { computed, ref } from 'vue';
 import type { Ref } from 'vue';
@@ -9,7 +11,7 @@ import {
 } from '@/data/serialize';
 import type { BoardData, BoardInfoSerialized, LogResourceSerialized } from '@/data/serialize';
 import type {
-  BoardInfo, CropTerm, LocationResource,  LogResource, PlantResource,
+  BoardInfo, CropTerm, LocationResource, LogResource, PlantResource,
   OperationTerm, PartialResource, PlanResource, Resource, TaxonomyTerm,
 } from '@/data/resources';
 import { createDateSequence, defaultSeason, fallbackRange } from '@/utils/date';
@@ -22,11 +24,10 @@ function updater(orig: Resource, changes: Partial<typeof orig>): typeof orig {
   const valid = pick(keys(orig), merged);
   const fields = omit(['id', 'type'], valid);
   const next = mergeRight(orig, fields);
-  return next
+  return next;
 }
 
 export default function useBoardData(initInfo?: BoardInfo) {
-
   const info = ref<BoardInfo|null>(null);
 
   // All of the core data entities for representing the board data.
@@ -50,7 +51,7 @@ export default function useBoardData(initInfo?: BoardInfo) {
   // Mock retrieving the task & plant entities from a database, API, file, etc.
   async function load(boardInfo?: BoardInfo): Promise<void> {
     if (!boardInfo || !validate(boardInfo.id)) {
-      return getAllBoardInfo().then(([b]) => b ? load(b) : Promise.resolve());
+      return getAllBoardInfo().then(([b]) => (b ? load(b) : Promise.resolve()));
     }
 
     const plantIds = boardInfo.crops.map(c => c.id);
@@ -77,21 +78,22 @@ export default function useBoardData(initInfo?: BoardInfo) {
     const logQuery = (log: LogResourceSerialized) =>
       safeIncludes(locIds, log.location?.id)
       || safeIncludes(cropIds, log.plant?.id);
-    const [cachedCrops, cachedLocs, cachedOps, cachedTasks] = await Promise.allSettled([
-      getRecords('entities', 'taxonomy_term', cropIds),
-      getRecords('entities', 'asset', locIds),
-      getRecords('entities', 'taxonomy_term', opQuery),
-      getRecords('entities', 'log', logQuery).then(objectifyDateTimeProps),
-    ]);
-    function onSettled<T>(result: PromiseSettledResult<T>, state: Ref<T>) {
-      if (result.status === 'fulfilled') state.value = result.value;
+    function ifSettled<T>(r: PromiseSettledResult<T>, cb: (v: T) => void) {
+      if (r.status === 'fulfilled') cb(r.value);
     }
-    info.value = boardInfo;
-    plants.value = (cachedPlants);
-    onSettled(cachedCrops, crops);
-    onSettled(cachedLocs, locations);
-    onSettled(cachedOps, operations);
-    onSettled(cachedTasks, tasks);
+    return Promise.allSettled([
+      getRecords<CropTerm>('entities', 'taxonomy_term', cropIds),
+      getRecords<LocationResource>('entities', 'asset', locIds),
+      getRecords<OperationTerm>('entities', 'taxonomy_term', opQuery),
+      getRecords<LogResourceSerialized>('entities', 'log', logQuery).then(objectifyDateTimeProps),
+    ]).then(([cachedCrops, cachedLocs, cachedOps, cachedTasks]) => {
+      ifSettled(cachedCrops, (val) => { crops.value = val as CropTerm[]; });
+      ifSettled(cachedLocs, (val) => { locations.value = val as LocationResource[]; });
+      ifSettled(cachedOps, (val) => { operations.value = val as OperationTerm[]; });
+      ifSettled(cachedTasks, (val) => { tasks.value = val as LogResource[]; });
+      info.value = boardInfo;
+      plants.value = (cachedPlants);
+    });
   }
 
   function importBoard(data: BoardData) {
@@ -120,17 +122,17 @@ export default function useBoardData(initInfo?: BoardInfo) {
       Promise.allSettled(fmtedData.plants.map((record) =>
         saveRecord('entities', 'asset', record))),
     ]).then((results) => {
-        const [
-          infoResults, cropResults, locResults, opResults, taskResults, plantResults,
-        ] = results;
-        return {
-          info: infoResults,
-          crops: cropResults,
-          locations: locResults,
-          operations: opResults,
-          tasks: taskResults,
-          plants: plantResults,
-        }
+      const [
+        infoResults, cropResults, locResults, opResults, taskResults, plantResults,
+      ] = results;
+      return {
+        info: infoResults,
+        crops: cropResults,
+        locations: locResults,
+        operations: opResults,
+        tasks: taskResults,
+        plants: plantResults,
+      };
     });
   }
 
@@ -153,7 +155,7 @@ export default function useBoardData(initInfo?: BoardInfo) {
   function update(value: PartialResource) {
     const collection = findCollection(value);
     const [storeName] = value.type.split('--');
-    
+
     if (collection && storeName) {
       let state: CollectionItem;
       let i = collection.value.findIndex(item => item.id === value.id);
@@ -220,5 +222,5 @@ export default function useBoardData(initInfo?: BoardInfo) {
     import: importBoard,
     load,
     update,
-  }
+  };
 }

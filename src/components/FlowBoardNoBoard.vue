@@ -3,8 +3,7 @@ import { ref } from 'vue';
 import type { BoardData } from '@/data/serialize';
 import FlowBoardDialogImportBoard from './FlowBoardDialogImportBoard.vue';
 
-const emit = defineEmits<{
-  (e: 'import-board', value: BoardData): void,
+const emit = defineEmits<{(e: 'import-board', value: BoardData): void,
 }>();
 const openImportBoardDialog = ref(true);
 

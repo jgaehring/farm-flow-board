@@ -1,7 +1,23 @@
 import { clone, mergeDeepRight, reduce } from 'ramda';
 import { useDark } from '@vueuse/core';
 import { sameDate } from '@/utils/date';
-import type { CropTerm, LocationResource, LogResource, OperationTerm } from '@/data/resources';
+import type {
+  CropTerm, LocationResource, LogResource, OperationTerm,
+} from '@/data/resources';
+
+// These are the same defaults specified by the Canvas API.
+export const DEFAULT_CANVAS_WIDTH: 300 = 300 as const;
+export const DEFAULT_CANVAS_HEIGHT: 150 = 150 as const;
+
+// Constants for laying out the grid and label margins along each axis.
+export const DEFAULT_GRID = {
+  unit: 40,
+  lineWidth: 1.5,
+};
+export const DEFAULT_AXES = {
+  yAxisWidth: 240,
+  xAxisHeight: 60,
+};
 
 type CanvasContext = CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D;
 
@@ -194,7 +210,7 @@ const gridStylesFallback = (style: StyleOptions): GridStyles => ({
   stroke: getColorVar('--ff-c-green-transparent-2', style.isDark)
     || 'rgba(0, 189, 126, 0.3)',
   lineWidth: style.grid?.lineWidth || 1.5,
-})
+});
 
 // Fallbacks for Style Options
 const applyStyleFallbacks = (style: StyleOptions): StyleProperties => mergeDeepRight({
@@ -207,8 +223,8 @@ const applyStyleFallbacks = (style: StyleOptions): StyleProperties => mergeDeepR
     color: getColorVar('--color-text', style.isDark)
       || lightDark('#rgba(60, 60, 60, 0.66)', 'rgba(235, 235, 235, 0.64)'),
     fontFamily: getColorVar('--ff-font-family', style.isDark)
-      || `Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, `
-      + `Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif`,
+      || 'Inter, -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Oxygen, '
+      + 'Ubuntu, Cantarell, \'Fira Sans\', \'Droid Sans\', \'Helvetica Neue\', sans-serif',
   },
   axes: {
     yAxisWidth: 240,
@@ -222,7 +238,7 @@ const applyStyleFallbacks = (style: StyleOptions): StyleProperties => mergeDeepR
   },
   highlight: {
     fill: getColorVar('--color-background-mute', style.isDark)
-      || lightDark('#eaeaea','#323232'),
+      || lightDark('#eaeaea', '#323232'),
     column: -1,
     row: -1,
   },
@@ -246,7 +262,7 @@ export function computeBoardProperties(
   style?: StyleOptions,
 ): BoardProperties {
   const sureStyle = applyStyleFallbacks(style || {});
-  const { axes: { yAxisWidth, xAxisHeight }, grid, markers, } = sureStyle;
+  const { axes: { yAxisWidth, xAxisHeight }, grid, markers } = sureStyle;
   const dates = fitToGrid(
     canvas.width,
     yAxisWidth,
@@ -314,7 +330,7 @@ export function computeBoardProperties(
       color: sureStyle.font.color,
       fontFamily: sureStyle.font.fontFamily,
     },
-  }
+  };
   return {
     width: boardWidth,
     height: boardHeight,
@@ -364,7 +380,7 @@ export function drawBoard(
 ): BoardProperties {
   const board = computeBoardProperties(ctx.canvas, values, index, style);
   if (ctx.canvas.height - board.height > board.grid.unit) {
-    ctx.canvas.height = board.height + .5 * board.grid.unit;
+    ctx.canvas.height = board.height + 0.5 * board.grid.unit;
   }
   const { axes, grid } = board;
   // Clear the canvas & apply a fill so previous paints don't show through.
@@ -390,8 +406,8 @@ export function drawBoard(
  */
 function easeInOutQuad(x: number): number {
   const y = x < 0.5
-    ? 2 * x * x 
-    : 1 - Math.pow(-2 * x + 2, 2) / 2;
+    ? 2 * x * x
+    : 1 - (-2 * x + 2) ** 2 / 2;
   return y;
 }
 
@@ -439,7 +455,8 @@ export function translateBoard(
   // ...meanwhilethe width and height deltas will indicate, in absolute terms,
   // just how much larger the offscreen canvas is compared to the main canvas.
   const deltas = {
-    x: dX, y: dY,
+    x: dX,
+    y: dY,
     width: dX * fromBoard.grid.unit,
     height: dY * fromBoard.grid.unit,
   };
@@ -451,7 +468,7 @@ export function translateBoard(
   const signOfDx = dX !== 0 ? dX / Math.abs(dX) : 1;
   const signOfDy = dY !== 0 ? dY / Math.abs(dY) : 1;
   // The index will always be the lowest x and y values displayed, whether the
-  // translation is going from highest to lowest, or vice versa. 
+  // translation is going from highest to lowest, or vice versa.
   const index = {
     x: Math.min(translation.to.x, translation.from.x),
     y: Math.min(translation.to.y, translation.from.y),
@@ -496,7 +513,7 @@ export function translateBoard(
     // passed to ctx.translate(x, y) and expand the coordinates of the clipping
     // box to include the X-AXIS labels, so they will be translated too.
     if (dX !== 0) {
-      translateX = translateX - easingX * deltas.width;
+      translateX -= easingX * deltas.width;
       clipH = fromBoard.height;
       clipOrigin.y = 0;
     }
@@ -505,15 +522,17 @@ export function translateBoard(
     // passed to ctx.translate(x, y) and expand the coordinates of the clipping
     // box to include the Y-AXIS labels, so they will be translated too.
     if (dY !== 0) {
-      translateY = translateY - easingY * deltas.height;
+      translateY -= easingY * deltas.height;
       clipW = fromBoard.width;
       clipOrigin.x = 0;
     }
 
-  // Invoke the beforeEach() callback now that the translation coordinates and
-  // easing have been calculated, but before clipping, translating, and drawing.
-  if (typeof translation.beforeEach === 'function') {
-      const cycle = { translateX, translateY, timestamp, progress, easing };
+    // Invoke the beforeEach() callback now that the translation coordinates and
+    // easing have been calculated, but before clipping, translating, and drawing.
+    if (typeof translation.beforeEach === 'function') {
+      const cycle = {
+        translateX, translateY, timestamp, progress, easing,
+      };
       translation.beforeEach(ctx, transBoard, deltas, cycle);
     }
 
@@ -550,7 +569,9 @@ export function translateBoard(
     if (progress < 1) {
     // If the animation hasn't finished, call afterEach() and resume the loop.
       if (typeof translation.afterEach === 'function') {
-        const cycle = { translateX, translateY, timestamp, progress, easing };
+        const cycle = {
+          translateX, translateY, timestamp, progress, easing,
+        };
         translation.afterEach(ctx, transBoard, deltas, cycle);
       }
       frame = window.requestAnimationFrame(animate);
@@ -671,7 +692,7 @@ const reduceDatesToMonths = reduce((
   const endCol = prev.endCol + 1;
   return [
     ...months.slice(0, months.length - 1),
-    { ...prev, endCol }
+    { ...prev, endCol },
   ];
 }, []);
 
@@ -684,7 +705,7 @@ function labelAxisX(
   const dateLineheight = Math.floor(axis.height * (5 / 9));
   const dateFontSize = Math.floor(dateLineheight * (5 / 9));
   const dateBaseline = axis.height - Math.floor(dateLineheight * (1 / 3));
-  const dateTextMarginLeft = grid.unit * .5;
+  const dateTextMarginLeft = grid.unit * 0.5;
   const { origin, values: dates } = axis;
   // Before drawing, always save the context's state.
   ctx.save();
@@ -721,7 +742,7 @@ function labelAxisX(
       ctx.lineTo(bgX, axis.height);
       ctx.stroke();
     }
-    const textX = bgX + .5 * width;
+    const textX = bgX + 0.5 * width;
     ctx.fillStyle = axis.color;
     ctx.font = `${monthFontSize}px ${axis.fontFamily}`;
     ctx.textAlign = 'center';
@@ -740,18 +761,18 @@ function labelAxisY(
   ctx.save();
   const { origin, values: locations } = axis;
   ctx.fillStyle = axis.color;
-  ctx.font = `${grid.unit * .65}px ${axis.fontFamily}`;
+  ctx.font = `${grid.unit * 0.65}px ${axis.fontFamily}`;
   ctx.textAlign = 'end';
   const x = axis.width - 6;
   locations.forEach((loc, i) => {
-    const y = origin.y + (i + 1) * grid.unit - grid.unit * .25;
+    const y = origin.y + (i + 1) * grid.unit - grid.unit * 0.25;
     ctx.fillText(loc.name, x, y);
   });
   // After all drawing operations complete, restore the context's original state.
   ctx.restore();
 }
 
-function plotTasks (
+function plotTasks(
   ctx: CanvasContext,
   board: BoardProperties,
   matrix: TaskMatrix,
@@ -787,8 +808,8 @@ function plotTasksByDate(
   ctx.save(); // Before drawing, always save the context state.
 
   // Derive the coordinates & dimensions for the circular marker.
-  const centerX = grid.origin.x + (indexX + .5) * grid.unit;
-  const centerY = grid.origin.y + (indexY + .5) * grid.unit;
+  const centerX = grid.origin.x + (indexX + 0.5) * grid.unit;
+  const centerY = grid.origin.y + (indexY + 0.5) * grid.unit;
   const radius = grid.unit * (11 / 30);
   const startAngle = 0;
   const endAngle = 2 * Math.PI;
@@ -799,7 +820,7 @@ function plotTasksByDate(
   // the rightmost marker. It should be the diameter of just one marker, plus
   // the combined lenth of all gaps, w/ one less gap than there are markers.
   const gapCount = operations.length - 1;
-  const gapSize = grid.unit * .2;
+  const gapSize = grid.unit * 0.2;
   const totalLength = 2 * radius + gapCount * gapSize;
 
   operations.forEach((a, i) => {

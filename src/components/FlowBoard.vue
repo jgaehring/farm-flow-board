@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { computed, inject, provide, ref } from 'vue';
+import {
+  computed, inject, provide, ref,
+} from 'vue';
+import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '@/canvas/board';
 import type { DatesByLocation, OperationsByDate, TaskMatrix } from '@/canvas/board';
 import {
   cropsKey, emitBoardDeleteKey, emitBoardUpdateKey, indexPositionKey,
@@ -8,7 +11,6 @@ import {
 import { sameDate } from '@/utils/date';
 import type { PartialResource } from '@/data/resources';
 import FlowBoardCanvas from '@/components/FlowBoardCanvas.vue';
-import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '@/components/FlowBoardCanvas.vue';
 import FlowBoardInteractiveLayer from '@/components/FlowBoardInteractiveLayer.vue';
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
 import IconChevronLeft from '@/assets/radix-icons/chevron-left.svg?component';
@@ -24,8 +26,7 @@ const locations = inject(locationsKey, ref([]));
 const operations = inject(operationsKey, ref([]));
 const crops = inject(cropsKey, ref([]));
 
-const emit = defineEmits<{
-  (e: 'delete', value: PartialResource): void,
+const emit = defineEmits<{(e: 'delete', value: PartialResource): void,
   (e: 'update', value: PartialResource): void,
 }>();
 provide(emitBoardDeleteKey, (value: PartialResource) => emit('delete', value));
@@ -35,29 +36,29 @@ provide(emitBoardUpdateKey, (value: PartialResource) => emit('update', value));
 // each location sorted by date. The locations will be created first, with empty
 // dates arrays, and generateTasks will populate the tasks by date after
 // randomly generating them according to the possible locations and dates.
-const matrix = computed((): TaskMatrix => {
-  return locations.value.map(({ id, type, name }) => {
-    const crop = crops.value.find(crop => plants.value.some(plant =>
-      crop.id === plant.crop.id && plant.location.id === id));
-    const dates = tasks.value.reduce((byDate: OperationsByDate[], task) => {
-      if (task.location?.id !== id) return byDate;
-      const opId = task.operation?.id;
-      // Default for unknown ops in sample data: 'Cultivation'
-      const op = opId && operations.value.find(o => o.id === opId) || operations.value[2];
-      const { date } = task;
-      const i = byDate.findIndex(byD => sameDate(byD.date, date));
-      if (i < 0) return [...byDate, { date, operations: [op], tasks: [task] }];
-      const ops = byDate[i].operations.concat(op);
-      const tasksByDate = byDate[i].tasks.concat(task);
-      return [
-        ...byDate.slice(0, i),
-        { date, operations: ops, tasks: tasksByDate },
-        ...byDate.slice(i + 1),
-      ];
-    }, []);
-    return { id, type, name, crop, dates } as DatesByLocation;
-  });
-});
+const matrix = computed((): TaskMatrix => locations.value.map(({ id, type, name }) => {
+  const crop = crops.value.find(c => plants.value.some(plant =>
+    c.id === plant.crop.id && plant.location.id === id));
+  const dates = tasks.value.reduce((byDate: OperationsByDate[], task) => {
+    if (task.location?.id !== id) return byDate;
+    const opId = task.operation?.id;
+    // Default for unknown ops in sample data: 'Cultivation'
+    const op = (opId && operations.value.find(o => o.id === opId)) || operations.value[2];
+    const { date } = task;
+    const i = byDate.findIndex(byD => sameDate(byD.date, date));
+    if (i < 0) return [...byDate, { date, operations: [op], tasks: [task] }];
+    const ops = byDate[i].operations.concat(op);
+    const tasksByDate = byDate[i].tasks.concat(task);
+    return [
+      ...byDate.slice(0, i),
+      { date, operations: ops, tasks: tasksByDate },
+      ...byDate.slice(i + 1),
+    ];
+  }, []);
+  return {
+    id, type, name, crop, dates,
+  } as DatesByLocation;
+}));
 provide(matrixKey, matrix);
 
 // The position of the board along x and y axes. The x coordinate corresponds to

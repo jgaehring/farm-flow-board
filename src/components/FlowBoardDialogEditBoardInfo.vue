@@ -21,8 +21,7 @@ const props = defineProps<{
   open: boolean,
 }>();
 
-const emit = defineEmits<{
-  (e: 'close'): void,
+const emit = defineEmits<{(e: 'close'): void,
   (e: 'update:save', value: BoardInfo): void,
   (e: 'update:new', value: BoardData): void,
   (e: 'update:cancel'): void,

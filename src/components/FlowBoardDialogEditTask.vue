@@ -8,8 +8,8 @@ import type {
   OperationIdentifier, OperationTerm, PartialLog, PlantResource, UUID,
 } from '@/data/resources';
 import { toOptionalIdfier } from '@/utils/idfier';
-import { dateRangeKey } from './providerKeys';
 import FFDatePicker from '@/components/FFDatePicker.vue';
+import { dateRangeKey } from './providerKeys';
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
 import IconTrash from '@/assets/radix-icons/trash.svg?component';
@@ -22,8 +22,7 @@ const props = defineProps<{
   plants?: PlantResource[],
 }>();
 
-const emit = defineEmits<{
-  (e: 'close'): void,
+const emit = defineEmits<{(e: 'close'): void,
   (e: 'update:save', value: PartialLog): void,
   (e: 'update:cancel'): void,
   (e: 'update:delete', value: PartialLog): void,
@@ -69,7 +68,9 @@ function confirmChanges() {
   if (props.task && 'id' in props.task && 'type' in props.task) {
     // If a task w/ valid id & type was passed as props, they must be preserved.
     const { id, type } = props.task as PartialLog;
-    const log = { id, type, date, location, operation, plant };
+    const log = {
+      id, type, date, location, operation, plant,
+    };
     emit('update:save', log);
   } else {
     // Otherwise, it's a new log, so assign its type based on the operation's
@@ -125,11 +126,12 @@ function cancelChanges() {
           <Combobox.Content class="combobox-content">
             <Combobox.Viewport class="combobox-viewport" >
               <Combobox.Empty class="combobox-empty"/>
-              <Combobox.Item v-for="(op, k) in operations"
+              <Combobox.Item
+                v-for="(op, k) in operations"
                 class="combobox-item"
                 @select="selected[IndexOf.Operation] = k"
                 :value="op.name"
-                :key="`edit-task-op-combobox-item-${k}`">
+                :key="`edit-task-op-${op.name}-combobox-item-${k}`" >
                 <Combobox.ItemIndicator class="combobox-item-indicator" >
                   <IconDotFilled/>
                 </Combobox.ItemIndicator>
@@ -308,7 +310,7 @@ button, input {
 .combobox-anchor {
   display: inline-flex;
   align-items: center;
-  justify-content: between; 
+  justify-content: between;
   font-size: 13px;
   line-height: 1;
   height: 35px;
@@ -359,7 +361,7 @@ button, input {
   text-align: center;
   font-size: 0.75rem;
   line-height: 1rem;
-  font-weight: 500; 
+  font-weight: 500;
   color: var(--color-text)
 }
 

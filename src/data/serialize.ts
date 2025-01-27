@@ -1,4 +1,6 @@
-import { clone, compose, evolve, is, when } from 'ramda';
+import {
+  clone, compose, evolve, is, when,
+} from 'ramda';
 import {
   fromDate, getLocalTimeZone, parseDate, parseZonedDateTime, toCalendarDate,
 } from '@internationalized/date';
@@ -52,8 +54,8 @@ export const stringifyBoardInfo: stringifyBoardInfo = compose(
   clone,
 );
 
-const stringifyDateProp = evolve({ date: when(is(Object), stringifyDateTime) })
-export const stringifyDateTimeProps = (t: Object|Object[]) =>
+const stringifyDateProp = evolve({ date: when(is(Object), stringifyDateTime) });
+export const stringifyDateTimeProps = (t: object|object[]) =>
   (Array.isArray(t) ? t.map(stringifyDateProp) : stringifyDateProp(t)) as Resource|Resource[];
 
 export const fmtBeforeSerialize = evolve({
@@ -61,18 +63,17 @@ export const fmtBeforeSerialize = evolve({
   board: stringifyBoardInfo,
 }) as (data: BoardData) => BoardDataSerialized;
 
+type fnReplacer = (key: string, val: unknown) => typeof val|string;
 export function serialize(
   data: BoardData,
-  replacer?: ((key: string, val: any) => any) | (string | number)[] | null,
+  replacer?: (string | number)[] | fnReplacer | null,
   space?: string | number,
 ): string {
   const board = fmtBeforeSerialize(data);
   if (!replacer) return JSON.stringify(board, null, space);
   if (Array.isArray(replacer)) {
-    replacer as (string | number)[];
     return JSON.stringify(board, replacer, space);
   }
-  replacer as (key: string, val: any) => any;
   return JSON.stringify(board, replacer, space);
 }
 
@@ -85,7 +86,7 @@ const objectifyDateRange = ([d1, d2]: [string, string]): [Date, Date] =>
   [objectifyDate(d1), objectifyDate(d2)];
 export const objectifyBoardInfo = evolve({ dateRange: objectifyDateRange });
 
-const objectifyDateProp = evolve({ date: when(is(String), objectifyDateTime) })
+const objectifyDateProp = evolve({ date: when(is(String), objectifyDateTime) });
 export const objectifyDateTimeProps = (t: LogResourceSerialized|LogResourceSerialized[]) =>
   (Array.isArray(t) ? t.map(objectifyDateProp) : objectifyDateProp(t));
 
@@ -96,7 +97,7 @@ export const fmtAfterDeserialize = evolve({
 
 export function deserialize(
   json: string,
-  reviver?: ((key: string, val: any) => any) | undefined,
+  reviver?: (fnReplacer) | undefined,
 ): BoardData {
   const data = JSON.parse(json, reviver);
   return fmtAfterDeserialize(data);

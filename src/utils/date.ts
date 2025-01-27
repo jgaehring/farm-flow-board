@@ -25,9 +25,9 @@ export const defaultSeason = {
   end: { month: 11, day: 30 },
 };
 export const fallbackRange = (season: typeof defaultSeason) => {
-  const tz = getLocalTimeZone()
+  const tz = getLocalTimeZone();
   const current = today(tz);
-  const index = current.month > season.end.month 
+  const index = current.month > season.end.month
     ? current.cycle('year', 1).set(season.start)
     : current;
   const start = index.set(season.start);

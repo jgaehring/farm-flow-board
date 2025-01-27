@@ -8,8 +8,7 @@ import { defaultSeason, fallbackRange } from '@/utils/date';
 import FFDatePicker from '@/components/FFDatePicker.vue';
 
 defineProps<{ open: boolean }>();
-const emit = defineEmits<{
-  (e: 'close'): void,
+const emit = defineEmits<{(e: 'close'): void,
   (e: 'update:save', value: BoardData): void,
   (e: 'update:cancel'): void,
 }>();
@@ -74,13 +73,13 @@ function cancelChanges() {
             :value="dateRange[0]"
             label="Start Date"
             class="edit-dialog-date-picker" />
-  
+
           <FFDatePicker
             @change="dateRange[1] = $event"
             :value="dateRange[1]"
             label="End Date"
             class="edit-dialog-date-picker" />
-  
+
           <div class="edit-dialog-btns">
             <Dialog.Close as-child >
               <button
@@ -251,8 +250,6 @@ button, input {
   border: 1px solid var(--color-border);
   cursor: text;
 }
-
-
 
 @keyframes overlayShow {
   from {

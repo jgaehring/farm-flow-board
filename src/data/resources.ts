@@ -13,6 +13,51 @@ type EntityName =
 export type ResourceType<E extends EntityName, B extends string> = `${E}--${B}`;
 
 /**
+ * LOGS:
+ *  - Activity
+ *  - Harvest
+ *  - Input
+ *  - Seeding
+ */
+export type LogBundle =
+  | 'activity'
+  | 'harvest'
+  | 'input'
+  | 'seeding';
+export type LogType<B extends LogBundle = LogBundle> =
+  ResourceType<EntityNameLog, B>;
+
+/**
+ * TAXONOMY TERMS
+ *  - Crop (plant)
+ *  - Operation
+ */
+export type TermBundle =
+  | 'plant'
+  | 'standard_operating_procedure';
+export type TermType<B extends TermBundle = TermBundle> =
+  ResourceType<EntityNameTerm, B>;
+export type TermIdentifier<T extends TermType = TermType> = {
+  id: UUID;
+  type: T;
+};
+export type TermProperties = { name: string };
+export type TaxonomyTerm = TermIdentifier & TermProperties;
+
+export type CropIdentifier = TermIdentifier<'taxonomy_term--plant'>;
+export type CropProperties = TermProperties & { color: string };
+export type CropTerm = CropIdentifier & CropProperties;
+export type CropPartial = CropIdentifier & Partial<CropProperties>;
+
+export type OperationIdentifier = TermIdentifier<'taxonomy_term--standard_operating_procedure'>;
+export type OperationProperties = TermProperties & {
+  log_type: LogType|null;
+  color: string;
+}
+export type OperationTerm = OperationIdentifier & OperationProperties;
+export type OperationPartial = OperationIdentifier & Partial<OperationProperties>;
+
+/**
  * ASSETS:
  *  - Land
  *  - Plant
@@ -41,20 +86,6 @@ export type PlantProperties = AssetProperties & {
 export type PlantResource = PlantIdentifier & PlantProperties;
 export type PlantPartial = PlantIdentifier & Partial<PlantProperties>;
 
-/**
- * LOGS:
- *  - Activity
- *  - Harvest
- *  - Input
- *  - Seeding
- */
-export type LogBundle =
-  | 'activity'
-  | 'harvest'
-  | 'input'
-  | 'seeding';
-export type LogType<B extends LogBundle = LogBundle> =
-  ResourceType<EntityNameLog, B>;
 export type LogIdentifier<T extends LogType = LogType> = {
   id: UUID;
   type: T;
@@ -92,36 +123,6 @@ export type BoardProperties = PlanProperties & {
 }
 export type BoardInfo = BoardIdentifier & BoardProperties;
 export type BoardInfoPartial = BoardIdentifier & Partial<BoardProperties>;
-
-/**
- * TAXONOMY TERMS
- *  - Crop (plant)
- *  - Operation
- */
-export type TermBundle =
-  | 'plant'
-  | 'standard_operating_procedure';
-export type TermType<B extends TermBundle = TermBundle> =
-  ResourceType<EntityNameTerm, B>;
-export type TermIdentifier<T extends TermType = TermType> = {
-  id: UUID;
-  type: T;
-};
-export type TermProperties = { name: string };
-export type TaxonomyTerm = TermIdentifier & TermProperties;
-
-export type CropIdentifier = TermIdentifier<'taxonomy_term--plant'>;
-export type CropProperties = TermProperties & { color: string };
-export type CropTerm = CropIdentifier & CropProperties;
-export type CropPartial = CropIdentifier & Partial<CropProperties>;
-
-export type OperationIdentifier = TermIdentifier<'taxonomy_term--standard_operating_procedure'>;
-export type OperationProperties = TermProperties & {
-  log_type: LogType|null;
-  color: string;
-}
-export type OperationTerm = OperationIdentifier & OperationProperties;
-export type OperationPartial = OperationIdentifier & Partial<OperationProperties>;
 
 /**
  * GENERALIZED RESOURCES

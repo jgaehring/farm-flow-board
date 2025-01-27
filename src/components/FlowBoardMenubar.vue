@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref } from 'vue'
+import { inject, ref } from 'vue';
 import { Menubar } from 'radix-vue/namespaced';
 import FlowBoardDialogEditBoardInfo from '@/components/FlowBoardDialogEditBoardInfo.vue';
 import FlowBoardDialogEditTask from '@/components/FlowBoardDialogEditTask.vue';
@@ -9,6 +9,7 @@ import {
 } from '@/components/providerKeys';
 import type { LogResource, PartialLog, BoardInfo } from '@/data/resources';
 import type { BoardData } from '@/data/serialize';
+import { validate } from 'uuid';
 import IconChevronRight from '@/assets/radix-icons/chevron-right.svg?component';
 import IconCheck from '@/assets/radix-icons/check.svg?component';
 import IconDotFilled from '@/assets/radix-icons/dot-filled.svg?component';
@@ -21,16 +22,17 @@ const plants = inject(plantsKey, ref([]));
 const boardInfo = inject(boardInfoKey, ref(null));
 const boards = inject(boardsKey, ref([]));
 const boardRadio = ref<string>(boardInfo.value?.id || '');
-const emit = defineEmits<{
-  (e: 'export-board'): void,
+const emit = defineEmits<{(e: 'export-board'): void,
   (e: 'import-board', value: BoardData): void,
   (e: 'select-board', value: string): void,
   (e: 'create-task', value: PartialLog): void,
   (e: 'update-board-info', value: BoardInfo): void,
 }>();
 
-function handleSelectBoard(id: any) {
-  if (typeof id === 'string') emit('select-board', id);
+function handleSelectBoard(id: unknown) {
+  if (typeof id === 'string' && validate(id)) {
+    emit('select-board', id);
+  }
 }
 
 const openEditBoardDialog = ref(false);

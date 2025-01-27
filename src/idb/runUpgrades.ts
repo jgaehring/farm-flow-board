@@ -1,5 +1,6 @@
-import type { IDBDatabaseInfo, IDBStoreUpgrade, IDBStoreConfig, IDBDatabaseConfig } from "./databases";
-
+import type {
+  IDBDatabaseInfo, IDBStoreUpgrade, IDBStoreConfig, IDBDatabaseConfig,
+} from './databases';
 
 interface Versionable { version: number }
 interface IDBStoreUpgradeParameters extends IDBStoreUpgrade {
@@ -8,7 +9,10 @@ interface IDBStoreUpgradeParameters extends IDBStoreUpgrade {
 }
 
 // Recusive function for running async upgrades sequentially.
-export function run(event: IDBVersionChangeEvent, upgrades: IDBStoreUpgradeParameters[]): Promise<IDBObjectStore> {
+export function run(
+  event: IDBVersionChangeEvent,
+  upgrades: IDBStoreUpgradeParameters[],
+): Promise<IDBObjectStore> {
   const head = upgrades[0];
   const tail = upgrades.slice(1);
   // Wrap every onUpgrade call so we can be sure it returns a promise.
@@ -38,15 +42,17 @@ function filterAndSort<T extends Versionable>(ver: number): (acc: T[], cur: T) =
       return sortByVersion<T>(acc, cur);
     }
     return acc;
-  }
+  };
   return reducer;
 }
 
 const runUpgrades = (config: IDBDatabaseConfig) => (event: IDBVersionChangeEvent) => {
   const reducer = filterAndSort<IDBStoreUpgradeParameters>(event.oldVersion);
   const { stores, ...db } = config;
-  const storeUpgrades = stores.flatMap(({ upgrades, ...store }) => 
-    upgrades.map(({ version, onUpgrade }) => ({ version, db, store, onUpgrade })));
+  const storeUpgrades = stores.flatMap(({ upgrades, ...store }) =>
+    upgrades.map(({ version, onUpgrade }) => ({
+      version, db, store, onUpgrade,
+    })));
   const sortedUpgrades = storeUpgrades.reduce(reducer, []);
   return run(event, sortedUpgrades);
 };
