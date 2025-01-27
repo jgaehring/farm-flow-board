@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Ref } from 'vue';
-import { computed, inject, ref, unref } from 'vue';
+import {
+  computed, inject, ref, unref,
+} from 'vue';
 import { useEventListener, useParentElement } from '@vueuse/core';
 import { Popover } from 'radix-vue/namespaced';
 import { VisuallyHidden } from 'radix-vue';
@@ -36,7 +38,7 @@ const update = inject(emitBoardUpdateKey, () => console.warn('No update emitter 
 const deleteResource = inject(emitBoardDeleteKey, () => console.warn('No delete emitter provided.'));
 
 // Parameters for laying out the grid.
-const style = computed(() => ({
+const styles = computed(() => ({
   isDark: isDark?.value,
   grid: {
     unit: 40,
@@ -52,7 +54,7 @@ const board = computed(() => computeBoardProperties(
   { width: props.width, height: props.height },
   { x: unref(dateSeq), y: locations.value },
   boardIndex.value,
-  style.value,
+  styles.value,
 ));
 
 interface GridCell {
@@ -78,9 +80,13 @@ const gridRefs = computed(() => board.value.axes.y.values.flatMap((location, y) 
     const size = `width: ${grid.unit}px; height: ${grid.unit}px`;
     const style = `top: ${top}px; left: ${left}px; ${size}`;
     const gridCell = {
-      location, date,
-      operations: ops, tasks: tasksByDate,
-      x, y, style,
+      location,
+      date,
+      operations: ops,
+      tasks: tasksByDate,
+      x,
+      y,
+      style,
       ref: ref(null),
     };
     return [...cells, gridCell];
@@ -93,11 +99,11 @@ const selected = ref<{ [I in IndexOf]: number }>([-1, -1, -1, -1]);
 const initTask = ref<Partial<LogProperties>|null>(null);
 const fig = useParentElement() as Ref<HTMLElement | null>;
 useEventListener(fig, 'click', (event: MouseEvent) => {
-  const x = event.offsetX - style.value.axes.yAxisWidth;
-  const y = event.offsetY - style.value.axes.xAxisHeight;
+  const x = event.offsetX - styles.value.axes.yAxisWidth;
+  const y = event.offsetY - styles.value.axes.xAxisHeight;
   if (x <= 0 || y <= 0) return;
-  const gridX = Math.floor(x / style.value.grid.unit);
-  const gridY = Math.floor(y / style.value.grid.unit);
+  const gridX = Math.floor(x / styles.value.grid.unit);
+  const gridY = Math.floor(y / styles.value.grid.unit);
   const date = board.value.axes.x.values[gridX] || new Date();
   const location = toOptionalIdfier(board.value.axes.y.values[gridY]);
   const plant = toOptionalIdfier(plants.value.find(p => p.location.id === location?.id));

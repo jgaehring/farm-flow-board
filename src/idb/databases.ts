@@ -15,14 +15,6 @@ export interface IDBIndexConfig {
   options?: IDBIndexParameters;
 }
 
-export interface IDBStoreConfigWithUpgrades {
-  name: string,
-  autoIncrement?: boolean;
-  keyPath?: string | string[] | null;
-  indices?: IDBIndexConfig;
-  upgrades: IDBStoreUpgrade[];
-}
-
 export interface IDBStoreConfig {
   name: string,
   autoIncrement?: boolean;
@@ -39,6 +31,14 @@ export interface IDBStoreUpgrade {
   ) => Promise<IDBObjectStore>;
 }
 
+export interface IDBStoreConfigWithUpgrades {
+  name: string,
+  autoIncrement?: boolean;
+  keyPath?: string | string[] | null;
+  indices?: IDBIndexConfig;
+  upgrades: IDBStoreUpgrade[];
+}
+
 export interface IDBDatabaseConfig extends IDBDatabaseInfo {
   stores: IDBStoreConfigWithUpgrades[];
 }
@@ -51,12 +51,11 @@ function createIndices(store: IDBObjectStore, indices?: IDBIndexConfig) {
   }
 }
 
-const upgrades = [{
+const upgrades: IDBStoreUpgrade[] = [{
   version: 1,
-  onUpgrade: function v1Upgrade(event: IDBVersionChangeEvent, store: IDBStoreConfig): Promise<IDBObjectStore> {
-    const {
-      name, keyPath = 'id', autoIncrement = false, indices,
-    } = store;
+  onUpgrade: function v1Upgrade(event, {
+    name, keyPath = 'id', autoIncrement = false, indices,
+  }) {
     return new Promise((resolve, reject) => {
       const db = (event.target as IDBRequest)?.result as IDBDatabase;
       try {
@@ -97,6 +96,6 @@ const databases: { [db: string]: IDBDatabaseConfig } = {
       },
     ],
   },
-}
+};
 
 export default databases;

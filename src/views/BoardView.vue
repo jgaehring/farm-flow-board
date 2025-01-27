@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { validate } from 'uuid';
-import { computed, onMounted, provide, ref, watch } from 'vue';
-import { useDark, useToggle } from '@vueuse/core'
+import {
+  computed, onMounted, provide, ref, watch,
+} from 'vue';
+import { useDark, useToggle } from '@vueuse/core';
 import { Editable, Switch } from 'radix-vue/namespaced';
 import {
   boardInfoKey, boardsKey, cropsKey, dateRangeKey, dateSequenceKey, isDarkKey,
@@ -75,14 +77,14 @@ function exportBoard() {
   const blob = new Blob([json], { type: 'text/json' });
   const link = document.createElement('a');
 
-  link.download = data.board.name.toLowerCase().replaceAll(/\s+/g, '_') + '.json';
+  link.download = `${data.board.name.toLowerCase().replaceAll(/\s+/g, '_')}.json`;
   link.href = window.URL.createObjectURL(blob);
   link.dataset.downloadurl = ['text/json', link.download, link.href].join(':');
 
   const evt = new MouseEvent('click', {
-      view: window,
-      bubbles: true,
-      cancelable: true,
+    view: window,
+    bubbles: true,
+    cancelable: true,
   });
 
   link.dispatchEvent(evt);
@@ -100,7 +102,7 @@ const toggleDark = useToggle(isDark);
 onMounted(() => {
   loading.value = true;
   board.getAllBoardInfo().then((all: BoardInfo[]) => {
-    all.forEach((board: BoardInfo) => { boards.value.push(board); });
+    all.forEach((b: BoardInfo) => { boards.value.push(b); });
     if (!board.info.value && all.length > 0) {
       board.load(all[0]).then(() => { loading.value = false; });
     } else {

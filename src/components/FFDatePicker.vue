@@ -14,8 +14,7 @@ export interface Props {
   label?: string,
 }
 const props = defineProps<Props>();
-const emit = defineEmits<{
-  (e: 'change', value: Date): void,
+const emit = defineEmits<{(e: 'change', value: Date): void,
   (e: 'input', value: Date): void,
 }>();
 

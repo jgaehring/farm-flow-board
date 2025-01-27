@@ -1,8 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { fileURLToPath } from 'node:url';
-import pluginVue from 'eslint-plugin-vue'
+import pluginVue from 'eslint-plugin-vue';
 import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
-import pluginVitest from '@vitest/eslint-plugin'
+import pluginVitest from '@vitest/eslint-plugin';
 import runrigStyle from '@runrig/eslint-config-runrig';
 
 const settings = {

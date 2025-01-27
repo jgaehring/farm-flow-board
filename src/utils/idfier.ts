@@ -1,5 +1,7 @@
 import { validate } from 'uuid';
-import { always, both, ifElse, pick, propIs, propSatisfies } from 'ramda';
+import {
+  always, both, ifElse, pick, propIs, propSatisfies,
+} from 'ramda';
 
 export const isIdfier = both(
   propSatisfies(validate, 'id'),

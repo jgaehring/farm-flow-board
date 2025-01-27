@@ -15,7 +15,7 @@ export default function useResizableCanvas(target: TargetCanvas, cb: ResizeCanva
     });
   }
 
-  const parent = useParentElement(canvas) as Readonly<Ref<HTMLElement | null>>;  
+  const parent = useParentElement(canvas) as Readonly<Ref<HTMLElement | null>>;
   if (canvas.value && parent.value) {
     canvas.value.width = parent.value.clientWidth;
     canvas.value.height = parent.value.clientHeight;

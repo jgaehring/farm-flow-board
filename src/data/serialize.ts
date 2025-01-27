@@ -1,4 +1,6 @@
-import { clone, compose, evolve, is, when } from 'ramda';
+import {
+  clone, compose, evolve, is, when,
+} from 'ramda';
 import {
   fromDate, getLocalTimeZone, parseDate, parseZonedDateTime, toCalendarDate,
 } from '@internationalized/date';
@@ -52,7 +54,7 @@ export const stringifyBoardInfo: stringifyBoardInfo = compose(
   clone,
 );
 
-const stringifyDateProp = evolve({ date: when(is(Object), stringifyDateTime) })
+const stringifyDateProp = evolve({ date: when(is(Object), stringifyDateTime) });
 export const stringifyDateTimeProps = (t: object|object[]) =>
   (Array.isArray(t) ? t.map(stringifyDateProp) : stringifyDateProp(t)) as Resource|Resource[];
 
@@ -84,7 +86,7 @@ const objectifyDateRange = ([d1, d2]: [string, string]): [Date, Date] =>
   [objectifyDate(d1), objectifyDate(d2)];
 export const objectifyBoardInfo = evolve({ dateRange: objectifyDateRange });
 
-const objectifyDateProp = evolve({ date: when(is(String), objectifyDateTime) })
+const objectifyDateProp = evolve({ date: when(is(String), objectifyDateTime) });
 export const objectifyDateTimeProps = (t: LogResourceSerialized|LogResourceSerialized[]) =>
   (Array.isArray(t) ? t.map(objectifyDateProp) : objectifyDateProp(t));
 

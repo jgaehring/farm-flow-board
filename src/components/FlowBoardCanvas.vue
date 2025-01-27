@@ -1,6 +1,7 @@
 <script lang="ts">
-export const DEFAULT_CANVAS_WIDTH: 300 = 300 as const; // <-- default width for any <canvas> element.
-export const DEFAULT_CANVAS_HEIGHT: 150 = 150 as const; // <-- default height for any <canvas> element.
+// These are the same defaults specified by the Canvas API.
+export const DEFAULT_CANVAS_WIDTH: 300 = 300 as const;
+export const DEFAULT_CANVAS_HEIGHT: 150 = 150 as const;
 
 // Constants for laying out the grid and label margins along each axis.
 export const DEFAULT_GRID = {
@@ -13,14 +14,17 @@ export const DEFAULT_AXES = {
 };
 </script>
 
+<!-- eslint-disable import/first -->
 <script setup lang="ts">
-import { computed, inject, ref, unref, watch } from 'vue';
+import {
+  computed, inject, ref, unref, watch,
+} from 'vue';
 import { useMouseInElement } from '@vueuse/core';
 import useResizableCanvas from '@/composables/useResizableCanvas';
 import { drawBoard, translateBoard } from '@/canvas/board';
 import {
   dateSequenceKey, indexPositionKey, isDarkKey, locationsKey, matrixKey,
-} from '@/components/providerKeys';  
+} from '@/components/providerKeys';
 
 // Refs for canvas DOM element.
 const canvas = ref<HTMLCanvasElement | null>(null);
@@ -72,7 +76,7 @@ const drawToCanvas = () => {
     };
     drawBoard(ctx, range, unref(matrix.value), currentIndex.value, style);
   }
-}
+};
 
 watch([matrix, dateSeq, isDark], drawToCanvas);
 
