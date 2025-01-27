@@ -5,6 +5,20 @@ import type {
   CropTerm, LocationResource, LogResource, OperationTerm,
 } from '@/data/resources';
 
+// These are the same defaults specified by the Canvas API.
+export const DEFAULT_CANVAS_WIDTH: 300 = 300 as const;
+export const DEFAULT_CANVAS_HEIGHT: 150 = 150 as const;
+
+// Constants for laying out the grid and label margins along each axis.
+export const DEFAULT_GRID = {
+  unit: 40,
+  lineWidth: 1.5,
+};
+export const DEFAULT_AXES = {
+  yAxisWidth: 240,
+  xAxisHeight: 60,
+};
+
 type CanvasContext = CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D;
 
 interface Coordinates { x: number, y: number }

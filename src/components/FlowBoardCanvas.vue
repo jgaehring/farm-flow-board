@@ -1,27 +1,13 @@
-<script lang="ts">
-// These are the same defaults specified by the Canvas API.
-export const DEFAULT_CANVAS_WIDTH: 300 = 300 as const;
-export const DEFAULT_CANVAS_HEIGHT: 150 = 150 as const;
-
-// Constants for laying out the grid and label margins along each axis.
-export const DEFAULT_GRID = {
-  unit: 40,
-  lineWidth: 1.5,
-};
-export const DEFAULT_AXES = {
-  yAxisWidth: 240,
-  xAxisHeight: 60,
-};
-</script>
-
-<!-- eslint-disable import/first -->
 <script setup lang="ts">
 import {
   computed, inject, ref, unref, watch,
 } from 'vue';
 import { useMouseInElement } from '@vueuse/core';
 import useResizableCanvas from '@/composables/useResizableCanvas';
-import { drawBoard, translateBoard } from '@/canvas/board';
+import {
+  DEFAULT_AXES, DEFAULT_CANVAS_HEIGHT, DEFAULT_CANVAS_WIDTH, DEFAULT_GRID,
+  drawBoard, translateBoard,
+} from '@/canvas/board';
 import {
   dateSequenceKey, indexPositionKey, isDarkKey, locationsKey, matrixKey,
 } from '@/components/providerKeys';

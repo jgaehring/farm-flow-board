@@ -2,6 +2,7 @@
 import {
   computed, inject, provide, ref,
 } from 'vue';
+import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '@/canvas/board';
 import type { DatesByLocation, OperationsByDate, TaskMatrix } from '@/canvas/board';
 import {
   cropsKey, emitBoardDeleteKey, emitBoardUpdateKey, indexPositionKey,
@@ -9,7 +10,7 @@ import {
 } from '@/components/providerKeys';
 import { sameDate } from '@/utils/date';
 import type { PartialResource } from '@/data/resources';
-import FlowBoardCanvas, { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '@/components/FlowBoardCanvas.vue';
+import FlowBoardCanvas from '@/components/FlowBoardCanvas.vue';
 import FlowBoardInteractiveLayer from '@/components/FlowBoardInteractiveLayer.vue';
 import IconChevronDown from '@/assets/radix-icons/chevron-down.svg?component';
 import IconChevronLeft from '@/assets/radix-icons/chevron-left.svg?component';
